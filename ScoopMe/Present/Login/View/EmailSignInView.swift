@@ -1,5 +1,5 @@
 //
-//  EmailLoginView.swift
+//  EmailSignInView.swift
 //  ScoopMe
 //
 //  Created by Lee Wonsun on 5/10/25.
@@ -8,8 +8,117 @@
 import SwiftUI
 
 struct EmailSignInView: View {
+    
+    @State private var email: String = ""
+    @State private var password: String = ""
+    
+    @State private var autoLoginStatus: Bool = false
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Color.scmBrightSprout
+                .ignoresSafeArea()
+            
+            vstackContents
+        }
+    }
+    
+    private var vstackContents: some View {
+        VStack(alignment: .center, spacing: 0) {
+            Text(StringLiterals.title.text)
+                .basicText(.JNLargeTitle1, .scmBlackSprout)
+            
+            Text(StringLiterals.subtitle.text)
+                .basicText(.PTBody1, .scmBlackSprout)
+                .padding(.top, 16)
+            
+            VStack(alignment: .leading, spacing: 12) {
+                emailField
+                passwordField
+                
+                autoLogin
+            } .defaultHorizontalPadding()
+            
+            bottomLogin
+        }
+    }
+    
+    private var emailField: some View {
+        TextField("", text: $email)
+            .placeholder(StringLiterals.emailHolder.text, $email)
+            .padding(20)
+            .background(alignment: .center) {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(lineWidth: 1)
+                    .foregroundStyle(.scmGray60.opacity(0.6))
+            }
+            .padding(.top, 40)
+    }
+    
+    private var passwordField: some View {
+        SecureField("", text: $password)
+            .placeholder(StringLiterals.pwHolder.text, $password)
+            .padding(20)
+            .background(alignment: .center) {
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(lineWidth: 1)
+                    .foregroundStyle(.scmGray60.opacity(0.6))
+            }
+    }
+    
+    private var autoLogin: some View {
+        HStack(alignment: .center, spacing: 8) {
+            Image(autoLoginStatus ? .checkmarkSquareFill : .square)
+                .basicImage(width: 20, color: .scmBlackSprout)
+                .asButton {
+                    autoLoginStatus.toggle()
+                }
+            
+            Text(StringLiterals.autoLogin.text)
+                .basicText(.PTBody1, .scmGray75)
+        }
+    }
+    
+    private var bottomLogin: some View {
+        VStack(alignment: .trailing, spacing: 12) {
+            NextButtonCell(
+                title: StringLiterals.loginButton.text,
+                buttonColor: .scmBlackSprout
+            )
+            .asButton {
+                print("로그인 버튼 클릭")
+            }
+            
+            Text(StringLiterals.signup.text)
+                .basicText(.PTBody2, .scmGray75)
+                .asButton {
+                    print("이메일 가입하기 클릭")
+                }
+        }
+        .defaultHorizontalPadding()
+        .padding(.top, 40)
+    }
+}
+
+private enum StringLiterals {
+    case title
+    case subtitle
+    case emailHolder
+    case pwHolder
+    case autoLogin
+    case loginButton
+    case signup
+    
+    var text: String {
+        switch self {
+        case .title: return "Login"
+        case .subtitle: return "스쿱미에 오신 것을 환영합니다 :)"
+        case .emailHolder: return "이메일 주소"
+        case .pwHolder: return "비밀번호"
+        case .autoLogin: return "로그인 상태 유지"
+        case .loginButton: return "로그인"
+        case .signup: return "이메일로 가입하기 >"
+        }
     }
 }
 
