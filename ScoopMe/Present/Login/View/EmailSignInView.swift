@@ -44,26 +44,18 @@ struct EmailSignInView: View {
     }
     
     private var emailField: some View {
-        TextField("", text: $email)
-            .placeholder(StringLiterals.emailHolder.text, $email)
-            .padding(20)
-            .background(alignment: .center) {
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(lineWidth: 1)
-                    .foregroundStyle(.scmGray60.opacity(0.6))
-            }
-            .padding(.top, 40)
+        LoginTextFieldCell(
+            text: $email,
+            placeholder: StringLiterals.emailHolder.text
+        )
+        .padding(.top, 40)
     }
     
     private var passwordField: some View {
-        SecureField("", text: $password)
-            .placeholder(StringLiterals.pwHolder.text, $password)
-            .padding(20)
-            .background(alignment: .center) {
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(lineWidth: 1)
-                    .foregroundStyle(.scmGray60.opacity(0.6))
-            }
+        LoginSecureFieldCell(
+            text: $password,
+            placeholder: StringLiterals.pwHolder.text
+        )
     }
     
     private var autoLogin: some View {
