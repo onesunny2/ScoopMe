@@ -51,6 +51,13 @@ struct LoginView: View {
         
         RoundedRectangle(cornerRadius: 5)
             .fill(type.bgColor)
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(
+                        (type == .email) ? .scmBlackSprout : .clear,
+                        lineWidth: 0.5
+                    )
+            )
             .overlay(alignment: .leading) {
                 type.symbolImage
                     .basicImage(width: 18, color: type.symbolColor)
