@@ -47,13 +47,6 @@ struct ContentView: View {
                 .font(.PTCaption3)
         }
         .padding()
-        .onAppear {
-            for fontFamily in UIFont.familyNames {
-                for fontName in UIFont.fontNames(forFamilyName: fontFamily) {
-                    print(fontName)
-                }
-            }
-        }
     }
 }
 
