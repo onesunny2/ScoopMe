@@ -21,6 +21,7 @@ struct EmailSignInView: View {
             
             vstackContents
         }
+        .backButton(.scmBlackSprout)
     }
     
     private var vstackContents: some View {
