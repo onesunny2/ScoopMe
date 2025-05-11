@@ -47,6 +47,10 @@ struct SignUpView: View {
                 text: $email,
                 placeholder: StringLiterals.email.placeholder
             )
+            .overlay(alignment: .trailing) {
+                emailValidationButton
+                    .padding(.trailing, 10)
+            }
             
             // 비밀번호
             requiredText(.password).padding(.top, 12)
@@ -106,6 +110,20 @@ struct SignUpView: View {
                 .basicText(.PTBody1, .scmBlackSprout)
         }
     }
+    
+    private var emailValidationButton: some View {
+        Text(StringLiterals.emailValidation.text)
+            .basicText(.PTBody3, .scmGray15)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(.scmDeepSprout)
+                )
+            .asButton {
+                print("중복확인 버튼 클릭")
+            }
+    }
 }
 
 private enum StringLiterals: String {
@@ -117,6 +135,8 @@ private enum StringLiterals: String {
     case phoneNum = "휴대전화"
     case signup = "가입하기"
     case punctuation
+    case emailValidation = "중복확인"
+    case completeValidation = "사용가능"
     
     var text: String {
         return self.rawValue
@@ -124,7 +144,7 @@ private enum StringLiterals: String {
     
     var placeholder: String {
         switch self {
-        case .title, .email, .checkPw, .signup: return ""
+        case .title, .email, .checkPw, .signup, .emailValidation, .completeValidation: return ""
         case .password:
             return "8자 이상, 영문/슷자/특수문자 1개 이상 포함"
         case .nickname:
