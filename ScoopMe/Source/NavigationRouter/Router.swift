@@ -72,12 +72,6 @@ extension Router {
         loginPath.removeLast()
     }
     
-    func popLoginRoute(_ count: Int) {
-        let pathCount = loginPath.count
-        guard count <= pathCount else { return }
-        loginPath.removeLast(count)
-    }
-    
     func popToLoginRoot() {
         loginPath = NavigationPath()
     }

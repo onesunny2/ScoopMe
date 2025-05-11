@@ -9,6 +9,8 @@ import SwiftUI
 
 struct EmailSignInView: View {
     
+    @EnvironmentObject private var router: Router
+    
     @State private var email: String = ""
     @State private var password: String = ""
     
@@ -85,7 +87,7 @@ struct EmailSignInView: View {
             Text(StringLiterals.signup.text)
                 .basicText(.PTBody2, .scmGray75)
                 .asButton {
-                    print("이메일 가입하기 클릭")
+                    router.pushLoginRoute(.signup)
                 }
         }
         .defaultHorizontalPadding()
@@ -117,4 +119,5 @@ private enum StringLiterals {
 
 #Preview {
     EmailSignInView()
+        .environmentObject(Router())
 }
