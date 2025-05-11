@@ -9,6 +9,8 @@ import SwiftUI
 
 struct LoginView: View {
     
+    @EnvironmentObject private var router: Router
+    
     private var horizontalPadding: CGFloat = 40
     
     var body: some View {
@@ -69,6 +71,11 @@ struct LoginView: View {
             }
             .frame(height: 48)
             .padding(.horizontal, horizontalPadding)
+            .asButton {
+                if type == .email {
+                    router.pushLoginRoute(.emailLogin)
+                }
+            }
     }
 }
 
@@ -86,4 +93,5 @@ private enum StringLiterals {
 
 #Preview {
     LoginView()
+        .environmentObject(Router())
 }
