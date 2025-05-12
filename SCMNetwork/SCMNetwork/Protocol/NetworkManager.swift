@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+public protocol NetworkManager {
+    func fetchData<T: Decodable>(_ request: HTTPRequest, _ type: T.Type) async throws -> T
+}
