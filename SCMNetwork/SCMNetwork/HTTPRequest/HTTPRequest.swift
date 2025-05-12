@@ -15,14 +15,20 @@ public struct HTTPRequest {
     private var parameters: [String: String?]? = nil
     private var httpHeaders: [String: String] = [:]
     private var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
+    private var successStatusCodes: Set<Int>
     
-    public init(scheme: Schemes, method: HTTPMethods) {
+    public init(scheme: Schemes, method: HTTPMethods, successCodes: Set<Int>) {
         self.scheme = scheme
         self.method = method
+        self.successStatusCodes = successCodes
     }
 }
 
 extension HTTPRequest: Requestable {
+    
+    public var successCodes: Set<Int> {
+        return successStatusCodes
+    }
     
     public var urlString: String {
         return "\(scheme.string)://\(baseURL)\(path)"

@@ -10,7 +10,6 @@ import Foundation
 enum SCMError: Error {
     case invalidURL
     case invalidResponse
-    case invalidData
     case invalidParameter
     case requestFailed(Error)
     case decodingFailed(Error)
@@ -20,7 +19,6 @@ enum SCMError: Error {
         switch self {
         case .invalidURL: return "유효하지 않은 URL입니다."
         case .invalidResponse: return "유효하지 않은 응답입니다."
-        case .invalidData: return "유효하지 않은 데이터입니다."
         case .invalidParameter: return "유효하지 않은 파라미터입니다."
         case .requestFailed(let error): return "요청에 실패했습니다: \(error.localizedDescription)"
         case .decodingFailed(let error): return "응답 디코딩에 실패했습니다: \(error.localizedDescription)"
