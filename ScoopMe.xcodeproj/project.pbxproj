@@ -6,8 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; };
+		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43AC4B3C2DD118120010D965 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		43AC47EB2DCF19040010D965 /* ScoopMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScoopMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		43AC4B392DD118120010D965 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43AC4C2A2DD11A200010D965 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +68,9 @@
 		43AC47E22DCF19040010D965 = {
 			isa = PBXGroup;
 			children = (
+				43AC4C2A2DD11A200010D965 /* Secret.xcconfig */,
 				43AC47ED2DCF19040010D965 /* ScoopMe */,
+				43AC4B382DD118120010D965 /* Frameworks */,
 				43AC47EC2DCF19040010D965 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +83,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		43AC4B382DD118120010D965 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43AC4B392DD118120010D965 /* SCMNetwork.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -68,6 +101,7 @@
 				43AC47E72DCF19040010D965 /* Sources */,
 				43AC47E82DCF19040010D965 /* Frameworks */,
 				43AC47E92DCF19040010D965 /* Resources */,
+				43AC4B3C2DD118120010D965 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -122,6 +156,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +294,7 @@
 		};
 		43AC47FA2DCF19050010D965 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
