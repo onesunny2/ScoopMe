@@ -5,4 +5,62 @@
 //  Created by Lee Wonsun on 5/12/25.
 //
 
-import Foundation
+internal import KakaoSDKUser
+
+public final class KakaoLoginManager {
+    
+    public static let shared = KakaoLoginManager()
+    private init() { }
+    
+    public func kakaoLogin() async throws -> String {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            print("카카오톡으로 로그인 시도")
+            return try await loginWithKakaoTalk()
+        } else {
+            print("카카오 계정으로 로그인 시도")
+            return try await loginWithKakaoAccount()
+        }
+    }
+    
+    /// kakaoTalk으로 로그인
+    private func loginWithKakaoTalk() async throws -> String {
+        return try await withCheckedThrowingContinuation { continuation in
+            UserApi.shared.loginWithKakaoTalk { oauthToken, error in
+                
+                if let error {
+                    print("❎ loginWithKakaoTalk Error: \(error)")
+                    continuation.resume(throwing: LoginError.kakaoLoginFailed(error.localizedDescription))
+                }
+                
+                guard let accessToken = oauthToken?.accessToken else {
+                    continuation.resume(throwing: LoginError.noAccessToken)
+                    return
+                }
+                
+                print("✅ 카카오톡 로그인 success")
+                continuation.resume(returning: accessToken)
+            }
+        }
+    }
+    
+    /// kakao 계정으로 로그인
+    private func loginWithKakaoAccount() async throws -> String {
+        return try await withCheckedThrowingContinuation { continuation in
+            UserApi.shared.loginWithKakaoAccount { oauthToken, error in
+                
+                if let error {
+                    print("❎ loginWithKakaoAccount Error: \(error)")
+                    continuation.resume(throwing: LoginError.kakaoLoginFailed(error.localizedDescription))
+                }
+                
+                guard let accessToken = oauthToken?.accessToken else {
+                    continuation.resume(throwing: LoginError.noAccessToken)
+                    return
+                }
+                
+                print("✅ 카카오 계정 로그인 success")
+                continuation.resume(returning: accessToken)
+            }
+        }
+    }
+}
