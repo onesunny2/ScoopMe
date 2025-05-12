@@ -39,21 +39,9 @@ extension HTTPRequest: Requestable {
         return request
     }
     
-    public func addParameter(_ key: String, _ value: String) -> Self {
-        var request = self
-        request.parameters?[key] = value
-        return request
-    }
-    
     public func addParamters(_ params: [String: String?]?) -> Self {
         var request = self
         request.parameters = params
-        return request
-    }
-    
-    public func addHeader(_ key: String, _ value: String) -> Self {
-        var request = self
-        request.httpHeaders[key] = value
         return request
     }
     
