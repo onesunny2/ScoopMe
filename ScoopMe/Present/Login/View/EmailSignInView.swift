@@ -102,7 +102,7 @@ struct EmailSignInView: View {
         Task {
             do {
                 let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
-                let request = HTTPRequest(scheme: .http, method: .post)
+                let request = HTTPRequest(scheme: .http, method: .post, successCodes: [200])
                     .addBaseURL(value.baseURL)
                     .addPath(value.path)
                     .addParamters(value.parameters)
