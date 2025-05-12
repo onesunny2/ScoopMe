@@ -14,7 +14,6 @@
 
 /* Begin PBXFileReference section */
 		435E58252DD1C9E10005196F /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		435E58472DD1D4C10005196F /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,7 +55,6 @@
 			isa = PBXGroup;
 			children = (
 				435E58272DD1C9E10005196F /* SCMLogin */,
-				435E58462DD1D4C10005196F /* Frameworks */,
 				435E58262DD1C9E10005196F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,14 +65,6 @@
 				435E58252DD1C9E10005196F /* SCMLogin.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		435E58462DD1D4C10005196F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				435E58472DD1D4C10005196F /* SCMNetwork.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
