@@ -10,6 +10,7 @@ internal import KakaoSDKAuth
 
 public enum KakaoLoginConfiguration {
     
+    @MainActor
     public static func iniKakaoSDK(_ appkey: String) {
         KakaoSDK.initSDK(appKey: appkey)
     }
