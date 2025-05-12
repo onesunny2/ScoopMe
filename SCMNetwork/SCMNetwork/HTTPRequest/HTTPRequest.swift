@@ -14,6 +14,7 @@ public struct HTTPRequest {
     private var path: String = ""
     private var parameters: [String: String?]? = nil
     private var httpHeaders: [String: String] = [:]
+    private var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
     
     public init(scheme: Schemes, method: HTTPMethods) {
         self.scheme = scheme
@@ -51,12 +52,21 @@ extension HTTPRequest: Requestable {
         return request
     }
     
+    public func setCachePolicy(_ policy: URLRequest.CachePolicy) -> Self {
+        var request = self
+        request.cachePolicy = policy
+        return request
+    }
+    
     public func urlRequest() throws -> URLRequest {
         
         guard let url = URL(string: urlString) else { throw SCMError.invalidURL }
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+        
+        // cachePolicy
+        request.cachePolicy = cachePolicy
         
         // header
         for (key, value) in httpHeaders {
