@@ -24,7 +24,7 @@ public struct HTTPRequest {
 extension HTTPRequest: Requestable {
     
     public var urlString: String {
-        return baseURL + path
+        return "\(scheme.string)://\(baseURL)\(path)"
     }
     
     public func addBaseURL(_ url: String) -> Self {
