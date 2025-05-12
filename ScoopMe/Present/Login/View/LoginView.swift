@@ -75,7 +75,7 @@ struct LoginView: View {
             .asButton {
                 switch type {
                 case .apple:
-                    break
+                    Log.error("error Test")
                 case .kakao:
                     Task {
                         try await KakaoLoginManager.shared.kakaoLogin()
