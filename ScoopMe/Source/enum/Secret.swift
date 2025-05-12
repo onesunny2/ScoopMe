@@ -23,8 +23,8 @@ enum Secret {
     }()
     
     static let kakaoKey: String = {
-        guard let urlString = Bundle.main.infoDictionary?["KAKAO_Native"] as? String else {
-            fatalError("KAKAO_Native ERROR")
+        guard let urlString = Bundle.main.infoDictionary?["KAKAO_Native_Key"] as? String else {
+            fatalError("KAKAO_Native_Key ERROR")
         }
         return urlString
     }()

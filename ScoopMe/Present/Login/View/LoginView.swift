@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMLogin
 
 struct LoginView: View {
     
@@ -72,7 +73,14 @@ struct LoginView: View {
             .frame(height: 48)
             .padding(.horizontal, horizontalPadding)
             .asButton {
-                if type == .email {
+                switch type {
+                case .apple:
+                    break
+                case .kakao:
+                    Task {
+                        try await KakaoLoginManager.shared.kakaoLogin()
+                    }
+                case .email:
                     router.pushLoginRoute(.emailLogin)
                 }
             }
