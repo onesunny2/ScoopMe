@@ -9,20 +9,10 @@ import Foundation
 import os.log
 
 extension OSLog {
-    static let subsystem = Bundle.main.bundleIdentifier!
-    static let network = OSLog(subsystem: subsystem, category: LogCategory.network.string)
-    static let debug = OSLog(subsystem: subsystem, category: LogCategory.debug.string)
-    static let info = OSLog(subsystem: subsystem, category: LogCategory.info.string)
-    static let error = OSLog(subsystem: subsystem, category: LogCategory.error.string)
+    static let subsystem = Bundle.main.bundleIdentifier ?? "com.Tynee.ScoopMe"
     
-    enum LogCategory: String {
-        case network = "Network"
-        case debug = "Debug"
-        case info = "Info"
-        case error = "Error"
-        
-        var string: String {
-            return self.rawValue
-        }
-    }
+    static let network = OSLog(subsystem: subsystem, category: "NETWORK")
+    static let debug = OSLog(subsystem: subsystem, category: "DEBUG")
+    static let info = OSLog(subsystem: subsystem, category: "INFO")
+    static let error = OSLog(subsystem: subsystem, category: "ERROR")
 }
