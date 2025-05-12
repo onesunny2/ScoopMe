@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMNetwork
 
 struct EmailSignInView: View {
     
@@ -15,6 +16,8 @@ struct EmailSignInView: View {
     @State private var password: String = ""
     
     @State private var autoLoginStatus: Bool = false
+    
+    private let network = SCMNetworkImpl()
     
     var body: some View {
         ZStack {
@@ -82,6 +85,7 @@ struct EmailSignInView: View {
             )
             .asButton {
                 print("로그인 버튼 클릭")
+                fetchLogin()
             }
             
             Text(StringLiterals.signup.text)
@@ -92,6 +96,25 @@ struct EmailSignInView: View {
         }
         .defaultHorizontalPadding()
         .padding(.top, 40)
+    }
+    
+    private func fetchLogin() {
+        Task {
+            do {
+                let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
+                let request = HTTPRequest(scheme: .http, method: .post)
+                    .addBaseURL(value.baseURL)
+                    .addPath(value.path)
+                    .addParamters(value.parameters)
+                    .addHeaders(value.headers)
+                
+                let result = try await network.fetchData(request, LoginDTO.self)
+                
+                dump(result)
+            } catch {
+                print("email login error: \(error)")
+            }
+        }
     }
 }
 
