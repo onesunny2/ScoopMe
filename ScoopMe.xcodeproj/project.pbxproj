@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435E58322DD1CA030005196F /* SCMLogin.framework */; };
 		435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 435E58322DD1CA030005196F /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; };
+		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
+		43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E014B52DD21A2B0016391C /* OSLog.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +35,7 @@
 		43AC47EB2DCF19040010D965 /* ScoopMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScoopMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4B392DD118120010D965 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4C2A2DD11A200010D965 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		43E014B52DD21A2B0016391C /* OSLog.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSLog.framework; path = System/Library/Frameworks/OSLog.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -62,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
 				43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */,
 			);
@@ -91,6 +94,7 @@
 		43AC4B382DD118120010D965 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43E014B52DD21A2B0016391C /* OSLog.framework */,
 				435E58322DD1CA030005196F /* SCMLogin.framework */,
 				43AC4B392DD118120010D965 /* SCMNetwork.framework */,
 			);
