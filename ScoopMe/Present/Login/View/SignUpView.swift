@@ -143,8 +143,8 @@ struct SignUpView: View {
                 Log.info("중복확인 버튼 클릭")
                 
                 Task {
-                    let message = await signupManager.postEmailValidation(email)
-                    alertMessage = message
+                    let result = await signupManager.postEmailValidation(email)
+                    alertMessage = result.message
                     
                     showAlert = true
                 }

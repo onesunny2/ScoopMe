@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SCMNetwork
+import SCMLogin
 
 struct EmailSignInView: View {
     
