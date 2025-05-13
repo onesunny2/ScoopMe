@@ -17,7 +17,7 @@ struct EmailSignInView: View {
     
     @State private var autoLoginStatus: Bool = false
     
-    private let network = SCMNetworkImpl()
+    private let loginManager = LoginManager.shared
     
     var body: some View {
         ZStack {
@@ -84,7 +84,9 @@ struct EmailSignInView: View {
                 buttonColor: .scmBlackSprout
             )
             .asButton {
-                fetchLogin()
+                Task {
+                    await loginManager.postEmainLogin(email, password)
+                }
             }
             
             Text(StringLiterals.signup.text)
@@ -95,26 +97,6 @@ struct EmailSignInView: View {
         }
         .defaultHorizontalPadding()
         .padding(.top, 40)
-    }
-    
-    private func fetchLogin() {
-        Task {
-            do {
-                let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
-                let request = HTTPRequest(scheme: .http, method: .post, successCodes: [200])
-                    .addBaseURL(value.baseURL)
-                    .addPath(value.path)
-                    .addParamters(value.parameters)
-                    .addHeaders(value.headers)
-                
-                let result = try await network.fetchData(request, LoginDTO.self)
-                
-                dump(result)
-                Log.info("로그인 성공")
-            } catch {
-                Log.error("이메일 로그인 실패: \(error)")
-            }
-        }
     }
 }
 

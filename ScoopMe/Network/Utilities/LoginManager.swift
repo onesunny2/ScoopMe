@@ -33,7 +33,6 @@ final class LoginManager {
     
     func postAppleLogin(id token: String) async {
         do {
-            
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value)
             
@@ -46,7 +45,6 @@ final class LoginManager {
     
     func postKakaoLogin(oauth token: String ) async {
         do {
-            
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value)
             
@@ -54,6 +52,18 @@ final class LoginManager {
             
         } catch {
             Log.error("❎ 카카오 login error: \(error)")
+        }
+    }
+    
+    func postEmainLogin(_ email: String, _ password: String) async {
+        do {
+            let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
+            let result = try await callRequest(value)
+            
+            Log.debug("✅ 이메일로그인 결과: \(result.response)")
+            
+        } catch {
+            Log.error("❎ 이메일 login error: \(error)")
         }
     }
 }
