@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+enum EmailDuplication {
+    case title
+    case message(String)
+    
+    var string: String {
+        switch self {
+        case .title:
+            return "중복 확인"
+        case .message(let message):
+            return message
+        }
+    }
+}

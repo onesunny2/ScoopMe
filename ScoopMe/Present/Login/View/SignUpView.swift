@@ -17,6 +17,7 @@ struct SignUpView: View {
     @State private var nickname: String = ""
     @State private var phoneNumber: String = ""
     
+    @State private var showAlert: Bool = false
     @State private var isComplete: Bool = false
     
     var body: some View {
@@ -34,6 +35,11 @@ struct SignUpView: View {
                     route.popToLoginRoot()
                 }
         }
+        .showAlert(
+            isPresented: $showAlert,
+            title: EmailDuplication.title.string,
+            message: "test message"
+        )
     }
     
     private var vstackContents: some View {
@@ -131,6 +137,7 @@ struct SignUpView: View {
                 )
             .asButton {
                 Log.info("중복확인 버튼 클릭")
+                showAlert = true
             }
     }
 }
@@ -153,7 +160,6 @@ private enum StringLiterals: String {
     
     var placeholder: String {
         switch self {
-        case .title, .email, .checkPw, .signup, .emailValidation, .completeValidation: return ""
         case .password:
             return "8자 이상, 영문/슷자/특수문자 1개 이상 포함"
         case .nickname:
@@ -162,6 +168,7 @@ private enum StringLiterals: String {
             return "-는 제외하고 적어주세요 (예: 01012345678)"
         case .punctuation:
             return "* 특수문자: @, $, !, %, *, #, ?, &"
+        default: return ""
         }
     }
 }
