@@ -13,6 +13,7 @@ struct LoginView: View {
     
     @EnvironmentObject private var router: Router
     
+    private let loginManager = LoginManager.shared
     private var horizontalPadding: CGFloat = 40
     
     var body: some View {
@@ -79,7 +80,8 @@ struct LoginView: View {
                     break
                 case .kakao:
                     Task {
-                        try await KakaoLoginManager.shared.kakaoLogin()
+                        let data = try await KakaoLoginManager.shared.kakaoLogin()
+                        await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
                     router.pushLoginRoute(.emailLogin)
@@ -90,23 +92,32 @@ struct LoginView: View {
                     SignInWithAppleButton { request in
                         request.requestedScopes = [.fullName, .email]
                     } onCompletion: { result in
-                        switch result {
-                        case let .success(authResult):
-                            print("애플로그인 성공")
-                            if let credential = authResult.credential as? ASAuthorizationAppleIDCredential {
-                                if let token = credential.identityToken, let stringToken = String(data: token, encoding: .utf8) {
-                                    Log.debug("애플로그인 토큰: \(stringToken)")
-                                }
-                            }
-                            
-                        case let .failure(error):
-                            Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
-                        }
+                        getAppleAuth(result)
                     }
                     .blendMode(.overlay)
                     .padding(.horizontal, horizontalPadding)
                 }
             }
+    }
+    
+    /// 애플 로그인 결과 값에 대한 분기처리
+    private func getAppleAuth(_ result: Result<ASAuthorization, any Error>) {
+        switch result {
+        case let .success(authResult):
+            print("애플로그인 성공")
+            if let credential = authResult.credential as? ASAuthorizationAppleIDCredential {
+                if let token = credential.identityToken, let stringToken = String(data: token, encoding: .utf8) {
+                    Log.debug("애플로그인 토큰: \(stringToken)")
+                    
+                    Task {
+                        await loginManager.postAppleLogin(id: stringToken)
+                    }
+                }
+            }
+            
+        case let .failure(error):
+            Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
+        }
     }
 }
 

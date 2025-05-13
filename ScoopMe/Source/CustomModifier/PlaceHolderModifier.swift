@@ -13,15 +13,14 @@ struct PlaceHolderModifier: ViewModifier {
     @Binding var text: String
     
     func body(content: Content) -> some View {
-        ZStack(alignment: .leading) {
-            
-            content
-            
-            if text.isEmpty {
-                Text(placeholder)
-                    .basicText(.PTBody1, .scmGray60)
+        
+        content
+            .overlay(alignment: .leading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .basicText(.PTBody1, .scmGray60)
+                }
             }
-        }
     }
 }
 
