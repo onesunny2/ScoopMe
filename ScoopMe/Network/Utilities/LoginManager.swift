@@ -17,27 +17,43 @@ final class LoginManager {
     
     private let network: SCMNetworkImpl
     
-    func postAppleLogin(_ token: String) async {
+    private func callRequest(_ value: LoginURL) async throws -> HTTPResponse<LoginDTO> {
+        let request = HTTPRequest(
+            scheme: .http,
+            method: .post,
+            successCodes: [200]
+        )
+            .addBaseURL(value.baseURL)
+            .addPath(value.path)
+            .addParamters(value.parameters)
+            .addHeaders(value.headers)
+        
+        return try await network.fetchData(request, LoginDTO.self)
+    }
+    
+    func postAppleLogin(id token: String) async {
         do {
             
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
+            let result = try await callRequest(value)
             
-            let request = HTTPRequest(
-                scheme: .http,
-                method: .post,
-                successCodes: [200]
-            )
-                .addBaseURL(value.baseURL)
-                .addPath(value.path)
-                .addParamters(value.parameters)
-                .addHeaders(value.headers)
-            
-            let result = try await network.fetchData(request, LoginDTO.self)
-            
-            Log.debug("appleLogin 결과: ", result)
+            Log.debug("✅ 애플로그인 결과: \(result.response)")
             
         } catch {
-            Log.error("login error: \(error)")
+            Log.error("❎ 애플 login error: \(error)")
+        }
+    }
+    
+    func postKakaoLogin(oauth token: String ) async {
+        do {
+            
+            let value = LoginURL.kakaoLogin(oauth: token, device: nil)
+            let result = try await callRequest(value)
+            
+            Log.debug("✅ 카카오로그인 결과: \(result.response)")
+            
+        } catch {
+            Log.error("❎ 카카오 login error: \(error)")
         }
     }
 }

@@ -80,7 +80,8 @@ struct LoginView: View {
                     break
                 case .kakao:
                     Task {
-                        try await KakaoLoginManager.shared.kakaoLogin()
+                        let data = try await KakaoLoginManager.shared.kakaoLogin()
+                        await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
                     router.pushLoginRoute(.emailLogin)
@@ -109,7 +110,7 @@ struct LoginView: View {
                     Log.debug("애플로그인 토큰: \(stringToken)")
                     
                     Task {
-                        await loginManager.postAppleLogin(stringToken)
+                        await loginManager.postAppleLogin(id: stringToken)
                     }
                 }
             }
