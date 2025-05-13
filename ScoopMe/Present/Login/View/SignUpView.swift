@@ -121,7 +121,7 @@ struct SignUpView: View {
                     .fill(.scmDeepSprout)
                 )
             .asButton {
-                print("중복확인 버튼 클릭")
+                Log.info("중복확인 버튼 클릭")
             }
     }
 }

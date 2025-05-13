@@ -84,7 +84,6 @@ struct EmailSignInView: View {
                 buttonColor: .scmBlackSprout
             )
             .asButton {
-                print("로그인 버튼 클릭")
                 fetchLogin()
             }
             
@@ -111,8 +110,9 @@ struct EmailSignInView: View {
                 let result = try await network.fetchData(request, LoginDTO.self)
                 
                 dump(result)
+                Log.info("로그인 성공")
             } catch {
-                print("email login error: \(error)")
+                Log.error("이메일 로그인 실패: \(error)")
             }
         }
     }
