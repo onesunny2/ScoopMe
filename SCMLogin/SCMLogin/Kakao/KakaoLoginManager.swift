@@ -31,11 +31,11 @@ public final class KakaoLoginManager {
                 
                 if let error {
                     print("❎ loginWithKakaoTalk Error: \(error)")
-                    continuation.resume(throwing: LoginError.kakaoLoginFailed(error.localizedDescription))
+                    continuation.resume(throwing: KakaoError.loginFailed(error.localizedDescription))
                 }
                 
                 guard let accessToken = oauthToken?.accessToken else {
-                    continuation.resume(throwing: LoginError.noAccessToken)
+                    continuation.resume(throwing: KakaoError.noAccessToken)
                     return
                 }
                 
@@ -53,12 +53,12 @@ public final class KakaoLoginManager {
                 
                 if let error {
                     print("❎ loginWithKakaoAccount Error: \(error)")
-                    continuation.resume(throwing: LoginError.kakaoLoginFailed(error.localizedDescription))
+                    continuation.resume(throwing: KakaoError.loginFailed(error.localizedDescription))
                     return
                 }
                 
                 guard let accessToken = oauthToken?.accessToken else {
-                    continuation.resume(throwing: LoginError.noAccessToken)
+                    continuation.resume(throwing: KakaoError.noAccessToken)
                     return
                 }
                 
