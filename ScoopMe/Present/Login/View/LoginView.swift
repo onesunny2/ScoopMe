@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 import SCMLogin
 
 struct LoginView: View {
@@ -75,13 +76,35 @@ struct LoginView: View {
             .asButton {
                 switch type {
                 case .apple:
-                    Log.error("error Test")
+                    break
                 case .kakao:
                     Task {
                         try await KakaoLoginManager.shared.kakaoLogin()
                     }
                 case .email:
                     router.pushLoginRoute(.emailLogin)
+                }
+            }
+            .overlay {
+                if type == .apple {
+                    SignInWithAppleButton { request in
+                        request.requestedScopes = [.fullName, .email]
+                    } onCompletion: { result in
+                        switch result {
+                        case let .success(authResult):
+                            print("애플로그인 성공")
+                            if let credential = authResult.credential as? ASAuthorizationAppleIDCredential {
+                                if let token = credential.identityToken, let stringToken = String(data: token, encoding: .utf8) {
+                                    Log.debug("애플로그인 토큰: \(stringToken)")
+                                }
+                            }
+                            
+                        case let .failure(error):
+                            Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
+                        }
+                    }
+                    .blendMode(.overlay)
+                    .padding(.horizontal, horizontalPadding)
                 }
             }
     }
