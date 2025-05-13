@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SignUpView: View {
     
+    @EnvironmentObject private var route: Router
+    
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var checkPW: String = ""
@@ -25,6 +27,13 @@ struct SignUpView: View {
             vstackContents
         }
         .backButton(.scmBlackSprout)
+        .navigationRightItem {
+            Image(.homeFill)
+                .basicImage(width: 25, color: .scmBlackSprout)
+                .asButton {
+                    route.popToLoginRoot()
+                }
+        }
     }
     
     private var vstackContents: some View {
