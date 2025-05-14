@@ -10,6 +10,7 @@ import SwiftUI
 struct LowercaseTextFieldModifier: ViewModifier {
     
     @Binding var text: String
+    let resetStatus: () -> ()?
     
     func body(content: Content) -> some View {
         content
@@ -21,12 +22,14 @@ struct LowercaseTextFieldModifier: ViewModifier {
                 if newText.contains(" ") {
                     text = newText.replacingOccurrences(of: " ", with: "")
                 }
+                
+                resetStatus()
             }
     }
 }
 
 extension View {
-    func lowercaseTextfield(_ text: Binding<String>) -> some View {
-        modifier(LowercaseTextFieldModifier(text: text))
+    func lowercaseTextfield(_ text: Binding<String>, reset status: @escaping () -> ()) -> some View {
+        modifier(LowercaseTextFieldModifier(text: text, resetStatus: status))
     }
 }

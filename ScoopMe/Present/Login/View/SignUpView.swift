@@ -53,7 +53,10 @@ struct SignUpView: View {
                 route.popLoginRoute()
             }
         )
-        .lowercaseTextfield($email)
+        .lowercaseTextfield($email) {
+            // 이메일에 대한 변경사항 있으면 다시 중복확인 하도록 초기화 해야 함
+            signupManager.emailAvailable = false
+        }
     }
     
     private var vstackContents: some View {
@@ -182,6 +185,8 @@ struct SignUpView: View {
     }
 }
 
+
+// MARK: Methods
 extension SignUpView {
     
     /// 이메일 text 형식 확인
