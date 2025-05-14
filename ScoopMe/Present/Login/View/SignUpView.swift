@@ -145,21 +145,21 @@ struct SignUpView: View {
         Text(
             signupManager.emailAvailable ? StringLiterals.completeValidation.text :  StringLiterals.emailValidation.text
         )
-            .basicText(.PTBody3, .scmGray15)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(checkEmailForm() ? (signupManager.emailAvailable ? .scmGray60 : .scmBlackSprout) : .scmGray60)
-                )
-            .asButton ({
-                Log.info("중복확인 버튼 클릭")
-                
-                Task {
-                    await signupManager.postEmailValidation(email)
-                    showAlert = true
-                }
-            }, disabled: !(checkEmailForm() && !signupManager.emailAvailable))
+        .basicText(.PTBody3, signupManager.emailAvailable ? .scmBlackSprout : .scmGray15)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(checkEmailForm() ? (signupManager.emailAvailable ? .scmGray45 : .scmBlackSprout) : .scmGray45)
+        )
+        .asButton ({
+            Log.info("중복확인 버튼 클릭")
+            
+            Task {
+                await signupManager.postEmailValidation(email)
+                showAlert = true
+            }
+        }, disabled: !(checkEmailForm() && !signupManager.emailAvailable))
     }
 }
 
