@@ -18,7 +18,7 @@ struct PlaceHolderModifier: ViewModifier {
             .overlay(alignment: .leading) {
                 if text.isEmpty {
                     Text(placeholder)
-                        .basicText(.PTBody1, .scmGray60)
+                        .basicText(.PTBody2, .scmGray60)
                 }
             }
     }

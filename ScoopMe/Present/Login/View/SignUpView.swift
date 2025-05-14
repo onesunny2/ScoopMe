@@ -157,7 +157,9 @@ struct SignUpView: View {
 extension SignUpView {
     
     /// 이메일 text 형식 확인
-    func checkEmailForm() -> Bool {
+    private func checkEmailForm() -> Bool {
+        
+        guard !containsKorean() else { return false }
         
         // @ 기호 기준으로 분리
         let parts = email.split(separator: "@", maxSplits: 1, omittingEmptySubsequences: false)
@@ -181,6 +183,12 @@ extension SignUpView {
         
         return true
     }
+    
+    /// 한글 포함여부
+    private func containsKorean() -> Bool {
+        let range = email.range(of: "[ㄱ-ㅎㅏ-ㅣ가-힣]", options: .regularExpression)
+        return range != nil
+    }
 }
 
 private enum StringLiterals: String {
@@ -195,7 +203,7 @@ private enum StringLiterals: String {
     case emailValidation = "중복확인"
     case completeValidation = "사용가능"
     case okayEmail = ""
-    case noEmail = "이메일 형식을 다시 확인해주세요"
+    case noEmail = "이메일이 올바른지 확인해주세요"
     
     var text: String {
         return self.rawValue
