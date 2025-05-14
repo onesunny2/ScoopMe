@@ -13,11 +13,11 @@ struct LoginView: View {
     
     @EnvironmentObject private var router: Router
     
-    private let loginManager: LoginManager
+    @StateObject private var loginManager: LoginManager
     private var horizontalPadding: CGFloat = 40
     
     init(loginManager: LoginManager) {
-        self.loginManager = loginManager
+        self._loginManager = StateObject(wrappedValue: loginManager)
     }
     
     var body: some View {
@@ -27,6 +27,11 @@ struct LoginView: View {
             
             vstackContents
         }
+        .showAlert(
+            isPresented: $loginManager.loginFalied,
+            title: loginManager.alertTitle,
+            message: loginManager.alertMessage
+        )
     }
     
     private var vstackContents: some View {
@@ -121,6 +126,7 @@ struct LoginView: View {
             
         case let .failure(error):
             Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
+            loginManager.alertMessage = "\(error.localizedDescription)"
         }
     }
 }

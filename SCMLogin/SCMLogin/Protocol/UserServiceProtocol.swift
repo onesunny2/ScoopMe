@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import Combine
 internal import SCMNetwork
 
 protocol UserServiceProtocol: ObservableObject, AnyObject {
     
+    var alertMessage: String { get set }
     var network: SCMNetworkImpl { get }
     
     func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T>
@@ -29,5 +31,18 @@ extension UserServiceProtocol {
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)
+    }
+    
+    @MainActor
+    func handleError(_ error: Error, _ alertMessage: inout String) {
+        
+        guard let scmError = error as? SCMError else { return }
+        
+        switch scmError {
+        case .serverError(_, let message):
+            alertMessage = message
+        default:
+            alertMessage = scmError.localizedDescription
+        }
     }
 }
