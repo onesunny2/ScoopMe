@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import Combine
 internal import SCMNetwork
 
 public final class LoginManager: UserServiceProtocol {
+    
+    @Published public var loginFalied: Bool = false
+    @Published public var alertMessage: String = ""
+    public let alertTitle: String = "로그인 실패"
     
     public init() {
         self.network = SCMNetworkImpl()
@@ -16,6 +21,7 @@ public final class LoginManager: UserServiceProtocol {
     
     let network: SCMNetworkImpl
     
+    @MainActor
     public func postAppleLogin(id token: String) async {
         do {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
@@ -23,13 +29,15 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 애플로그인 결과: \(result.response)")
             print("✅ 애플로그인 결과: \(result.response)")
-            
         } catch {
             //            Log.error("❎ 애플 login error: \(error)")
             print("❎ 애플 login error: \(error)")
+            loginFalied = true
+            handleError(error, &alertMessage)
         }
     }
     
+    @MainActor
     public func postKakaoLogin(oauth token: String) async {
         do {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
@@ -40,9 +48,12 @@ public final class LoginManager: UserServiceProtocol {
         } catch {
             //            Log.error("❎ 카카오 login error: \(error)")
             print("❎ 카카오 login error: \(error)")
+            loginFalied = true
+            handleError(error, &alertMessage)
         }
     }
     
+    @MainActor
     public func postEmailLogin(_ email: String, _ password: String) async {
         do {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
@@ -54,6 +65,8 @@ public final class LoginManager: UserServiceProtocol {
         } catch {
             //            Log.error("❎ 이메일 login error: \(error)")
             print("❎ 이메일 login error: \(error)")
+            loginFalied = true
+            handleError(error, &alertMessage)
         }
     }
 }

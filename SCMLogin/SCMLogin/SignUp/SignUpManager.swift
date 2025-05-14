@@ -38,7 +38,7 @@ public final class SignUpManager: UserServiceProtocol {
             print("이메일 사용 불가: \(error)")
 //            Log.error("이메일 사용 불가: \(error)")
             alertTitle = "Failed"
-            alertMessage = "\(error)"
+            handleError(error, &alertMessage)
         }
     }
     
