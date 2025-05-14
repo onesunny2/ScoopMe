@@ -88,7 +88,7 @@ struct LoginView: View {
                         await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
-                    router.pushLoginRoute(.emailLogin)
+                    router.pushLoginRoute(.emailLogin(manager: loginManager))
                 }
             }
             .overlay {

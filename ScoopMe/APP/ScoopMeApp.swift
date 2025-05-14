@@ -26,7 +26,7 @@ struct ScoopMeApp: App {
                 LoginView(loginManager: LoginManager())
                     .navigationDestination(for: LoginRoute.self) { route in
                         switch route {
-                        case .emailLogin: EmailSignInView(loginManager: LoginManager())
+                        case let .emailLogin(manager): EmailSignInView(loginManager: manager)
                         case .signup: SignUpView()
                         }
                     }

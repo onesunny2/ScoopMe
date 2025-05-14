@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SCMLogin
 
 enum AppRoute: Hashable {
     case login
@@ -17,6 +18,25 @@ enum AppRoute: Hashable {
 }
 
 enum LoginRoute: Hashable {
-    case emailLogin
+    case emailLogin(manager: LoginManager)
     case signup
+    
+    static func == (lhs: LoginRoute, rhs: LoginRoute) -> Bool {
+        switch (lhs, rhs) {
+        case (.emailLogin(let lhsManager), .emailLogin(let rhsManager)):
+            return ObjectIdentifier(lhsManager) == ObjectIdentifier(rhsManager)
+        case (.signup, .signup):
+            return true
+        default: return false
+        }
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .emailLogin(let manager):
+            hasher.combine(ObjectIdentifier(manager))
+        case .signup:
+            hasher.combine("signup")
+        }
+    }
 }
