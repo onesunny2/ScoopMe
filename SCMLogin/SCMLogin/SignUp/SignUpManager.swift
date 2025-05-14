@@ -14,7 +14,6 @@ public final class SignUpManager: ObservableObject {
     @Published public var completeSignup: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
-    @Published public var showAlert: Bool = false
     
     public static let shared = SignUpManager()
     private init() {
@@ -37,6 +36,7 @@ public final class SignUpManager: ObservableObject {
         return try await network.fetchData(request, EmailValidationDTO.self)
     }
     
+    /// 이메일 유효성 서버통신
     @MainActor
     public func postEmailValidation(_ email: String) async {
         do {
