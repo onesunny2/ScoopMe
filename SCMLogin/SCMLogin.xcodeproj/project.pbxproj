@@ -10,15 +10,20 @@
 		435E58372DD1CB0D0005196F /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 435E58362DD1CB0D0005196F /* KakaoSDKAuth */; };
 		435E58392DD1CB0D0005196F /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 435E58382DD1CB0D0005196F /* KakaoSDKCommon */; };
 		435E583B2DD1CB0D0005196F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 435E583A2DD1CB0D0005196F /* KakaoSDKUser */; };
+		43E0172E2DD3A6ED0016391C /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43E0172D2DD3A6ED0016391C /* Secret.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		435E58252DD1C9E10005196F /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43E0172D2DD3A6ED0016391C /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		435E582C2DD1C9E10005196F /* Exceptions for "SCMLogin" folder in "SCMLogin" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
 			publicHeaders = (
 				SCMLogin.h,
 			);
@@ -54,6 +59,7 @@
 		435E581B2DD1C9E10005196F = {
 			isa = PBXGroup;
 			children = (
+				43E0172D2DD3A6ED0016391C /* Secret.xcconfig */,
 				435E58272DD1C9E10005196F /* SCMLogin */,
 				435E58262DD1C9E10005196F /* Products */,
 			);
@@ -147,6 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43E0172E2DD3A6ED0016391C /* Secret.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +172,7 @@
 /* Begin XCBuildConfiguration section */
 		435E582E2DD1C9E10005196F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 43E0172D2DD3A6ED0016391C /* Secret.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -176,6 +184,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SCMLogin/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -214,6 +223,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SCMLogin/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;

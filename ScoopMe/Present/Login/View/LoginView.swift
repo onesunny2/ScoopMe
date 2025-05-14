@@ -13,8 +13,12 @@ struct LoginView: View {
     
     @EnvironmentObject private var router: Router
     
-    private let loginManager = LoginManager.shared
+    private let loginManager: LoginManager
     private var horizontalPadding: CGFloat = 40
+    
+    init(loginManager: LoginManager) {
+        self.loginManager = loginManager
+    }
     
     var body: some View {
         ZStack {
@@ -84,7 +88,7 @@ struct LoginView: View {
                         await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
-                    router.pushLoginRoute(.emailLogin)
+                    router.pushLoginRoute(.emailLogin(manager: loginManager))
                 }
             }
             .overlay {
@@ -134,6 +138,6 @@ private enum StringLiterals {
 }
 
 #Preview {
-    LoginView()
+    LoginView(loginManager: LoginManager())
         .environmentObject(Router())
 }

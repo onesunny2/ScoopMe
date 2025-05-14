@@ -1,12 +1,12 @@
 //
 //  LoginURL.swift
-//  ScoopMe
+//  SCMLogin
 //
-//  Created by Lee Wonsun on 5/12/25.
+//  Created by Lee Wonsun on 5/13/25.
 //
 
 import Foundation
-import SCMNetwork
+internal import SCMNetwork
 
 enum LoginURL {
     case checkEmail(email: String)
@@ -21,7 +21,7 @@ enum LoginURL {
     
     var method: HTTPMethods {
         switch self {
-        case .checkEmail, .join, .emailLogin, .kakaoLogin, .appleLogin: return .post
+        default: .post
         }
     }
     
@@ -77,3 +77,4 @@ enum LoginURL {
         }
     }
 }
+

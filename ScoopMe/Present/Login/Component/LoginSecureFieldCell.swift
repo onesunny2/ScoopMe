@@ -14,8 +14,10 @@ struct LoginSecureFieldCell: View {
     
     var body: some View {
         SecureField("", text: $text)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
             .placeholder(placeholder, $text)
-            .padding(20)
+            .padding(15)
             .background(alignment: .center) {
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(lineWidth: 1)

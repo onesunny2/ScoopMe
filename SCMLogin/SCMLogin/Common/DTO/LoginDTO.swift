@@ -1,8 +1,8 @@
 //
 //  LoginDTO.swift
-//  ScoopMe
+//  SCMLogin
 //
-//  Created by Lee Wonsun on 5/12/25.
+//  Created by Lee Wonsun on 5/13/25.
 //
 
 import Foundation

@@ -13,7 +13,7 @@ public enum HTTPMethods: String {
     case put = "PUT"
     case delete = "DELETE"
     
-    var string: String {
+    public var string: String {
         return self.rawValue
     }
 }

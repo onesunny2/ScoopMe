@@ -22,7 +22,7 @@ struct BackButtonModifier<S: ShapeStyle>: ViewModifier {
                         dismiss()
                     } label: {
                         Image(.chevron)
-                            .basicImage(width: 40, color: color)
+                            .basicImage(width: 30, color: color)
                     }
                 }
             }

@@ -16,15 +16,17 @@ struct ScoopMeApp: App {
     init() {
         // kakao sdk 초기화
         KakaoLoginConfiguration.iniKakaoSDK(Secret.kakaoKey)
+        // alert system color set
+        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.scmBlackSprout)
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.loginPath) {
-                LoginView()
+                LoginView(loginManager: LoginManager())
                     .navigationDestination(for: LoginRoute.self) { route in
                         switch route {
-                        case .emailLogin: EmailSignInView()
+                        case let .emailLogin(manager): EmailSignInView(loginManager: manager)
                         case .signup: SignUpView()
                         }
                     }
