@@ -11,6 +11,7 @@ import SCMLogin
 struct SignUpView: View {
     
     @EnvironmentObject private var route: Router
+    @StateObject private var signupManager = SignUpManager.shared
     
     @State private var email: String = ""
     @State private var password: String = ""
@@ -18,9 +19,8 @@ struct SignUpView: View {
     @State private var nickname: String = ""
     @State private var phoneNumber: String = ""
     
+    @State private var checkEmailText: Bool = false
     @State private var showAlert: Bool = false
-    
-    @StateObject private var signupManager = SignUpManager.shared
     
     var body: some View {
         ZStack {
@@ -42,6 +42,7 @@ struct SignUpView: View {
             title: signupManager.alertTitle,
             message: signupManager.alertMessage
         )
+        .lowercaseTextfield($email)
     }
     
     private var vstackContents: some View {
@@ -59,7 +60,12 @@ struct SignUpView: View {
     private var textfields: some View {
         VStack(alignment: .leading) {
             // 이메일
-            requiredText(.email)
+            HStack {
+                requiredText(.email)
+                Spacer()
+                Text(checkEmailForm() ? StringLiterals.okayEmail.text : StringLiterals.noEmail.text)
+                    .basicText(.PTBody3, email.isEmpty ? .clear : (checkEmailForm() ? .blue : .red))
+            }
             LoginTextFieldCell(
                 text: $email,
                 placeholder: StringLiterals.email.placeholder
@@ -148,6 +154,35 @@ struct SignUpView: View {
     }
 }
 
+extension SignUpView {
+    
+    /// 이메일 text 형식 확인
+    func checkEmailForm() -> Bool {
+        
+        // @ 기호 기준으로 분리
+        let parts = email.split(separator: "@", maxSplits: 1, omittingEmptySubsequences: false)
+        
+        // @가 1개인지 확인
+        guard parts.count == 2 else { return false }
+        
+        let localPart = parts[0]
+        let domainPart = parts[1]
+        
+        guard !localPart.isEmpty && !domainPart.isEmpty else { return false }
+        
+        // local part의 .이 시작과 끝에 있는지 확인
+        guard !localPart.hasPrefix(".") && !localPart.hasSuffix(".") else { return false }
+        
+        // domain part의 .이 시작과 끝에 있는지 확인
+        guard !domainPart.hasPrefix(".") && !domainPart.hasSuffix(".") else { return false }
+        
+        // 뒤에 .이 최소 1개인지
+        guard domainPart.contains(".") else { return false }
+        
+        return true
+    }
+}
+
 private enum StringLiterals: String {
     case title = "회원가입"
     case email = "이메일"
@@ -159,6 +194,8 @@ private enum StringLiterals: String {
     case punctuation
     case emailValidation = "중복확인"
     case completeValidation = "사용가능"
+    case okayEmail = ""
+    case noEmail = "이메일 형식을 다시 확인해주세요"
     
     var text: String {
         return self.rawValue
@@ -166,6 +203,8 @@ private enum StringLiterals: String {
     
     var placeholder: String {
         switch self {
+        case .email:
+            return "이메일은 모두 소문자로 작성해주세요."
         case .password:
             return "8자 이상, 영문/슷자/특수문자 1개 이상 포함"
         case .nickname:
