@@ -12,6 +12,7 @@ internal import SCMNetwork
 public final class SignUpManager: ObservableObject {
     
     @Published public var emailAvailable: Bool = false
+    @Published public var successSignup: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
     
@@ -22,7 +23,7 @@ public final class SignUpManager: ObservableObject {
     
     private let network: SCMNetworkImpl
     
-    private func callRequest(_ value: LoginURL) async throws -> HTTPResponse<EmailValidationDTO> {
+    private func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T> {
         let request = HTTPRequest(
             scheme: .http,
             method: .post,
@@ -33,7 +34,7 @@ public final class SignUpManager: ObservableObject {
             .addParamters(value.parameters)
             .addHeaders(value.headers)
         
-        return try await network.fetchData(request, EmailValidationDTO.self)
+        return try await network.fetchData(request, T.self)
     }
     
     /// 이메일 유효성 서버통신
@@ -41,7 +42,7 @@ public final class SignUpManager: ObservableObject {
     public func postEmailValidation(_ email: String) async {
         do {
             let value = LoginURL.checkEmail(email: email)
-            let result = try await callRequest(value)
+            let result = try await callRequest(value, type: EmailValidationDTO.self)
             
             print("✅ 중복확인 통과: \(result.response)")
 //            Log.debug("✅ 중복확인 통과: \(result.response)")
@@ -53,6 +54,28 @@ public final class SignUpManager: ObservableObject {
 //            Log.error("이메일 사용 불가: \(error)")
             alertTitle = "Failed"
             alertMessage = "\(error)"
+        }
+    }
+    
+    /// 회원가입 서버통신
+    @MainActor
+    public func postSignupValidation(_ email: String, _ pw: String, _ nick: String, _ phone: String?) async {
+        do {
+            let value = LoginURL.join(
+                email: email,
+                pw: pw,
+                nick: nick,
+                phone: phone,
+                device: nil
+            )
+            let result = try await callRequest(value, type: JoinResponseDTO.self)
+            
+            successSignup = true
+            
+            print("✅ 회원가입 완료: \(result.response)")
+            
+        } catch {
+            print("회원가입 실패")
         }
     }
 }

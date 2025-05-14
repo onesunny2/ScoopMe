@@ -45,6 +45,14 @@ struct SignUpView: View {
             title: signupManager.alertTitle,
             message: signupManager.alertMessage
         )
+        .showAlert(
+            isPresented: $signupManager.successSignup,
+            title: StringLiterals.signupAlertTitle.text,
+            message: StringLiterals.signupAlertMessage.text,
+            action: {
+                route.popLoginRoute()
+            }
+        )
         .lowercaseTextfield($email)
     }
     
@@ -96,7 +104,7 @@ struct SignUpView: View {
                 requiredText(.checkPw)
                 Spacer()
                 Text((password == checkPW) ? StringLiterals.empty.text : StringLiterals.noPW.text)
-                    .basicText(.PTBody3, checkPW.isEmpty ? .clear : (checkEmailForm() ? .blue : .red))
+                    .basicText(.PTBody3, checkPW.isEmpty ? .clear : ((password == checkPW) ? .blue : .red))
             }.padding(.top, 12)
             LoginSecureFieldCell(
                 text: $checkPW,
@@ -126,9 +134,20 @@ struct SignUpView: View {
             title: StringLiterals.signup.text,
             buttonColor: completeSignup ? .scmBlackSprout : .scmGray45
         )
-        .asButton ({
-            Log.debug("회원가입 버튼 클릭")
-        }, disabled: !completeSignup)
+        .asButton (
+            {
+                Log.debug("회원가입 버튼 클릭")
+                
+                Task {
+                    await signupManager.postSignupValidation(
+                        email,
+                        password,
+                        nickname,
+                        phoneNumber
+                    )
+                }
+            },
+            disabled: !completeSignup)
     }
     
     private func requiredText(_ type: StringLiterals) -> some View {
@@ -225,6 +244,8 @@ private enum StringLiterals: String {
     case completeValidation = "사용가능"
     case noEmail = "이메일이 올바른지 확인해주세요"
     case noPW = "비밀번호가 일치하지 않습니다"
+    case signupAlertTitle = "완료"
+    case signupAlertMessage = "회원가입이 완료되었습니다. 로그인 후 서비스 사용이 가능합니다."
     
     var text: String {
         return self.rawValue
