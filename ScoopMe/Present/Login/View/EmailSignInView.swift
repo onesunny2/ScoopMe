@@ -17,7 +17,7 @@ struct EmailSignInView: View {
     
     @State private var autoLoginStatus: Bool = false
     
-    private let loginManager = LoginManager.shared
+    let loginManager: LoginManager
     
     var body: some View {
         ZStack {
@@ -85,7 +85,7 @@ struct EmailSignInView: View {
             )
             .asButton {
                 Task {
-                    await loginManager.postEmainLogin(email, password)
+                    await loginManager.postEmailLogin(email, password)
                 }
             }
             
@@ -123,6 +123,6 @@ private enum StringLiterals {
 }
 
 #Preview {
-    EmailSignInView()
+    EmailSignInView(loginManager: LoginManager())
         .environmentObject(Router())
 }

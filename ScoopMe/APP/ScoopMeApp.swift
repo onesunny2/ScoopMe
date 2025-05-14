@@ -23,10 +23,10 @@ struct ScoopMeApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.loginPath) {
-                LoginView()
+                LoginView(loginManager: LoginManager())
                     .navigationDestination(for: LoginRoute.self) { route in
                         switch route {
-                        case .emailLogin: EmailSignInView()
+                        case .emailLogin: EmailSignInView(loginManager: LoginManager())
                         case .signup: SignUpView()
                         }
                     }
