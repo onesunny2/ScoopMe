@@ -9,7 +9,7 @@ import Foundation
 import Combine
 internal import SCMNetwork
 
-public final class SignUpManager: ObservableObject {
+public final class SignUpManager: UserServiceProtocol {
     
     @Published public var emailAvailable: Bool = false
     @Published public var successSignup: Bool = false
@@ -20,22 +20,8 @@ public final class SignUpManager: ObservableObject {
         self.network = SCMNetworkImpl()
     }
     
-    private let network: SCMNetworkImpl
-    
-    private func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T> {
-        let request = HTTPRequest(
-            scheme: .http,
-            method: .post,
-            successCodes: [200]
-        )
-            .addBaseURL(value.baseURL)
-            .addPath(value.path)
-            .addParamters(value.parameters)
-            .addHeaders(value.headers)
-        
-        return try await network.fetchData(request, T.self)
-    }
-    
+   let network: SCMNetworkImpl
+
     /// 이메일 유효성 서버통신
     @MainActor
     public func postEmailValidation(_ email: String) async {
