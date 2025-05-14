@@ -16,8 +16,7 @@ public final class SignUpManager: ObservableObject {
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
     
-    public static let shared = SignUpManager()
-    private init() {
+    public init() {
         self.network = SCMNetworkImpl()
     }
     
