@@ -23,7 +23,7 @@ struct AlertModifier: ViewModifier {
     }
 }
 
-struct AlertMultiModifier: ViewModifier {
+struct AlertActionModifier: ViewModifier {
     
     @Binding var showAlert: Bool
     let title: String
@@ -33,8 +33,25 @@ struct AlertMultiModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .alert(title, isPresented: $showAlert) {
+                Button("확인", role: .none) { okayAction() }
+            } message: {
+                Text(message)
+            }
+    }
+}
+
+struct AlertMultiModifier: ViewModifier {
+    
+    @Binding var showAlert: Bool
+    let title: String
+    let message: String
+    let multiOkayAction: () -> ()
+    
+    func body(content: Content) -> some View {
+        content
+            .alert(title, isPresented: $showAlert) {
                 Button("취소", role: .none) { }
-                Button("확인", role: .cancel) { okayAction() }
+                Button("확인", role: .cancel) { multiOkayAction() }
             } message: {
                 Text(message)
             }
@@ -50,12 +67,16 @@ extension View {
         modifier(AlertModifier(showAlert: isPresented, title: title, message: message))
     }
     
+    func showAlert(isPresented: Binding<Bool>, title: String, message: String, action: @escaping () -> ()) -> some View {
+        modifier(AlertActionModifier(showAlert: isPresented, title: title, message: message, okayAction: action))
+    }
+    
     func showAlert(
         isPresented: Binding<Bool>,
         title: String,
         message: String,
-        action: @escaping () -> ()
+        multiAction: @escaping () -> ()
     ) -> some View {
-        modifier(AlertMultiModifier(showAlert: isPresented, title: title, message: message, okayAction: action))
+        modifier(AlertMultiModifier(showAlert: isPresented, title: title, message: message, multiOkayAction: multiAction))
     }
 }
