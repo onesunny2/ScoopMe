@@ -11,7 +11,7 @@ internal import SCMNetwork
 
 public final class SignUpManager: ObservableObject {
     
-    @Published public var completeSignup: Bool = false
+    @Published public var emailAvailable: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
     
@@ -47,6 +47,7 @@ public final class SignUpManager: ObservableObject {
 //            Log.debug("✅ 중복확인 통과: \(result.response)")
             alertTitle = "Success"
             alertMessage = result.response.message
+            emailAvailable = true
         } catch {
             print("이메일 사용 불가: \(error)")
 //            Log.error("이메일 사용 불가: \(error)")

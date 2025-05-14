@@ -21,6 +21,9 @@ struct SignUpView: View {
     
     @State private var checkEmailText: Bool = false
     @State private var showAlert: Bool = false
+    private var completeSignup: Bool {
+        return signupAvailable()
+    }
     
     var body: some View {
         ZStack {
@@ -116,12 +119,11 @@ struct SignUpView: View {
     private var signupButton: some View {
         NextButtonCell(
             title: StringLiterals.signup.text,
-            buttonColor: signupManager.completeSignup ? .scmBlackSprout : .scmGray45
+            buttonColor: completeSignup ? .scmBlackSprout : .scmGray45
         )
-        .asButton {
-            // TODO: 테스트용 코드
-            signupManager.completeSignup.toggle()
-        }
+        .asButton ({
+            Log.debug("회원가입 버튼 클릭")
+        }, disabled: !completeSignup)
     }
     
     private func requiredText(_ type: StringLiterals) -> some View {
@@ -135,22 +137,24 @@ struct SignUpView: View {
     }
     
     private var emailValidationButton: some View {
-        Text(StringLiterals.emailValidation.text)
+        Text(
+            signupManager.emailAvailable ? StringLiterals.completeValidation.text :  StringLiterals.emailValidation.text
+        )
             .basicText(.PTBody3, .scmGray15)
             .padding(.vertical, 6)
             .padding(.horizontal, 10)
             .background(
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(.scmDeepSprout)
+                    .fill(checkEmailForm() ? (signupManager.emailAvailable ? .scmGray60 : .scmBlackSprout) : .scmGray60)
                 )
-            .asButton {
+            .asButton ({
                 Log.info("중복확인 버튼 클릭")
                 
                 Task {
                     await signupManager.postEmailValidation(email)
                     showAlert = true
                 }
-            }
+            }, disabled: !(checkEmailForm() && !signupManager.emailAvailable))
     }
 }
 
@@ -158,6 +162,8 @@ extension SignUpView {
     
     /// 이메일 text 형식 확인
     private func checkEmailForm() -> Bool {
+        
+        guard !email.isEmpty else { return false }
         
         guard !containsKorean() else { return false }
         
@@ -189,6 +195,17 @@ extension SignUpView {
         let range = email.range(of: "[ㄱ-ㅎㅏ-ㅣ가-힣]", options: .regularExpression)
         return range != nil
     }
+    
+    /// 회원가입 가능 여부
+    private func signupAvailable() -> Bool {
+        
+        // 각 텍스트 필드 공백X + 이메일 중복확인 통과
+        guard !email.isEmpty && !password.isEmpty && !checkPW.isEmpty && !nickname.isEmpty && signupManager.emailAvailable else { return false }
+        
+//        signupManager.completeSignup = true
+        
+        return true
+    }
 }
 
 private enum StringLiterals: String {
@@ -214,7 +231,7 @@ private enum StringLiterals: String {
         case .email:
             return "이메일은 모두 소문자로 작성해주세요."
         case .password:
-            return "8자 이상, 영문/슷자/특수문자 1개 이상 포함"
+            return "8자 이상, 영문/숫자/특수문자 1개 이상 포함"
         case .nickname:
             return ". , ? * - @는 사용할 수 없습니다."
         case .phoneNum:
