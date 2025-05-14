@@ -1,8 +1,8 @@
 //
 //  EmailValidationDTO.swift
-//  ScoopMe
+//  SCMLogin
 //
-//  Created by Lee Wonsun on 5/13/25.
+//  Created by Lee Wonsun on 5/14/25.
 //
 
 import Foundation

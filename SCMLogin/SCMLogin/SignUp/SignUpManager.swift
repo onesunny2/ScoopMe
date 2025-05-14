@@ -1,16 +1,16 @@
 //
 //  SignUpManager.swift
-//  ScoopMe
+//  SCMLogin
 //
-//  Created by Lee Wonsun on 5/13/25.
+//  Created by Lee Wonsun on 5/14/25.
 //
 
 import Foundation
-import SCMNetwork
+internal import SCMNetwork
 
-final class SignUpManager {
+public final class SignUpManager {
     
-    static let shared = SignUpManager()
+    public static let shared = SignUpManager()
     private init() {
         self.network = SCMNetworkImpl()
     }
@@ -31,15 +31,17 @@ final class SignUpManager {
         return try await network.fetchData(request, EmailValidationDTO.self)
     }
     
-    func postEmailValidation(_ email: String) async -> (title: String, message: String) {
+    public func postEmailValidation(_ email: String) async -> (title: String, message: String) {
         do {
             let value = LoginURL.checkEmail(email: email)
             let result = try await callRequest(value)
             
-            Log.debug("✅ 중복확인 통과: \(result.response)")
+            print("✅ 중복확인 통과: \(result.response)")
+//            Log.debug("✅ 중복확인 통과: \(result.response)")
             return ("사용가능", result.response.message)
         } catch {
-            Log.error("이메일 사용 불가: \(error)")
+            print("이메일 사용 불가: \(error)")
+//            Log.error("이메일 사용 불가: \(error)")
             return ("\(error)", "\(error)")
         }
     }
