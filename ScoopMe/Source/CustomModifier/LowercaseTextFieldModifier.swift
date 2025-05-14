@@ -17,6 +17,10 @@ struct LowercaseTextFieldModifier: ViewModifier {
                 if newText != newText.lowercased() {
                     text = newText.lowercased()
                 }
+                
+                if newText.contains(" ") {
+                    text = newText.replacingOccurrences(of: " ", with: "")
+                }
             }
     }
 }
