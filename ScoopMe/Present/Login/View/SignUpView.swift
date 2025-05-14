@@ -63,10 +63,10 @@ struct SignUpView: View {
     private var textfields: some View {
         VStack(alignment: .leading) {
             // 이메일
-            HStack {
+            HStack(alignment: .center) {
                 requiredText(.email)
                 Spacer()
-                Text(checkEmailForm() ? StringLiterals.okayEmail.text : StringLiterals.noEmail.text)
+                Text(checkEmailForm() ? StringLiterals.empty.text : StringLiterals.noEmail.text)
                     .basicText(.PTBody3, email.isEmpty ? .clear : (checkEmailForm() ? .blue : .red))
             }
             LoginTextFieldCell(
@@ -92,7 +92,12 @@ struct SignUpView: View {
             }.padding(.top, 2)
             
             // 비밀번호 확인
-            requiredText(.checkPw).padding(.top, 12)
+            HStack(alignment: .center) {
+                requiredText(.checkPw)
+                Spacer()
+                Text((password == checkPW) ? StringLiterals.empty.text : StringLiterals.noPW.text)
+                    .basicText(.PTBody3, checkPW.isEmpty ? .clear : (checkEmailForm() ? .blue : .red))
+            }.padding(.top, 12)
             LoginSecureFieldCell(
                 text: $checkPW,
                 placeholder: StringLiterals.checkPw.placeholder
@@ -200,15 +205,14 @@ extension SignUpView {
     private func signupAvailable() -> Bool {
         
         // 각 텍스트 필드 공백X + 이메일 중복확인 통과
-        guard !email.isEmpty && !password.isEmpty && !checkPW.isEmpty && !nickname.isEmpty && signupManager.emailAvailable else { return false }
-        
-//        signupManager.completeSignup = true
+        guard !email.isEmpty && !password.isEmpty && !checkPW.isEmpty && !nickname.isEmpty && signupManager.emailAvailable && (password == checkPW) else { return false }
         
         return true
     }
 }
 
 private enum StringLiterals: String {
+    case empty = ""
     case title = "회원가입"
     case email = "이메일"
     case password = "비밀번호"
@@ -219,8 +223,8 @@ private enum StringLiterals: String {
     case punctuation
     case emailValidation = "중복확인"
     case completeValidation = "사용가능"
-    case okayEmail = ""
     case noEmail = "이메일이 올바른지 확인해주세요"
+    case noPW = "비밀번호가 일치하지 않습니다"
     
     var text: String {
         return self.rawValue
