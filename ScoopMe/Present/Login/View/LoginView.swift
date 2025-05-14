@@ -119,7 +119,7 @@ struct LoginView: View {
                     Log.debug("애플로그인 토큰: \(stringToken)")
                     
                     Task {
-                        await loginManager.postAppleLogin(id: stringToken + "1")
+                        await loginManager.postAppleLogin(id: stringToken)
                     }
                 }
             }
