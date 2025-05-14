@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SCMError: Error {
+public enum SCMError: Error {
     case invalidURL
     case invalidResponse
     case invalidParameter
