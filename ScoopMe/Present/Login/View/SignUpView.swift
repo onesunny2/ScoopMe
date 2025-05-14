@@ -18,12 +18,9 @@ struct SignUpView: View {
     @State private var nickname: String = ""
     @State private var phoneNumber: String = ""
     
-    @State private var alertMessage: String = ""
-    
     @State private var showAlert: Bool = false
-    @State private var isComplete: Bool = false
     
-    private let signupManager = SignUpManager.shared
+    @StateObject private var signupManager = SignUpManager.shared
     
     var body: some View {
         ZStack {
@@ -42,8 +39,8 @@ struct SignUpView: View {
         }
         .showAlert(
             isPresented: $showAlert,
-            title: EmailDuplication.title.string,
-            message: alertMessage
+            title: signupManager.alertTitle,
+            message: signupManager.alertMessage
         )
     }
     
@@ -113,11 +110,11 @@ struct SignUpView: View {
     private var signupButton: some View {
         NextButtonCell(
             title: StringLiterals.signup.text,
-            buttonColor: isComplete ? .scmBlackSprout : .scmGray45
+            buttonColor: signupManager.completeSignup ? .scmBlackSprout : .scmGray45
         )
         .asButton {
             // TODO: 테스트용 코드
-            isComplete.toggle()
+            signupManager.completeSignup.toggle()
         }
     }
     
@@ -144,9 +141,7 @@ struct SignUpView: View {
                 Log.info("중복확인 버튼 클릭")
                 
                 Task {
-                    let result = await signupManager.postEmailValidation(email)
-                    alertMessage = result.message
-                    
+                    await signupManager.postEmailValidation(email)
                     showAlert = true
                 }
             }

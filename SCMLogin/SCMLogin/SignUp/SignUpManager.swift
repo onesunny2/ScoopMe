@@ -6,9 +6,15 @@
 //
 
 import Foundation
+import Combine
 internal import SCMNetwork
 
-public final class SignUpManager {
+public final class SignUpManager: ObservableObject {
+    
+    @Published public var completeSignup: Bool = false
+    @Published public var alertTitle: String = ""
+    @Published public var alertMessage: String = ""
+    @Published public var showAlert: Bool = false
     
     public static let shared = SignUpManager()
     private init() {
@@ -31,18 +37,21 @@ public final class SignUpManager {
         return try await network.fetchData(request, EmailValidationDTO.self)
     }
     
-    public func postEmailValidation(_ email: String) async -> (title: String, message: String) {
+    @MainActor
+    public func postEmailValidation(_ email: String) async {
         do {
             let value = LoginURL.checkEmail(email: email)
             let result = try await callRequest(value)
             
             print("✅ 중복확인 통과: \(result.response)")
 //            Log.debug("✅ 중복확인 통과: \(result.response)")
-            return ("사용가능", result.response.message)
+            alertTitle = "Success"
+            alertMessage = result.response.message
         } catch {
             print("이메일 사용 불가: \(error)")
 //            Log.error("이메일 사용 불가: \(error)")
-            return ("\(error)", "\(error)")
+            alertTitle = "Failed"
+            alertMessage = "\(error)"
         }
     }
 }
