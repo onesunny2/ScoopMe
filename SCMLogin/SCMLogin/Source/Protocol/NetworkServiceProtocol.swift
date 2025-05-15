@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Combine
 internal import SCMNetwork
 
-protocol NetworkServiceProtocol: AnyObject {
+protocol NetworkServiceProtocol: ObservableObject, AnyObject {
     var network: SCMNetworkImpl { get }
     
     func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T>

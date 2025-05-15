@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Combine
 internal import SCMNetwork
 
-protocol UserServiceProtocol: NetworkServiceProtocol, ObservableObject {
+protocol UserServiceProtocol: NetworkServiceProtocol {
     
     var alertTitle: String { get set }
     var alertMessage: String { get set }
