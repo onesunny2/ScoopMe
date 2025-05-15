@@ -1,5 +1,5 @@
 //
-//  TokenManager.swift
+//  LoginTokenManager.swift
 //  SCMLogin
 //
 //  Created by Lee Wonsun on 5/15/25.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 internal import SCMNetwork
 
-public final class TokenManager: UserServiceProtocol {
+public final class LoginTokenManager: UserServiceProtocol {
     
     @Published var isTokenAvailable: Bool = false
     @Published var alertTitle: String = ""
@@ -24,17 +24,6 @@ public final class TokenManager: UserServiceProtocol {
     private let keychainManager: KeychainManager
     let network: SCMNetworkImpl
     
-    // 토큰 조회
-    public func fetchToken(_ type: Keychain) -> String {
-        do {
-            let token = try keychainManager.getToken(for: type)
-            return token
-        } catch {
-            print("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
-            return ""
-        }
-    }
-    
     // 로그인 시 토큰 저장
     public func saveLoginTokens(access: String, refresh: String) {
         do {
@@ -43,15 +32,6 @@ public final class TokenManager: UserServiceProtocol {
             isTokenAvailable = true
         } catch {
             print("로그인 토큰 저장 실패")
-        }
-    }
-    
-    // device Token 저장
-    public func saveDeviceToken(_ device: String) {
-        do {
-            try keychainManager.setToken(token: device, for: .deviceToken)
-        } catch {
-            print("device Token 저장 실패")
         }
     }
     
@@ -68,7 +48,7 @@ public final class TokenManager: UserServiceProtocol {
             }
             
             // 리프레시 통신 진행
-            await getRefreshToken(accessToken, refreshToken)
+            await requestRefreshToken(accessToken, refreshToken)
             
             return true  // true이면 다시 재통신 진행
         } catch {
@@ -78,7 +58,7 @@ public final class TokenManager: UserServiceProtocol {
     }
     
     @MainActor
-    private func getRefreshToken(_ access: String, _ refresh: String) async {
+    private func requestRefreshToken(_ access: String, _ refresh: String) async {
         do {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
             let result = try await callRequest(value, method: .get, type: RefreshTokenResponseDTO.self)

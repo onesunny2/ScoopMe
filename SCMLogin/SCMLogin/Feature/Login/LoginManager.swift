@@ -16,11 +16,11 @@ public final class LoginManager: UserServiceProtocol {
     public var alertTitle: String = "로그인 실패"
     
     public init() {
-        self.tokenManager = TokenManager()
+        self.tokenManager = LoginTokenManager()
         self.network = SCMNetworkImpl()
     }
     
-    private let tokenManager: TokenManager
+    private let tokenManager: LoginTokenManager
     let network: SCMNetworkImpl
     
     @MainActor
