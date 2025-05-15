@@ -16,9 +16,11 @@ public final class LoginManager: UserServiceProtocol {
     public let alertTitle: String = "로그인 실패"
     
     public init() {
+        self.tokenManager = TokenManager()
         self.network = SCMNetworkImpl()
     }
     
+    private let tokenManager: TokenManager
     let network: SCMNetworkImpl
     
     @MainActor
@@ -29,6 +31,10 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 애플로그인 결과: \(result.response)")
             print("✅ 애플로그인 결과: \(result.response)")
+            tokenManager.saveTokens(
+                access: result.response.accessToken,
+                refresh: result.response.refreshToken
+            )
         } catch {
             //            Log.error("❎ 애플 login error: \(error)")
             print("❎ 애플 login error: \(error)")
@@ -45,6 +51,10 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 카카오로그인 결과: \(result.response)")
             print("✅ 카카오로그인 결과: \(result.response)")
+            tokenManager.saveTokens(
+                access: result.response.accessToken,
+                refresh: result.response.refreshToken
+            )
         } catch {
             //            Log.error("❎ 카카오 login error: \(error)")
             print("❎ 카카오 login error: \(error)")
@@ -61,7 +71,10 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 이메일로그인 결과: \(result.response)")
             print("✅ 이메일로그인 결과: \(result.response)")
-            
+            tokenManager.saveTokens(
+                access: result.response.accessToken,
+                refresh: result.response.refreshToken
+            )
         } catch {
             //            Log.error("❎ 이메일 login error: \(error)")
             print("❎ 이메일 login error: \(error)")
