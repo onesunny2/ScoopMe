@@ -6,13 +6,14 @@
 //
 
 import Foundation
-import Combine
 internal import SCMNetwork
 internal import Security
 
-public final class KeychainManager: ObservableObject {
+public final class KeychainManager {
     
     private let serviceName = "ScoopMe"
+    
+    public init() { }
     
     private func query(token: String? = nil, _ account: Keychain) -> [String: Any] {
         var data: [String: Any] = [
@@ -29,8 +30,8 @@ public final class KeychainManager: ObservableObject {
         return data
     }
     
-    /// 저장 및 조회
-    public func setToken(token: String, for account: Keychain) -> Result<Void, KeychainError> {
+    /// 저장 및 업데이트
+    public func setToken(token: String, for account: Keychain) -> Result<String, KeychainError> {
         
         let query = self.query(token: nil, account)
         let updateData = [kSecValueData as String: token.data(using: .utf8) as Any] as [String: Any]
@@ -39,7 +40,7 @@ public final class KeychainManager: ObservableObject {
         
         switch updateStatus {
         case errSecSuccess:
-            return .success(())
+            return .success(token)
         case errSecItemNotFound:
             // 기존 항목없으면 추가하는 방향
             let addQuery = self.query(token: token, account)
@@ -47,7 +48,7 @@ public final class KeychainManager: ObservableObject {
             
             switch addStatus {
             case errSecSuccess:
-                return .success(())
+                return .success(token)
             default:
                 return .failure(.unhandledError(status: addStatus))
             }
@@ -57,7 +58,7 @@ public final class KeychainManager: ObservableObject {
     }
     
     /// 불러오기
-    public func getToken(for account: Keychain) -> Result<Void, KeychainError> {
+    public func getToken(for account: Keychain) -> Result<String, KeychainError> {
         
         var query = self.query(token: nil, account)
         query[kSecReturnData as String] = true
@@ -72,7 +73,7 @@ public final class KeychainManager: ObservableObject {
                 return .failure(.unexpectedSavedData)
             }
             
-            return .success(())
+            return .success(token)
             
         case errSecItemNotFound:
             return .failure(.noSavedData)
