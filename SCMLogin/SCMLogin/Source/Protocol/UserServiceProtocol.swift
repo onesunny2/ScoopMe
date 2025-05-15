@@ -14,15 +14,15 @@ protocol UserServiceProtocol: ObservableObject, AnyObject {
     var alertMessage: String { get set }
     var network: SCMNetworkImpl { get }
     
-    func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T>
+    func callRequest<T: Decodable>(_ value: LoginURL, method: HTTPMethods, type: T.Type) async throws -> HTTPResponse<T>
 }
 
 extension UserServiceProtocol {
     
-    func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T> {
+    func callRequest<T: Decodable>(_ value: LoginURL, method: HTTPMethods, type: T.Type) async throws -> HTTPResponse<T> {
         let request = HTTPRequest(
             scheme: .http,
-            method: .post,
+            method: method,
             successCodes: [200]
         )
             .addBaseURL(value.baseURL)
