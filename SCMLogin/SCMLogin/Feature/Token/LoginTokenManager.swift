@@ -61,7 +61,7 @@ public final class LoginTokenManager: UserServiceProtocol {
     private func requestRefreshToken(_ access: String, _ refresh: String) async {
         do {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
-            let result = try await callRequest(value, method: .get, type: RefreshTokenResponseDTO.self)
+            let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
             print("✅ 리프레시토큰 결과: \(result.response)")
             saveLoginTokens(

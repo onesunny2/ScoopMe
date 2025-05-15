@@ -9,7 +9,7 @@ import Foundation
 import Combine
 internal import SCMNetwork
 
-public final class DeviceTokenManager {
+public final class DeviceTokenManager: NetworkServiceProtocol {
     
     public init() {
         self.keychainManager = KeychainManager()
