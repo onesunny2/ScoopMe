@@ -11,6 +11,7 @@ internal import SCMNetwork
 
 protocol UserServiceProtocol: ObservableObject, AnyObject {
     
+    var alertTitle: String { get set }
     var alertMessage: String { get set }
     var network: SCMNetworkImpl { get }
     

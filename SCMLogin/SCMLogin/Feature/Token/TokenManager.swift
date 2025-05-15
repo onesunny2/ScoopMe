@@ -12,7 +12,9 @@ internal import SCMNetwork
 public final class TokenManager: UserServiceProtocol {
     
     @Published var isTokenAvailable: Bool = false
+    @Published var alertTitle: String = ""
     @Published var alertMessage: String = ""
+    @Published var needLogin: Bool = false
     
     public init() {
         self.keychainManager = KeychainManager()
@@ -43,6 +45,7 @@ public final class TokenManager: UserServiceProtocol {
     }
     
     // 리프레시 토큰 갱신
+    @MainActor
     public func refreshAccessToken() async -> Bool {
         do {
             let refreshToken = try keychainManager.getToken(for: .refreshToken)
@@ -63,6 +66,7 @@ public final class TokenManager: UserServiceProtocol {
         }
     }
     
+    @MainActor
     private func getRefreshToken(_ access: String, _ refresh: String) async {
         do {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
@@ -76,6 +80,18 @@ public final class TokenManager: UserServiceProtocol {
         } catch {
             // 여기 에러에 따라서 처리해야 함!!!!
             print("❎ 리프레시토큰 갱신 error: \(error)")
+            
+            guard let scmError = error as? SCMError else { return }
+            
+            switch scmError {
+            case .serverError:
+                alertTitle = "안내"
+                alertMessage = "세션이 만료되었습니다.\n다시 로그인 후 사용해주세요."
+                needLogin = true
+            default:
+                alertTitle = "오류"
+                alertMessage = scmError.localizedDescription
+            }
         }
     }
     

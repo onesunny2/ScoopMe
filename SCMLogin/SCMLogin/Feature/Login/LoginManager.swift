@@ -13,7 +13,7 @@ public final class LoginManager: UserServiceProtocol {
 
     @Published public var loginFalied: Bool = false
     @Published public var alertMessage: String = ""
-    public let alertTitle: String = "로그인 실패"
+    public var alertTitle: String = "로그인 실패"
     
     public init() {
         self.tokenManager = TokenManager()
