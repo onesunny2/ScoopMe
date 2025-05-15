@@ -7,9 +7,12 @@
 
 import SwiftUI
 import SCMLogin
+import UserNotifications
 
 @main
 struct ScoopMeApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     @StateObject private var router = Router()
     
