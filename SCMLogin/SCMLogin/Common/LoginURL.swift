@@ -14,6 +14,7 @@ enum LoginURL {
     case emailLogin(email: String, pw: String, device: String?)
     case kakaoLogin(oauth: String, device: String?)
     case appleLogin(id: String, device: String?, nick: String?)
+    case refreshToken(access: String, refresh: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -32,6 +33,7 @@ enum LoginURL {
         case .emailLogin: "/v1/users/login"
         case .kakaoLogin: "/v1/users/login/kakao"
         case .appleLogin: "/v1/users/login/apple"
+        case .refreshToken: "/v1/auth/refresh"
         }
     }
     
@@ -64,6 +66,7 @@ enum LoginURL {
                 "deviceToken": device,
                 "nick": nick
             ]
+        default: return nil
         }
     }
     
@@ -73,6 +76,13 @@ enum LoginURL {
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey
+            ]
+        case let .refreshToken(access, refresh):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "RefreshToken": refresh,
+                "Authorization": access
             ]
         }
     }

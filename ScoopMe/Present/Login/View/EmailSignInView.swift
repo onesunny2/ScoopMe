@@ -17,8 +17,6 @@ struct EmailSignInView: View {
     
     @State private var autoLoginStatus: Bool = false
     
-    let keychainmanager = KeychainManager()
-    
     let loginManager: LoginManager
     
     var body: some View {
@@ -76,8 +74,12 @@ struct EmailSignInView: View {
         }
         .asButton {
             autoLoginStatus.toggle()
-            dump(keychainmanager.getToken(for: .accessToken))
-            dump(keychainmanager.getToken(for: .refreshToken))
+//            dump(keychainmanager.getToken(for: .accessToken))
+//            dump(keychainmanager.getToken(for: .refreshToken))
+            Task {
+                let result = await TokenManager().refreshAccessToken()
+                print("리프레시토큰 갱신 결과: \(result)")
+            }
         }
     }
     

@@ -31,7 +31,7 @@ public final class KeychainManager {
     }
     
     /// 저장 및 업데이트
-    public func setToken(token: String, for account: Keychain) -> Result<String, KeychainError> {
+    public func setToken(token: String, for account: Keychain) throws {
         
         let query = self.query(token: nil, account)
         let updateData = [kSecValueData as String: token.data(using: .utf8) as Any] as [String: Any]
@@ -39,26 +39,24 @@ public final class KeychainManager {
         let updateStatus = SecItemUpdate(query as CFDictionary, updateData as CFDictionary)
         
         switch updateStatus {
-        case errSecSuccess:
-            return .success(token)
+        case errSecSuccess: return
         case errSecItemNotFound:
             // 기존 항목없으면 추가하는 방향
             let addQuery = self.query(token: token, account)
             let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
             
             switch addStatus {
-            case errSecSuccess:
-                return .success(token)
+            case errSecSuccess: return
             default:
-                return .failure(.unhandledError(status: addStatus))
+                throw KeychainError.unhandledError(status: addStatus)
             }
         default:
-            return .failure(.unhandledError(status: updateStatus))
+            throw KeychainError.unhandledError(status: updateStatus)
         }
     }
     
     /// 불러오기
-    public func getToken(for account: Keychain) -> Result<String, KeychainError> {
+    public func getToken(for account: Keychain) throws -> String {
         
         var query = self.query(token: nil, account)
         query[kSecReturnData as String] = true
@@ -70,36 +68,39 @@ public final class KeychainManager {
         switch status {
         case errSecSuccess:
             guard let data = dataTypeRef as? Data, let token = String(data: data, encoding: .utf8) else {
-                return .failure(.unexpectedSavedData)
+                throw KeychainError.unexpectedSavedData
             }
             
-            return .success(token)
+            return token
             
         case errSecItemNotFound:
-            return .failure(.noSavedData)
+            throw KeychainError.noSavedData
         default:
-            return .failure(.unhandledError(status: status))
+            throw KeychainError.unhandledError(status: status)
         }
     }
     
     /// 삭제
-    private func deleteToken(for account: Keychain) -> Result<Void, KeychainError> {
+    private func deleteToken(for account: Keychain) throws {
         
         let query = self.query(token: nil, account)
         let status = SecItemDelete(query as CFDictionary)
         
         switch status {
-        case errSecSuccess, errSecItemNotFound:
-            return .success(())
+        case errSecSuccess, errSecItemNotFound: return
         default:
-            return .failure(.unhandledError(status: status))
+            throw KeychainError.unhandledError(status: status)
         }
     }
     
     /// 전체 삭제
     public func deleteAllToken() {
-        _ = deleteToken(for: .accessToken)
-        _ = deleteToken(for: .refreshToken)
-        _ = deleteToken(for: .deviceToken)
+        do {
+            try deleteToken(for: .accessToken)
+            try deleteToken(for: .refreshToken)
+            try deleteToken(for: .deviceToken)
+        } catch {
+            print("delete All Token Failed")
+        }
     }
 }
