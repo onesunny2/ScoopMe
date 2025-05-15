@@ -38,7 +38,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         
         let deviceTokenString = deviceToken.reduce("", { $0 + String(format: "%02X", $1) })
+        let savedToken = tokenManager.fetchToken(.deviceToken)
+        guard !savedToken.isEmpty else {
+            tokenManager.saveDeviceToken(deviceTokenString)
+            Log.debug("첫 디바이스토큰 저장 완료", "token: \(deviceTokenString)")
+            return
+        }
+        
+        guard deviceTokenString != savedToken else { return }
         tokenManager.saveDeviceToken(deviceTokenString)
+        Log.debug("new 디바이스토큰 교체 완료", "token: \(deviceTokenString)")
     }
     
     // APNs 토큰 수신 실패

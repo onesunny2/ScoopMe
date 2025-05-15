@@ -24,6 +24,17 @@ public final class TokenManager: UserServiceProtocol {
     private let keychainManager: KeychainManager
     let network: SCMNetworkImpl
     
+    // 토큰 조회
+    public func fetchToken(_ type: Keychain) -> String {
+        do {
+            let token = try keychainManager.getToken(for: type)
+            return token
+        } catch {
+            print("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
+            return ""
+        }
+    }
+    
     // 로그인 시 토큰 저장
     public func saveLoginTokens(access: String, refresh: String) {
         do {
