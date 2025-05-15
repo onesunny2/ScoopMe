@@ -68,12 +68,18 @@ struct EmailSignInView: View {
         HStack(alignment: .center, spacing: 8) {
             Image(autoLoginStatus ? .checkmarkSquareFill : .square)
                 .basicImage(width: 20, color: .scmBlackSprout)
-                .asButton {
-                    autoLoginStatus.toggle()
-                }
             
             Text(StringLiterals.autoLogin.text)
                 .basicText(.PTBody1, .scmGray75)
+        }
+        .asButton {
+            autoLoginStatus.toggle()
+//            dump(keychainmanager.getToken(for: .accessToken))
+//            dump(keychainmanager.getToken(for: .refreshToken))
+            Task {
+                let result = await TokenManager().refreshAccessToken()
+                print("리프레시토큰 갱신 결과: \(result)")
+            }
         }
     }
     

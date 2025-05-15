@@ -27,7 +27,7 @@ public final class SignUpManager: UserServiceProtocol {
     public func postEmailValidation(_ email: String) async {
         do {
             let value = LoginURL.checkEmail(email: email)
-            let result = try await callRequest(value, type: EmailValidationDTO.self)
+            let result = try await callRequest(value, method: .post, type: EmailValidationDTO.self)
             
             print("✅ 중복확인 통과: \(result.response)")
 //            Log.debug("✅ 중복확인 통과: \(result.response)")
@@ -53,7 +53,7 @@ public final class SignUpManager: UserServiceProtocol {
                 phone: phone,
                 device: nil
             )
-            let result = try await callRequest(value, type: JoinResponseDTO.self)
+            let result = try await callRequest(value, method: .post, type: JoinResponseDTO.self)
             
             successSignup = true
             
