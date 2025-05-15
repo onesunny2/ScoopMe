@@ -20,11 +20,16 @@ public final class TokenManager: ObservableObject {
     private let keychainManager: KeychainManager
     
     // 로그인 시 토큰 저장
-    public func saveTokens(access: String, refresh: String) {
+    public func saveLoginTokens(access: String, refresh: String) {
         _ = keychainManager.setToken(token: access, for: .accessToken)
         _ = keychainManager.setToken(token: refresh, for: .refreshToken)
         
         isTokenAvailable = true
+    }
+    
+    // device Token
+    public func saveDeviceToken(_ device: String) {
+        _ = keychainManager.setToken(token: device, for: .deviceToken)
     }
     
     // 리프레시 토큰 갱신

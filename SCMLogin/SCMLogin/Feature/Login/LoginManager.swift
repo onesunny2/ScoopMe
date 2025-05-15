@@ -31,7 +31,7 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 애플로그인 결과: \(result.response)")
             print("✅ 애플로그인 결과: \(result.response)")
-            tokenManager.saveTokens(
+            tokenManager.saveLoginTokens(
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
@@ -51,7 +51,7 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 카카오로그인 결과: \(result.response)")
             print("✅ 카카오로그인 결과: \(result.response)")
-            tokenManager.saveTokens(
+            tokenManager.saveLoginTokens(
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
@@ -71,7 +71,7 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 이메일로그인 결과: \(result.response)")
             print("✅ 이메일로그인 결과: \(result.response)")
-            tokenManager.saveTokens(
+            tokenManager.saveLoginTokens(
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
