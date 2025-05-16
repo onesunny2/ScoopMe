@@ -78,15 +78,6 @@ public final class LoginTokenManager: UserServiceProtocol {
         }
     }
     
-    /// 자동로그인: 앱 진입 시 splash 화면에서 refresh 토큰 확인 -> refresh화면 만료 되었으면 로그인 화면으로 / refresh토큰 유효하면 자동으로 메인 화면으로 이동 시키기 위한 작업
-    public func checkAutoLoginValidation() {
-        let accessToken = fetchToken(.accessToken)
-        let refreshToken = fetchToken(.refreshToken)
-        
-        
-    }
-    
-    
     /// 로그아웃 - 나중에 로그아웃 하면 토큰 다 삭제하도록
     public func logout() {
         keychainManager.deleteAllToken()
