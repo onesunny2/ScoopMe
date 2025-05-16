@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SCMLogger
 internal import SCMNetwork
 internal import Security
 
@@ -100,7 +101,7 @@ public final class KeychainManager {
             try deleteToken(for: .refreshToken)
             try deleteToken(for: .deviceToken)
         } catch {
-            print("delete All Token Failed")
+            Log.error("전체 토큰 삭제 실패: \(error)")
         }
     }
 }

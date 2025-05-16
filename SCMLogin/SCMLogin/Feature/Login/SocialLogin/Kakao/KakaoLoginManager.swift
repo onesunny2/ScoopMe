@@ -6,6 +6,7 @@
 //
 
 internal import KakaoSDKUser
+import SCMLogger
 
 public final class KakaoLoginManager {
     
@@ -15,10 +16,10 @@ public final class KakaoLoginManager {
     @MainActor
     public func kakaoLogin() async throws -> String {
         if UserApi.isKakaoTalkLoginAvailable() {
-            print("카카오톡으로 로그인 시도")
+            Log.debug("카카오톡으로 로그인 시도")
             return try await loginWithKakaoTalk()
         } else {
-            print("카카오 계정으로 로그인 시도")
+            Log.debug("카카오계정으로 로그인 시도")
             return try await loginWithKakaoAccount()
         }
     }
@@ -30,7 +31,7 @@ public final class KakaoLoginManager {
             UserApi.shared.loginWithKakaoTalk { oauthToken, error in
                 
                 if let error {
-                    print("❎ loginWithKakaoTalk Error: \(error)")
+                    Log.error("❎ loginWithKakaoTalk Error: \(error)")
                     continuation.resume(throwing: KakaoError.loginFailed(error.localizedDescription))
                 }
                 
@@ -39,7 +40,7 @@ public final class KakaoLoginManager {
                     return
                 }
                 
-                print("✅ 카카오톡 로그인 success")
+                Log.debug("✅ 카카오톡 로그인 success")
                 continuation.resume(returning: accessToken)
             }
         }
@@ -52,7 +53,7 @@ public final class KakaoLoginManager {
             UserApi.shared.loginWithKakaoAccount { oauthToken, error in
                 
                 if let error {
-                    print("❎ loginWithKakaoAccount Error: \(error)")
+                    Log.error("❎ loginWithKakaoAccount Error: \(error)")
                     continuation.resume(throwing: KakaoError.loginFailed(error.localizedDescription))
                     return
                 }
@@ -62,7 +63,7 @@ public final class KakaoLoginManager {
                     return
                 }
                 
-                print("✅ 카카오 계정 로그인 success")
+                Log.debug("✅ 카카오 계정 로그인 success")
                 continuation.resume(returning: accessToken)
             }
         }

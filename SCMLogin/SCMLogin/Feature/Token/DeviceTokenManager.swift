@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SCMLogger
 internal import SCMNetwork
 
 public final class DeviceTokenManager: NetworkEmptyProtocol {
@@ -26,7 +27,7 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
             let token = try keychainManager.getToken(for: type)
             return token
         } catch {
-            print("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
+            Log.error("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
             return ""
         }
     }
@@ -36,7 +37,7 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
         do {
             try keychainManager.setToken(token: device, for: .deviceToken)
         } catch {
-            print("device Token 저장 실패")
+            Log.error("device Token 저장 실패")
         }
     }
     
@@ -45,7 +46,7 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
         
         let tokenChangedStatus = UserDefaults.standard.bool(forKey: userdefaultsKey)
         guard tokenChangedStatus else {
-            print("디바이스 토큰 변경사항 없음")
+            Log.info("디바이스 토큰 변경사항 없음")
             return
         }
         
@@ -54,11 +55,11 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
             let value = LoginURL.updateDeviceToken(device: device, access: accessToken)
             let result = try await callEmptyRequest(value)
             
-            print("deviceToken 업데이트 성공: Status Code \(result.statusCode)")
+            Log.debug("deviceToken 업데이트 성공: Status Code \(result.statusCode)")
             
             setDeviceTokenStatus(false) // 한번 서버에 push 하면 다시 false로 변경
         } catch {
-            print("deviceToken 업데이트 실패: \(error)")
+            Log.error("deviceToken 업데이트 실패: \(error)")
         }
     }
     

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMLogger
 internal import SCMNetwork
 
 public final class SignUpManager: UserServiceProtocol {
@@ -29,14 +30,12 @@ public final class SignUpManager: UserServiceProtocol {
             let value = LoginURL.checkEmail(email: email)
             let result = try await callRequest(value, type: EmailValidationDTO.self)
             
-            print("✅ 중복확인 통과: \(result.response)")
-//            Log.debug("✅ 중복확인 통과: \(result.response)")
+            Log.debug("✅ 중복확인 통과: \(result.response)")
             alertTitle = "Success"
             alertMessage = result.response.message
             emailAvailable = true
         } catch {
-            print("이메일 사용 불가: \(error)")
-//            Log.error("이메일 사용 불가: \(error)")
+            Log.error("이메일 사용 불가: \(error)")
             alertTitle = "Failed"
             handleError(error, &alertMessage)
         }
@@ -57,10 +56,10 @@ public final class SignUpManager: UserServiceProtocol {
             
             successSignup = true
             
-            print("✅ 회원가입 완료: \(result.response)")
+            Log.debug("✅ 회원가입 완료: \(result.response)")
             
         } catch {
-            print("회원가입 실패")
+            Log.error("회원가입 실패")
         }
     }
 }

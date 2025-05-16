@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SCMLogger
 
 public final class SCMNetworkImpl: NetworkManager {
     
@@ -92,7 +93,7 @@ public final class SCMNetworkImpl: NetworkManager {
                 return message
             }
         } catch {
-            print("Json 파싱 오류: \(error)")
+            Log.error("Json 파싱 오류: \(error)")
         }
         
         return jsonString.isEmpty ? "Unknown error" : jsonString
