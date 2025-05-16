@@ -9,4 +9,5 @@ import Foundation
 
 public protocol NetworkManager {
     func fetchData<T: Decodable>(_ request: HTTPRequest, _ type: T.Type) async throws -> HTTPResponse<T>
+    func fetchEmptyData(_ request: HTTPRequest) async throws -> HTTPResponse<EmptyResponse>
 }

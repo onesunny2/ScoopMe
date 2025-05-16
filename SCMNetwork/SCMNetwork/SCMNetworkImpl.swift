@@ -51,6 +51,38 @@ public final class SCMNetworkImpl: NetworkManager {
         }
     }
     
+    public func fetchEmptyData(_ request: HTTPRequest) async throws -> HTTPResponse<EmptyResponse> {
+        do {
+            let urlRequest = try request.urlRequest()
+            let (data, response) = try await session.data(for: urlRequest)
+            
+            guard let httpResponse = response as? HTTPURLResponse else { throw SCMError.invalidResponse }
+            
+            let headers = httpResponse.allHeaderFields as? [String: String]
+            
+            guard request.successCodes.contains(httpResponse.statusCode) else {
+                let errorMessage = getErrorMessage(from: data)
+                throw SCMError.serverError(statusCode: httpResponse.statusCode, message: errorMessage)
+            }
+            
+            // 데이터가 비어 있는 경우 EmptyResponse를 반환
+            let decodingResponse = EmptyResponse()
+            
+            return HTTPResponse(
+                statusCode: httpResponse.statusCode,
+                response: decodingResponse,
+                headers: headers
+            )
+            
+        } catch {
+            switch error {
+            case let scmError as SCMError: throw scmError
+            case let urlError as URLError: throw SCMError.requestFailed(urlError)
+            default: throw SCMError.requestFailed(error)
+            }
+        }
+    }
+    
     private func getErrorMessage(from data: Data) -> String {
         
         guard let jsonString = String(data: data, encoding: .utf8) else { return "Unknown error" }
