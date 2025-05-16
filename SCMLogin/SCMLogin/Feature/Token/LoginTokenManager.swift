@@ -1,5 +1,5 @@
 //
-//  TokenManager.swift
+//  LoginTokenManager.swift
 //  SCMLogin
 //
 //  Created by Lee Wonsun on 5/15/25.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 internal import SCMNetwork
 
-public final class TokenManager: UserServiceProtocol {
+public final class LoginTokenManager: UserServiceProtocol {
     
     @Published var isTokenAvailable: Bool = false
     @Published var alertTitle: String = ""
@@ -35,15 +35,6 @@ public final class TokenManager: UserServiceProtocol {
         }
     }
     
-    // device Token 저장
-    public func saveDeviceToken(_ device: String) {
-        do {
-            try keychainManager.setToken(token: device, for: .deviceToken)
-        } catch {
-            print("device Token 저장 실패")
-        }
-    }
-    
     // 리프레시 토큰 갱신
     @MainActor
     public func refreshAccessToken() async -> Bool {
@@ -57,7 +48,7 @@ public final class TokenManager: UserServiceProtocol {
             }
             
             // 리프레시 통신 진행
-            await getRefreshToken(accessToken, refreshToken)
+            await requestRefreshToken(accessToken, refreshToken)
             
             return true  // true이면 다시 재통신 진행
         } catch {
@@ -67,10 +58,10 @@ public final class TokenManager: UserServiceProtocol {
     }
     
     @MainActor
-    private func getRefreshToken(_ access: String, _ refresh: String) async {
+    private func requestRefreshToken(_ access: String, _ refresh: String) async {
         do {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
-            let result = try await callRequest(value, method: .get, type: RefreshTokenResponseDTO.self)
+            let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
             print("✅ 리프레시토큰 결과: \(result.response)")
             saveLoginTokens(

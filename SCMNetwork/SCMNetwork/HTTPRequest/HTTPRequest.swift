@@ -46,7 +46,7 @@ extension HTTPRequest: Requestable {
         return request
     }
     
-    public func addParamters(_ params: [String: String?]?) -> Self {
+    public func addParameters(_ params: [String: String?]?) -> Self {
         var request = self
         request.parameters = params
         return request

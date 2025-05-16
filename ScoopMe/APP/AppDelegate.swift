@@ -11,10 +11,10 @@ import SCMLogin
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     
-    private let tokenManager: TokenManager
+    private let deviceTokenManager: DeviceTokenManager
     
     override init() {
-        self.tokenManager = TokenManager()
+        self.deviceTokenManager = DeviceTokenManager()
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -38,7 +38,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         
         let deviceTokenString = deviceToken.reduce("", { $0 + String(format: "%02X", $1) })
-        tokenManager.saveDeviceToken(deviceTokenString)
+        let savedToken = deviceTokenManager.fetchToken(.deviceToken)
+        guard !savedToken.isEmpty else {
+            deviceTokenManager.saveDeviceToken(deviceTokenString)
+            Log.debug("첫 디바이스토큰 저장 완료", "token: \(deviceTokenString)")
+            return
+        }
+        
+        guard deviceTokenString != savedToken else { return }
+        deviceTokenManager.saveDeviceToken(deviceTokenString)
+        deviceTokenManager.setDeviceTokenStatus(true)
+        Log.debug("new 디바이스토큰 교체 완료", "token: \(deviceTokenString)")
     }
     
     // APNs 토큰 수신 실패
