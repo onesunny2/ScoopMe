@@ -25,7 +25,7 @@ extension NetworkServiceProtocol {
         )
             .addBaseURL(value.baseURL)
             .addPath(value.path)
-            .addParamters(value.parameters)
+            .addParameters(value.parameters)
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)
