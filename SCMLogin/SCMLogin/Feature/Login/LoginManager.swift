@@ -16,11 +16,13 @@ public final class LoginManager: UserServiceProtocol {
     public var alertTitle: String = "로그인 실패"
     
     public init() {
-        self.tokenManager = LoginTokenManager()
+        self.loginTokenManager = LoginTokenManager()
+        self.deviceTokenManager = DeviceTokenManager()
         self.network = SCMNetworkImpl()
     }
     
-    private let tokenManager: LoginTokenManager
+    private let loginTokenManager: LoginTokenManager
+    private let deviceTokenManager: DeviceTokenManager
     let network: SCMNetworkImpl
     
     @MainActor
@@ -31,10 +33,7 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 애플로그인 결과: \(result.response)")
             print("✅ 애플로그인 결과: \(result.response)")
-            tokenManager.saveLoginTokens(
-                access: result.response.accessToken,
-                refresh: result.response.refreshToken
-            )
+            await setTokens(result: result)
         } catch {
             //            Log.error("❎ 애플 login error: \(error)")
             print("❎ 애플 login error: \(error)")
@@ -51,10 +50,7 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 카카오로그인 결과: \(result.response)")
             print("✅ 카카오로그인 결과: \(result.response)")
-            tokenManager.saveLoginTokens(
-                access: result.response.accessToken,
-                refresh: result.response.refreshToken
-            )
+            await setTokens(result: result)
         } catch {
             //            Log.error("❎ 카카오 login error: \(error)")
             print("❎ 카카오 login error: \(error)")
@@ -71,15 +67,23 @@ public final class LoginManager: UserServiceProtocol {
             
             //            Log.debug("✅ 이메일로그인 결과: \(result.response)")
             print("✅ 이메일로그인 결과: \(result.response)")
-            tokenManager.saveLoginTokens(
-                access: result.response.accessToken,
-                refresh: result.response.refreshToken
-            )
+            await setTokens(result: result)
         } catch {
             //            Log.error("❎ 이메일 login error: \(error)")
             print("❎ 이메일 login error: \(error)")
             loginFalied = true
             handleError(error, &alertMessage)
         }
+    }
+    
+    // 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
+    private func setTokens(result: HTTPResponse<LoginDTO>) async {
+        let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
+        await deviceTokenManager.updateDeviceToken(deviceToken)
+        
+        loginTokenManager.saveLoginTokens(
+            access: result.response.accessToken,
+            refresh: result.response.refreshToken
+        )
     }
 }
