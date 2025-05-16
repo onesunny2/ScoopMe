@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Combine
 internal import SCMNetwork
 
-public final class DeviceTokenManager: NetworkServiceProtocol {
+public final class DeviceTokenManager: NetworkEmptyProtocol {
     
     public init() {
         self.keychainManager = KeychainManager()
@@ -40,4 +39,22 @@ public final class DeviceTokenManager: NetworkServiceProtocol {
     }
     
     // deviceToken 업데이트
+    public func updateDeviceToken(_ device: String) async {
+        do {
+            let accessToken = fetchToken(.accessToken)
+            let value = LoginURL.updateDeviceToken(device: device, access: accessToken)
+            let result = try await callEmptyRequest(value)
+//            let result = try await callRequest(value, type: EmptyResponseDTO.self)
+            
+            print("deviceToken 업데이트 성공: Status Code \(result.statusCode)")
+            
+        } catch {
+            print("deviceToken 업데이트 실패: \(error)")
+        }
+    }
+    
+    // deviceToken이 바뀌었는지 확인
+    public func checkDeviceTokenChange() {
+        
+    }
 }

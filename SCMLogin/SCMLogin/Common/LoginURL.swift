@@ -15,6 +15,7 @@ enum LoginURL {
     case kakaoLogin(oauth: String, device: String?)
     case appleLogin(id: String, device: String?, nick: String?)
     case refreshToken(access: String, refresh: String)
+    case updateDeviceToken(device: String, access: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -22,7 +23,12 @@ enum LoginURL {
     
     var method: HTTPMethods {
         switch self {
-        default: .post
+        case .refreshToken:
+            return .get
+        case .updateDeviceToken:
+            return .put
+        default:
+            return .post
         }
     }
     
@@ -34,6 +40,7 @@ enum LoginURL {
         case .kakaoLogin: "/v1/users/login/kakao"
         case .appleLogin: "/v1/users/login/apple"
         case .refreshToken: "/v1/auth/refresh"
+        case .updateDeviceToken: "/v1/users/deviceToken"
         }
     }
     
@@ -66,23 +73,31 @@ enum LoginURL {
                 "deviceToken": device,
                 "nick": nick
             ]
+        case let .updateDeviceToken(device, _):
+            return ["deviceToken": device]
         default: return nil
         }
     }
     
     var headers: [String: String] {
         switch self {
-        case .checkEmail, .join, .emailLogin, .kakaoLogin, .appleLogin:
-            return [
-                "Content-Type": "application/json",
-                "SeSACKey": Secret.apiKey
-            ]
         case let .refreshToken(access, refresh):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
                 "RefreshToken": refresh,
                 "Authorization": access
+            ]
+        case let .updateDeviceToken(_, access):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        default:
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey
             ]
         }
     }
