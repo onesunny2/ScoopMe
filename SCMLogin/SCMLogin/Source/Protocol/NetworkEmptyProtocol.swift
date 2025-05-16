@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Combine
 internal import SCMNetwork
 
-protocol NetworkEmptyProtocol: ObservableObject, AnyObject {
+protocol NetworkEmptyProtocol: NetworkServiceProtocol {
     var network: SCMNetworkImpl { get }
     
     func callEmptyRequest(_ value: LoginURL) async throws -> HTTPResponse<EmptyResponse> 

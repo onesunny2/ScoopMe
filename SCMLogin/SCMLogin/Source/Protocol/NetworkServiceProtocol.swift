@@ -7,27 +7,25 @@
 
 import Foundation
 import Combine
+import SCMLogger
 internal import SCMNetwork
 
 protocol NetworkServiceProtocol: ObservableObject, AnyObject {
     var network: SCMNetworkImpl { get }
     
-    func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T>
+    func fetchToken(_ type: Keychain) -> String
 }
 
 extension NetworkServiceProtocol {
     
-    func callRequest<T: Decodable>(_ value: LoginURL, type: T.Type) async throws -> HTTPResponse<T> {
-        let request = HTTPRequest(
-            scheme: .http,
-            method: value.method,
-            successCodes: [200]
-        )
-            .addBaseURL(value.baseURL)
-            .addPath(value.path)
-            .addParameters(value.parameters)
-            .addHeaders(value.headers)
-        
-        return try await network.fetchData(request, T.self)
+    func fetchToken(_ type: Keychain) -> String {
+        do {
+            let keychainManager = KeychainManager()
+            let token = try keychainManager.getToken(for: type)
+            return token
+        } catch {
+            Log.error("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
+            return ""
+        }
     }
 }
