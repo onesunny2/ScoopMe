@@ -78,6 +78,7 @@ struct EmailSignInView: View {
 //            dump(keychainmanager.getToken(for: .refreshToken))
             Task {
                 let result = await LoginTokenManager().refreshAccessToken()
+                await DeviceTokenManager().updateDeviceToken(DeviceTokenManager().fetchToken(.deviceToken))
                 print("리프레시토큰 갱신 결과: \(result)")
             }
         }
