@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMLogger
 import SCMLogin
 
 struct EmailSignInView: View {

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AuthenticationServices
+import SCMLogger
 import SCMLogin
 
 struct LoginView: View {
