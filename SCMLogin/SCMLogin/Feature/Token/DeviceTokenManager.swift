@@ -18,6 +18,8 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
     private let keychainManager: KeychainManager
     let network: SCMNetworkImpl
     
+    private let userdefaultsKey = "deviceTokenChanged"
+    
     public func fetchToken(_ type: Keychain) -> String {
         do {
             let keychainManager = KeychainManager()
@@ -40,21 +42,28 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
     
     // deviceToken 업데이트
     public func updateDeviceToken(_ device: String) async {
+        
+        let tokenChangedStatus = UserDefaults.standard.bool(forKey: userdefaultsKey)
+        guard tokenChangedStatus else {
+            print("디바이스 토큰 변경사항 없음")
+            return
+        }
+        
         do {
             let accessToken = fetchToken(.accessToken)
             let value = LoginURL.updateDeviceToken(device: device, access: accessToken)
             let result = try await callEmptyRequest(value)
-//            let result = try await callRequest(value, type: EmptyResponseDTO.self)
             
             print("deviceToken 업데이트 성공: Status Code \(result.statusCode)")
             
+            setDeviceTokenStatus(false) // 한번 서버에 push 하면 다시 false로 변경
         } catch {
             print("deviceToken 업데이트 실패: \(error)")
         }
     }
     
-    // deviceToken이 바뀌었는지 확인
-    public func checkDeviceTokenChange() {
-        
+    // deviceToken 변경되면 호출
+    public func setDeviceTokenStatus(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: userdefaultsKey)
     }
 }

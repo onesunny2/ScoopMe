@@ -47,6 +47,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         guard deviceTokenString != savedToken else { return }
         deviceTokenManager.saveDeviceToken(deviceTokenString)
+        deviceTokenManager.setDeviceTokenStatus(true)
         Log.debug("new 디바이스토큰 교체 완료", "token: \(deviceTokenString)")
     }
     
