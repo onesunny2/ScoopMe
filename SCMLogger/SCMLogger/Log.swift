@@ -65,21 +65,18 @@ public struct Log {
         
         #if DEBUG
         // DEBUG 빌드에서는 모든 로그를 출력
-        // Xcode 콘솔에 출력 (이모지 포함)
-        print("[\(Date())] \(level.displayCategory) \(logMessage)")
-        
         // Logger를 사용하여 시스템 로그에 기록
         switch level.logLevel {
         case .debug:
-            level.logger.debug("\(logMessage, privacy: .public)")
+            level.logger.debug("\(level.displayCategory) \(logMessage, privacy: .public)")
         case .info:
-            level.logger.info("\(logMessage, privacy: .public)")
+            level.logger.info("\(level.displayCategory) \(logMessage, privacy: .public)")
         case .default:
-            level.logger.log("\(logMessage, privacy: .public)")
+            level.logger.log("\(level.displayCategory) \(logMessage, privacy: .public)")
         case .error:
-            level.logger.error("\(logMessage, privacy: .public)")
+            level.logger.error("\(level.displayCategory) \(logMessage, privacy: .public)")
         default:
-            level.logger.log("\(logMessage, privacy: .public)")
+            level.logger.log("\(level.displayCategory) \(logMessage, privacy: .public)")
         }
         #else
         // RELEASE 빌드에서는 Error만 출력
