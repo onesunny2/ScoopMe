@@ -7,6 +7,7 @@
 
 import UIKit
 import UserNotifications
+import SCMLogger
 import SCMLogin
 
 final class AppDelegate: NSObject, UIApplicationDelegate {

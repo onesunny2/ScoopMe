@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMLogger
 internal import SCMNetwork
 
 public final class LoginTokenManager: UserServiceProtocol {
@@ -31,7 +32,7 @@ public final class LoginTokenManager: UserServiceProtocol {
             try keychainManager.setToken(token: refresh, for: .refreshToken)
             isTokenAvailable = true
         } catch {
-            print("로그인 토큰 저장 실패")
+            Log.error("로그인 토큰 저장 실패")
         }
     }
     
@@ -52,7 +53,7 @@ public final class LoginTokenManager: UserServiceProtocol {
             
             return true  // true이면 다시 재통신 진행
         } catch {
-            print("리프레시 토큰 갱신")
+            Log.error("리프레시 토큰 갱신")
             return false
         }
     }
@@ -63,14 +64,15 @@ public final class LoginTokenManager: UserServiceProtocol {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
             let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
-            print("✅ 리프레시토큰 결과: \(result.response)")
+            Log.debug("✅ 리프레시토큰 결과: \(result.response)")
+            
             saveLoginTokens(
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
         } catch {
             // 여기 에러에 따라서 처리해야 함!!!!
-            print("❎ 리프레시토큰 갱신 error: \(error)")
+            Log.error("❎ 리프레시토큰 갱신 error: \(error)")
             
             guard let scmError = error as? SCMError else { return }
             

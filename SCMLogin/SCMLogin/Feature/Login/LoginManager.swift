@@ -7,10 +7,11 @@
 
 import Foundation
 import Combine
+import SCMLogger
 internal import SCMNetwork
 
 public final class LoginManager: UserServiceProtocol {
-
+    
     @Published public var loginFalied: Bool = false
     @Published public var alertMessage: String = ""
     public var alertTitle: String = "로그인 실패"
@@ -31,12 +32,10 @@ public final class LoginManager: UserServiceProtocol {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            //            Log.debug("✅ 애플로그인 결과: \(result.response)")
-            print("✅ 애플로그인 결과: \(result.response)")
+            Log.debug("✅ 애플로그인 결과: \(result.response)")
             await setTokens(result: result)
         } catch {
-            //            Log.error("❎ 애플 login error: \(error)")
-            print("❎ 애플 login error: \(error)")
+            Log.error("❎ 애플 login error: \(error)")
             loginFalied = true
             handleError(error, &alertMessage)
         }
@@ -48,12 +47,10 @@ public final class LoginManager: UserServiceProtocol {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            //            Log.debug("✅ 카카오로그인 결과: \(result.response)")
-            print("✅ 카카오로그인 결과: \(result.response)")
+            Log.debug("✅ 카카오로그인 결과: \(result.response)")
             await setTokens(result: result)
         } catch {
-            //            Log.error("❎ 카카오 login error: \(error)")
-            print("❎ 카카오 login error: \(error)")
+            Log.error("❎ 카카오 login error: \(error)")
             loginFalied = true
             handleError(error, &alertMessage)
         }
@@ -65,12 +62,10 @@ public final class LoginManager: UserServiceProtocol {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            //            Log.debug("✅ 이메일로그인 결과: \(result.response)")
-            print("✅ 이메일로그인 결과: \(result.response)")
+            Log.debug("✅ 이메일로그인 결과: \(result.response)")
             await setTokens(result: result)
         } catch {
-            //            Log.error("❎ 이메일 login error: \(error)")
-            print("❎ 이메일 login error: \(error)")
+            Log.error("❎ 이메일 login error: \(error)")
             loginFalied = true
             handleError(error, &alertMessage)
         }
