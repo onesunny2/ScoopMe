@@ -74,13 +74,7 @@ struct EmailSignInView: View {
         }
         .asButton {
             autoLoginStatus.toggle()
-//            dump(keychainmanager.getToken(for: .accessToken))
-//            dump(keychainmanager.getToken(for: .refreshToken))
-            Task {
-                let result = await LoginTokenManager().refreshAccessToken()
-                await DeviceTokenManager().updateDeviceToken(DeviceTokenManager().fetchToken(.deviceToken))
-                print("리프레시토큰 갱신 결과: \(result)")
-            }
+            Log.error("Logger로 변경사항 확인 테스트 주우우우우웅")
         }
     }
     

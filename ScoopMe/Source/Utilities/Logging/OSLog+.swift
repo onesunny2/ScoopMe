@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import os.log
+import os
 
-extension OSLog {
+extension Logger {
     static let subsystem = Bundle.main.bundleIdentifier ?? "com.Tynee.ScoopMe"
     
-    static let network = OSLog(subsystem: subsystem, category: "NETWORK")
-    static let debug = OSLog(subsystem: subsystem, category: "DEBUG")
-    static let info = OSLog(subsystem: subsystem, category: "INFO")
-    static let error = OSLog(subsystem: subsystem, category: "ERROR")
+    static let network = Logger(subsystem: subsystem, category: "NETWORK")
+    static let debug = Logger(subsystem: subsystem, category: "DEBUG")
+    static let info = Logger(subsystem: subsystem, category: "INFO")
+    static let error = Logger(subsystem: subsystem, category: "ERROR")
 }

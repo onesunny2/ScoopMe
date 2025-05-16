@@ -36,26 +36,16 @@ struct Log {
             }
         }
         
-        // Console.app용 깔끔한 카테고리
-        fileprivate var logCategory: String {
+        fileprivate var logger: Logger {
             switch self {
-            case .debug: return "Debug"
-            case .info: return "Info"
-            case .network: return "Network"
-            case .error: return "Error"
+            case .debug: return Logger.debug
+            case .info: return Logger.info
+            case .network: return Logger.network
+            case .error: return Logger.error
             }
         }
         
-        fileprivate var osLog: OSLog {
-            switch self {
-            case .debug: return OSLog.debug
-            case .info: return OSLog.info
-            case .network: return OSLog.network
-            case .error: return OSLog.error
-            }
-        }
-        
-        fileprivate var osLogType: OSLogType {
+        fileprivate var logLevel: OSLogType {
             switch self {
             case .debug: return .debug
             case .info: return .info
@@ -69,25 +59,32 @@ struct Log {
         let filename = URL(fileURLWithPath: file).lastPathComponent
         let location = "\(filename):\(line)"
         let extraMessage: String = arguments.map({ String(describing: $0) }).joined(separator: " ")
+        let fullMessage = !extraMessage.isEmpty ? "\(message) \(extraMessage)" : "\(message)"
+        let logMessage = (level.logLevel == .error || level.logLevel == .debug) ?
+        "[\(location)] \(fullMessage)" : "\(fullMessage)"
         
         #if DEBUG
         // DEBUG 빌드에서는 모든 로그를 출력
-        let fullMessage = !extraMessage.isEmpty ? "\(message) \(extraMessage)" : "\(message)"
-        let logMessage = (level.osLogType == .error || level.osLogType == .debug) ?
-        "[\(location)] \(fullMessage)" :
-        "\(fullMessage)"
-        
         // Xcode 콘솔에 출력 (이모지 포함)
         print("[\(Date())] \(level.displayCategory) \(logMessage)")
         
-        // OS 로그 시스템에 출력 (Console.app에서 보임) - os_log 사용
-        os_log("%{public}@", log: level.osLog, type: level.osLogType, logMessage)
+        // Logger를 사용하여 시스템 로그에 기록
+        switch level.logLevel {
+        case .debug:
+            level.logger.debug("\(logMessage, privacy: .public)")
+        case .info:
+            level.logger.info("\(logMessage, privacy: .public)")
+        case .default:
+            level.logger.log("\(logMessage, privacy: .public)")
+        case .error:
+            level.logger.error("\(logMessage, privacy: .public)")
+        default:
+            level.logger.log("\(logMessage, privacy: .public)")
+        }
         #else
         // RELEASE 빌드에서는 Error만 출력
-        if level.osLogType == .error {
-            let fullMessage = !extraMessage.isEmpty ? "\(message) \(extraMessage)" : "\(message)"
-            let logMessage = "[\(location)] \(fullMessage)"
-            os_log("%{public}@", log: level.osLog, type: level.osLogType, logMessage)
+        if level.logLevel == .error {
+            level.logger.error("\(logMessage, privacy: .public)")
         }
         #endif
     }
