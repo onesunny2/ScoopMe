@@ -12,10 +12,18 @@ internal import SCMNetwork
 
 public final class LoginTokenManager: UserServiceProtocol {
     
-    @Published var isTokenAvailable: Bool = false
     @Published var alertTitle: String = ""
     @Published var alertMessage: String = ""
-    @Published var needLogin: Bool = false
+    
+    private let needLoginKey: String = "needLoginStatus"
+    public var isNeedLogin: Bool {
+        return UserDefaults.standard.bool(forKey: needLoginKey)
+    }
+    
+    private let autoLoginKey: String = "autoLoginStatus"
+    public var autoLoginAvailable: Bool {
+        return UserDefaults.standard.bool(forKey: autoLoginKey)
+    }
     
     public init() {
         self.keychainManager = KeychainManager()
@@ -30,67 +38,52 @@ public final class LoginTokenManager: UserServiceProtocol {
         do {
             try keychainManager.setToken(token: access, for: .accessToken)
             try keychainManager.setToken(token: refresh, for: .refreshToken)
-            isTokenAvailable = true
         } catch {
             Log.error("로그인 토큰 저장 실패")
         }
     }
     
-    // 리프레시 토큰 갱신
     @MainActor
-    public func refreshAccessToken() async -> Bool {
-        do {
-            let refreshToken = try keychainManager.getToken(for: .refreshToken)
-            let accessToken = try keychainManager.getToken(for: .accessToken)
-            
-            guard refreshToken.count > 0 else {
-                // refresh 값 없으면 알럿창 띄우고 로그인 화면으로 고고
-                return false
-            }
-            
-            // 리프레시 통신 진행
-            await requestRefreshToken(accessToken, refreshToken)
-            
-            return true  // true이면 다시 재통신 진행
-        } catch {
-            Log.error("리프레시 토큰 갱신")
-            return false
-        }
-    }
-    
-    @MainActor
-    private func requestRefreshToken(_ access: String, _ refresh: String) async {
+    public func requestRefreshToken(
+        _ access: String,
+        _ refresh: String,
+        onSuccess: @escaping () async -> ()
+    ) async {
         do {
             let value = LoginURL.refreshToken(access: access, refresh: refresh)
             let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
             Log.debug("✅ 리프레시토큰 결과: \(result.response)")
             
+            // access 갱신
             saveLoginTokens(
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
+            
+            // 갱신 완료 후 액션(API 재통신 or main화면 보내기)
+            await onSuccess()
         } catch {
-            // 여기 에러에 따라서 처리해야 함!!!!
+            // 리프레시 만료되면 재로그인으로 보내야 함
             Log.error("❎ 리프레시토큰 갱신 error: \(error)")
             
             guard let scmError = error as? SCMError else { return }
             
             switch scmError {
-            case .serverError:
+            default:
                 alertTitle = "안내"
                 alertMessage = "세션이 만료되었습니다.\n다시 로그인 후 사용해주세요."
-                needLogin = true
-            default:
-                alertTitle = "오류"
-                alertMessage = scmError.localizedDescription
+                setNeedLoginStatus(true)  // true이면 로그인 화면으로 보냄!
             }
         }
     }
     
-    // 로그아웃 - 나중에 로그아웃 하면 토큰 다 삭제하도록
+    /// 로그아웃 - 나중에 로그아웃 하면 토큰 다 삭제하도록
     public func logout() {
         keychainManager.deleteAllToken()
-        isTokenAvailable = false
+    }
+    
+    private func setNeedLoginStatus(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: needLoginKey)
     }
 }
