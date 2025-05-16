@@ -14,6 +14,7 @@ public final class LoginManager: UserServiceProtocol {
     
     @Published public var loginFalied: Bool = false
     @Published public var alertMessage: String = ""
+    
     public var alertTitle: String = "로그인 실패"
     
     public init() {
@@ -71,7 +72,7 @@ public final class LoginManager: UserServiceProtocol {
         }
     }
     
-    // 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
+    /// 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
     private func setTokens(result: HTTPResponse<LoginDTO>) async {
         let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
         await deviceTokenManager.updateDeviceToken(deviceToken)
