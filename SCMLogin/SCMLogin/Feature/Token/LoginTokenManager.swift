@@ -10,7 +10,7 @@ import Combine
 import SCMLogger
 internal import SCMNetwork
 
-public final class LoginTokenManager: UserServiceProtocol {
+public final class LoginTokenManager: NSObject, UserServiceProtocol {
     
     @Published var alertTitle: String = ""
     @Published var alertMessage: String = ""
@@ -25,7 +25,7 @@ public final class LoginTokenManager: UserServiceProtocol {
         return UserDefaults.standard.bool(forKey: autoLoginKey)
     }
     
-    public init() {
+    public override init() {
         self.keychainManager = KeychainManager()
         self.network = SCMNetworkImpl()
     }

@@ -9,7 +9,7 @@ import Foundation
 import SCMLogin
 
 enum MainFlow: Hashable {
-    case splash
+    case splash(LoginTokenManager)
     case login
     case main
 }

@@ -20,8 +20,8 @@ struct ContentView: View {
     @ViewBuilder
     private var mainFlowView: some View {
         switch flowSwitcher.currentFlow {
-        case .splash:
-            SplashView()
+        case let .splash(manager):
+            SplashView(loginTokenManager: manager)
         case .login:
             LoginView(loginManager: loginManager)
         case .main:

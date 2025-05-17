@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SCMLogin
 
 struct SplashView: View {
     
     @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    let loginTokenManager: LoginTokenManager
     
     @State private var angle: Double = 0
     @State private var scale: CGFloat = 1.0
@@ -26,6 +28,7 @@ struct SplashView: View {
             withAnimation(.easeInOut(duration: 0.3)) {
                 flowSwitcher.switchTo(.login)
             }
+//            await
         }
     }
     
@@ -45,5 +48,5 @@ struct SplashView: View {
 }
 
 #Preview {
-    SplashView()
+    SplashView(loginTokenManager: LoginTokenManager())
 }
