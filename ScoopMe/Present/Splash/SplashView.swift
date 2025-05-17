@@ -31,7 +31,8 @@ struct SplashView: View {
             
             try? await Task.sleep(for: .seconds(3))
             
-            await loginTokenManager.requestRefreshToken {
+            if loginTokenManager.autoLoginAvailable {
+                await loginTokenManager.requestRefreshToken {
                     if loginTokenManager.isNeedLogin {
                         flowSwitcher.switchTo(.login)
                     } else {
@@ -39,6 +40,9 @@ struct SplashView: View {
                     }
                     
                 }
+            } else {
+                flowSwitcher.switchTo(.login)
+            }
         }
     }
     

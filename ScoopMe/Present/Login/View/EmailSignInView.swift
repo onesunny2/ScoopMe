@@ -81,7 +81,8 @@ struct EmailSignInView: View {
         }
         .asButton {
             autoLoginStatus.toggle()
-            Log.error("Logger로 변경사항 확인 테스트 주우우우우웅")
+            loginTokenManager.setAutoLoginAvailable(autoLoginStatus)
+            Log.debug("자동로그인 유무: \(autoLoginStatus)")
         }
     }
     
