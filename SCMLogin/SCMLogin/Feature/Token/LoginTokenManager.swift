@@ -56,12 +56,13 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
     
     @MainActor
     public func requestRefreshToken(
-        _ access: String,
-        _ refresh: String,
         onSuccess: @escaping () async -> ()
     ) async {
         do {
-            let value = LoginURL.refreshToken(access: access, refresh: refresh)
+            let accessToken = fetchToken(.accessToken)
+            let refreshToken = fetchToken(.refreshToken)
+            
+            let value = LoginURL.refreshToken(access: accessToken, refresh: refreshToken)
             let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
             Log.debug("✅ 리프레시토큰 결과: \(result.response)")

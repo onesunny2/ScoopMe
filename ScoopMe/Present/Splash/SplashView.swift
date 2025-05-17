@@ -31,12 +31,7 @@ struct SplashView: View {
             
             try? await Task.sleep(for: .seconds(3))
             
-            let access = loginTokenManager.fetchToken(.accessToken)
-            let refresh = loginTokenManager.fetchToken(.refreshToken)
-            
-            await loginTokenManager.requestRefreshToken(
-                access,
-                refresh) {
+            await loginTokenManager.requestRefreshToken {
                     if loginTokenManager.isNeedLogin {
                         flowSwitcher.switchTo(.login)
                     } else {
