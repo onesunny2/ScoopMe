@@ -109,11 +109,16 @@ struct LoginView: View {
             }
             .overlay {
                 if type == .apple {
-                    SignInWithAppleButton { request in
-                        request.requestedScopes = [.fullName, .email]
-                    } onCompletion: { result in
-                        getAppleAuth(result)
-                    }
+                    SignInWithAppleButton(
+                        .signIn,
+                        onRequest: { request in
+                            request.requestedScopes = [.fullName, .email]
+                        },
+                        onCompletion: { result in
+                            getAppleAuth(result)
+                        }
+                    )
+                    .signInWithAppleButtonStyle(.black)
                     .blendMode(.overlay)
                     .padding(.horizontal, horizontalPadding)
                 }
@@ -124,7 +129,7 @@ struct LoginView: View {
     private func getAppleAuth(_ result: Result<ASAuthorization, any Error>) {
         switch result {
         case let .success(authResult):
-            print("애플로그인 성공")
+            Log.debug("애플로그인 성공")
             if let credential = authResult.credential as? ASAuthorizationAppleIDCredential {
                 if let token = credential.identityToken, let stringToken = String(data: token, encoding: .utf8) {
                     Log.debug("애플로그인 토큰: \(stringToken)")
