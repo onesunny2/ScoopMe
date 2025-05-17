@@ -1,5 +1,5 @@
 //
-//  ChattingView.swift
+//  ChatView.swift
 //  ScoopMe
 //
 //  Created by Lee Wonsun on 5/17/25.
