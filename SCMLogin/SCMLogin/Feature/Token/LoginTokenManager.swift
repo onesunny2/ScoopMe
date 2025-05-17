@@ -98,6 +98,11 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
         keychainManager.deleteAllToken()
     }
     
+    // 자동로그인 유무 변경
+    public func setAutoLoginAvailable(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: autoLoginKey)
+    }
+    
     private func setNeedLoginStatus(_ value: Bool) {
         UserDefaults.standard.set(value, forKey: needLoginKey)
     }
