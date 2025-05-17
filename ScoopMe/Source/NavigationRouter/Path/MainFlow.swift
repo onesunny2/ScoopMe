@@ -10,6 +10,6 @@ import SCMLogin
 
 enum MainFlow: Hashable {
     case splash
-    case login(LoginManager)
+    case login
     case main
 }

@@ -12,26 +12,37 @@ import SCMLogin
 
 struct LoginView: View {
     
+    @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager: LoginManager
+    
     private var horizontalPadding: CGFloat = 40
-    private let router = SCMRouter<LoginPath>.shared
     
     init(loginManager: LoginManager) {
         self._loginManager = StateObject(wrappedValue: loginManager)
     }
     
     var body: some View {
-        ZStack {
-            Color.scmBrightSprout
-                .ignoresSafeArea()
-            
-            vstackContents
+        NavigationStack(path: $router.path) {
+            ZStack {
+                Color.scmBrightSprout
+                    .ignoresSafeArea()
+                
+                vstackContents
+            }
+            .showAlert(
+                isPresented: $loginManager.loginFalied,
+                title: loginManager.alertTitle,
+                message: loginManager.alertMessage
+            )
+            .navigationDestination(for: LoginPath.self) { route in
+                switch route {
+                case let .emailLogin(manager):
+                    EmailSignInView(loginManager: manager)
+                case .signUp:
+                    SignUpView()
+                }
+            }
         }
-        .showAlert(
-            isPresented: $loginManager.loginFalied,
-            title: loginManager.alertTitle,
-            message: loginManager.alertMessage
-        )
     }
     
     private var vstackContents: some View {
