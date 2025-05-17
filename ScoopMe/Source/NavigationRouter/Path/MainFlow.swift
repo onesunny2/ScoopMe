@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import SCMLogin
 
 enum MainFlow: Hashable {
     case splash
-    case login
+    case login(LoginManager)
     case main
 }
