@@ -15,7 +15,7 @@ struct ScoopMeApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     @StateObject
-    private var loginRouter = Router<LoginPath>.shared
+    private var loginRouter = SCMRouter<LoginPath>.shared
     
     init() {
         // kakao sdk 초기화

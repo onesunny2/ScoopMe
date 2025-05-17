@@ -14,7 +14,7 @@ struct LoginView: View {
     
     @StateObject private var loginManager: LoginManager
     private var horizontalPadding: CGFloat = 40
-    private let router = Router<LoginPath>.shared
+    private let router = SCMRouter<LoginPath>.shared
     
     init(loginManager: LoginManager) {
         self._loginManager = StateObject(wrappedValue: loginManager)

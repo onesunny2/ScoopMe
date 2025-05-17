@@ -1,5 +1,5 @@
 //
-//  Navigation.swift
+//  Router.swift
 //  ScoopMe
 //
 //  Created by Lee Wonsun on 5/16/25.
@@ -7,43 +7,43 @@
 
 import Foundation
 
-final class Router<P: Hashable>: ObservableObject {
-    private init() { }
-    
-    @Published var path = Array<P>()
-    
-    func send(_ action: Action) {
-        action(action)
-    }
-    
-    private func action(_ action: Router<P>.Action) {
-        switch action {
-        case .push(let view):
-            path.append(view)
-        case .pop:
-            path.removeLast()
-        case .pops(let count):
-            let removeCount = min(count, path.count)
-            path.removeLast(count)
-        case .popAll:
-            path.removeAll()
-        }
-    }
-}
-
-extension Router where Router == Router<LoginPath> {
-    static let shared = Router()
-}
-
-extension Router where Router == Router<MainFlow> {
-    static let shared = Router()
-}
-
-extension Router {
-    enum Action {
-        case push(P)
-        case pop
-        case pops(Int)
-        case popAll
-    }
-}
+//final class Router<P: Hashable>: ObservableObject {
+//    private init() { }
+//    
+//    @Published var path = Array<P>()
+//    
+//    func send(_ action: Action) {
+//        handleAction(action)
+//    }
+//    
+//    private func handleAction(_ action: Router<P>.Action) {
+//        switch action {
+//        case .push(let view):
+//            path.append(view)
+//        case .pop:
+//            path.removeLast()
+//        case .pops(let count):
+//            let removeCount = min(count, path.count)
+//            path.removeLast(count)
+//        case .popAll:
+//            path.removeAll()
+//        }
+//    }
+//}
+//
+//extension Router where Router == Router<LoginPath> {
+//    static let shared = Router()
+//}
+//
+//extension Router where Router == Router<MainFlow> {
+//    static let shared = Router()
+//}
+//
+//extension Router {
+//    enum Action {
+//        case push(P)
+//        case pop
+//        case pops(Int)
+//        case popAll
+//    }
+//}

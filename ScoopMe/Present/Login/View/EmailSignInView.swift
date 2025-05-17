@@ -16,7 +16,7 @@ struct EmailSignInView: View {
     
     @State private var autoLoginStatus: Bool = false
     
-    private let router = Router<LoginPath>.shared
+    private let router = SCMRouter<LoginPath>.shared
     let loginManager: LoginManager
     
     var body: some View {
