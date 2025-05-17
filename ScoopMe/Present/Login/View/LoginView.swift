@@ -17,8 +17,8 @@ struct LoginView: View {
     
     private var horizontalPadding: CGFloat = 40
     
-    init(loginManager: LoginManager) {
-        self._loginManager = StateObject(wrappedValue: loginManager)
+    init() {
+        self._loginManager = StateObject(wrappedValue: LoginManager())
     }
     
     var body: some View {
@@ -36,8 +36,8 @@ struct LoginView: View {
             )
             .navigationDestination(for: LoginPath.self) { route in
                 switch route {
-                case let .emailLogin(manager):
-                    EmailSignInView(loginManager: manager)
+                case .emailLogin:
+                    EmailSignInView()
                 case .signUp:
                     SignUpView()
                 }
@@ -104,7 +104,7 @@ struct LoginView: View {
                         await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
-                    router.send(.push(.emailLogin(loginManager)))
+                    router.send(.push(.emailLogin))
                 }
             }
             .overlay {
@@ -160,5 +160,5 @@ private enum StringLiterals {
 }
 
 #Preview {
-    LoginView(loginManager: LoginManager())
+    LoginView()
 }

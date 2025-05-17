@@ -11,10 +11,14 @@ import SCMLogin
 struct SplashView: View {
     
     @EnvironmentObject private var flowSwitcher: SCMSwitcher
-    let loginTokenManager: LoginTokenManager
+    @StateObject private var loginTokenManager: LoginTokenManager
     
     @State private var angle: Double = 0
     @State private var scale: CGFloat = 1.0
+    
+    init() {
+        self._loginTokenManager = StateObject(wrappedValue: LoginTokenManager())
+    }
     
     var body: some View {
         ZStack {
@@ -34,10 +38,8 @@ struct SplashView: View {
                 access,
                 refresh) {
                     if loginTokenManager.isNeedLogin {
-                        // 로그인 화면 보내기
                         flowSwitcher.switchTo(.login)
                     } else {
-                        // main 화면 보내기
                         flowSwitcher.switchTo(.main)
                     }
                     
@@ -61,5 +63,5 @@ struct SplashView: View {
 }
 
 #Preview {
-    SplashView(loginTokenManager: LoginTokenManager())
+    SplashView()
 }

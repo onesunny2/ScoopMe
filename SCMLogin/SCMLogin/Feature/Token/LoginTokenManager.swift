@@ -20,10 +20,10 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
         return UserDefaults.standard.bool(forKey: needLoginKey)
     }
     
-//    private let autoLoginKey: String = "autoLoginStatus"
-//    public var autoLoginAvailable: Bool {
-//        return UserDefaults.standard.bool(forKey: autoLoginKey)
-//    }
+    private let autoLoginKey: String = "autoLoginStatus"
+    public var autoLoginAvailable: Bool {
+        return UserDefaults.standard.bool(forKey: autoLoginKey)
+    }
     
     public override init() {
         self.keychainManager = KeychainManager()
