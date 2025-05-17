@@ -12,10 +12,9 @@ import SCMLogin
 
 struct LoginView: View {
     
-    @EnvironmentObject private var router: Router
-    
     @StateObject private var loginManager: LoginManager
     private var horizontalPadding: CGFloat = 40
+    private let router = Router<LoginPath>.shared
     
     init(loginManager: LoginManager) {
         self._loginManager = StateObject(wrappedValue: loginManager)
@@ -94,7 +93,7 @@ struct LoginView: View {
                         await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
-                    router.pushLoginRoute(.emailLogin(manager: loginManager))
+                    router.send(.push(.emailLogin(loginManager)))
                 }
             }
             .overlay {
@@ -146,5 +145,4 @@ private enum StringLiterals {
 
 #Preview {
     LoginView(loginManager: LoginManager())
-        .environmentObject(Router())
 }

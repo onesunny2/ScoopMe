@@ -14,7 +14,8 @@ struct ScoopMeApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    @StateObject private var router = Router()
+    @StateObject
+    private var loginRouter = Router<LoginPath>.shared
     
     init() {
         // kakao sdk 초기화
@@ -25,19 +26,20 @@ struct ScoopMeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $router.loginPath) {
+            NavigationStack(path: $loginRouter.path) {
                 LoginView(loginManager: LoginManager())
-                    .navigationDestination(for: LoginRoute.self) { route in
+                    .navigationDestination(for: LoginPath.self) { route in
                         switch route {
-                        case let .emailLogin(manager): EmailSignInView(loginManager: manager)
-                        case .signup: SignUpView()
+                        case let .emailLogin(manager):
+                            EmailSignInView(loginManager: manager)
+                        case .signUp:
+                            SignUpView()
                         }
                     }
                     .onOpenURL { url in
                         _ = KakaoLoginConfiguration.handleKakaoCallback(url)
                     }
             }
-            .environmentObject(router)
         }
     }
 }
