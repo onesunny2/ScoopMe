@@ -11,7 +11,6 @@ import SCMLogin
 struct ContentView: View {
     
     @EnvironmentObject private var flowSwitcher: SCMSwitcher
-    @StateObject private var loginManager = LoginManager()
     
     var body: some View {
         mainFlowView
@@ -23,7 +22,7 @@ struct ContentView: View {
         case .splash:
             SplashView()
         case .login:
-            LoginView(loginManager: loginManager)
+            LoginView()
         case .main:
             MainTabView()
         }
@@ -32,4 +31,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(SCMSwitcher.shared)
 }

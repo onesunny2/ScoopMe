@@ -23,6 +23,10 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         self.network = SCMNetworkImpl()
     }
     
+    deinit {
+        Log.debug("LoginManager deinit")
+    }
+    
     private let loginTokenManager: LoginTokenManager
     private let deviceTokenManager: DeviceTokenManager
     let network: SCMNetworkImpl

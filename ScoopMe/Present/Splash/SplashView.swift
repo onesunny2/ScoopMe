@@ -6,13 +6,19 @@
 //
 
 import SwiftUI
+import SCMLogin
 
 struct SplashView: View {
     
     @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    @StateObject private var loginTokenManager: LoginTokenManager
     
     @State private var angle: Double = 0
     @State private var scale: CGFloat = 1.0
+    
+    init() {
+        self._loginTokenManager = StateObject(wrappedValue: LoginTokenManager())
+    }
     
     var body: some View {
         ZStack {
@@ -22,8 +28,19 @@ struct SplashView: View {
             shakeImage
         }
         .task {
+            
             try? await Task.sleep(for: .seconds(3))
-            withAnimation(.easeInOut(duration: 0.3)) {
+            
+            if loginTokenManager.autoLoginAvailable {
+                await loginTokenManager.requestRefreshToken {
+                    if loginTokenManager.isNeedLogin {
+                        flowSwitcher.switchTo(.login)
+                    } else {
+                        flowSwitcher.switchTo(.main)
+                    }
+                    
+                }
+            } else {
                 flowSwitcher.switchTo(.login)
             }
         }

@@ -11,13 +11,20 @@ import SCMLogin
 
 struct EmailSignInView: View {
     
+    @StateObject private var loginTokenManager: LoginTokenManager
+    @StateObject private var loginManager: LoginManager
+    
     @State private var email: String = ""
     @State private var password: String = ""
     
     @State private var autoLoginStatus: Bool = false
     
     private let router = SCMRouter<LoginPath>.shared
-    let loginManager: LoginManager
+    
+    init() {
+        self._loginTokenManager = StateObject(wrappedValue: LoginTokenManager())
+        self._loginManager = StateObject(wrappedValue: LoginManager())
+    }
     
     var body: some View {
         ZStack {
@@ -74,7 +81,8 @@ struct EmailSignInView: View {
         }
         .asButton {
             autoLoginStatus.toggle()
-            Log.error("Logger로 변경사항 확인 테스트 주우우우우웅")
+            loginTokenManager.setAutoLoginAvailable(autoLoginStatus)
+            Log.debug("자동로그인 유무: \(autoLoginStatus)")
         }
     }
     
@@ -124,5 +132,5 @@ private enum StringLiterals {
 }
 
 #Preview {
-    EmailSignInView(loginManager: LoginManager())
+    EmailSignInView()
 }

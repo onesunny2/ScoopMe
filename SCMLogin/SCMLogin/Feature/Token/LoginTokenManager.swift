@@ -10,7 +10,7 @@ import Combine
 import SCMLogger
 internal import SCMNetwork
 
-public final class LoginTokenManager: UserServiceProtocol {
+public final class LoginTokenManager: NSObject, UserServiceProtocol {
     
     @Published var alertTitle: String = ""
     @Published var alertMessage: String = ""
@@ -25,7 +25,7 @@ public final class LoginTokenManager: UserServiceProtocol {
         return UserDefaults.standard.bool(forKey: autoLoginKey)
     }
     
-    public init() {
+    public override init() {
         self.keychainManager = KeychainManager()
         self.network = SCMNetworkImpl()
     }
@@ -56,12 +56,13 @@ public final class LoginTokenManager: UserServiceProtocol {
     
     @MainActor
     public func requestRefreshToken(
-        _ access: String,
-        _ refresh: String,
         onSuccess: @escaping () async -> ()
     ) async {
         do {
-            let value = LoginURL.refreshToken(access: access, refresh: refresh)
+            let accessToken = fetchToken(.accessToken)
+            let refreshToken = fetchToken(.refreshToken)
+            
+            let value = LoginURL.refreshToken(access: accessToken, refresh: refreshToken)
             let result = try await callRequest(value, type: RefreshTokenResponseDTO.self)
             
             Log.debug("✅ 리프레시토큰 결과: \(result.response)")
@@ -71,6 +72,9 @@ public final class LoginTokenManager: UserServiceProtocol {
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
+            
+            // 통신 성공했으면 다시 false로 전환
+            setNeedLoginStatus(false)
             
             // 갱신 완료 후 액션(API 재통신 or main화면 보내기)
             await onSuccess()
@@ -92,6 +96,11 @@ public final class LoginTokenManager: UserServiceProtocol {
     /// 로그아웃 - 나중에 로그아웃 하면 토큰 다 삭제하도록
     public func logout() {
         keychainManager.deleteAllToken()
+    }
+    
+    // 자동로그인 유무 변경
+    public func setAutoLoginAvailable(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: autoLoginKey)
     }
     
     private func setNeedLoginStatus(_ value: Bool) {

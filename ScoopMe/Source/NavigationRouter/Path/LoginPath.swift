@@ -9,6 +9,6 @@ import Foundation
 import SCMLogin
 
 enum LoginPath: Hashable {
-    case emailLogin(LoginManager)
+    case emailLogin
     case signUp
 }
