@@ -12,9 +12,9 @@ import SCMLogin
 
 struct LoginView: View {
     
-    @EnvironmentObject private var router: Router
-    
+    @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager: LoginManager
+    
     private var horizontalPadding: CGFloat = 40
     
     init(loginManager: LoginManager) {
@@ -22,17 +22,27 @@ struct LoginView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.scmBrightSprout
-                .ignoresSafeArea()
-            
-            vstackContents
+        NavigationStack(path: $router.path) {
+            ZStack {
+                Color.scmBrightSprout
+                    .ignoresSafeArea()
+                
+                vstackContents
+            }
+            .showAlert(
+                isPresented: $loginManager.loginFalied,
+                title: loginManager.alertTitle,
+                message: loginManager.alertMessage
+            )
+            .navigationDestination(for: LoginPath.self) { route in
+                switch route {
+                case let .emailLogin(manager):
+                    EmailSignInView(loginManager: manager)
+                case .signUp:
+                    SignUpView()
+                }
+            }
         }
-        .showAlert(
-            isPresented: $loginManager.loginFalied,
-            title: loginManager.alertTitle,
-            message: loginManager.alertMessage
-        )
     }
     
     private var vstackContents: some View {
@@ -94,16 +104,21 @@ struct LoginView: View {
                         await loginManager.postKakaoLogin(oauth: data)
                     }
                 case .email:
-                    router.pushLoginRoute(.emailLogin(manager: loginManager))
+                    router.send(.push(.emailLogin(loginManager)))
                 }
             }
             .overlay {
                 if type == .apple {
-                    SignInWithAppleButton { request in
-                        request.requestedScopes = [.fullName, .email]
-                    } onCompletion: { result in
-                        getAppleAuth(result)
-                    }
+                    SignInWithAppleButton(
+                        .signIn,
+                        onRequest: { request in
+                            request.requestedScopes = [.fullName, .email]
+                        },
+                        onCompletion: { result in
+                            getAppleAuth(result)
+                        }
+                    )
+                    .signInWithAppleButtonStyle(.black)
                     .blendMode(.overlay)
                     .padding(.horizontal, horizontalPadding)
                 }
@@ -114,7 +129,7 @@ struct LoginView: View {
     private func getAppleAuth(_ result: Result<ASAuthorization, any Error>) {
         switch result {
         case let .success(authResult):
-            print("애플로그인 성공")
+            Log.debug("애플로그인 성공")
             if let credential = authResult.credential as? ASAuthorizationAppleIDCredential {
                 if let token = credential.identityToken, let stringToken = String(data: token, encoding: .utf8) {
                     Log.debug("애플로그인 토큰: \(stringToken)")
@@ -146,5 +161,4 @@ private enum StringLiterals {
 
 #Preview {
     LoginView(loginManager: LoginManager())
-        .environmentObject(Router())
 }

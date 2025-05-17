@@ -11,11 +11,32 @@
 		435E58392DD1CB0D0005196F /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 435E58382DD1CB0D0005196F /* KakaoSDKCommon */; };
 		435E583B2DD1CB0D0005196F /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 435E583A2DD1CB0D0005196F /* KakaoSDKUser */; };
 		43E0172E2DD3A6ED0016391C /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43E0172D2DD3A6ED0016391C /* Secret.xcconfig */; };
+		43E01AC12DD71D8A0016391C /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC02DD71D8A0016391C /* SCMLogger.framework */; };
+		43E01AC22DD71D8A0016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC02DD71D8A0016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43E01AC52DD71D8D0016391C /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC42DD71D8D0016391C /* SCMNetwork.framework */; };
+		43E01AC62DD71D8D0016391C /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC42DD71D8D0016391C /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43E01AC32DD71D8A0016391C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				43E01AC22DD71D8A0016391C /* SCMLogger.framework in Embed Frameworks */,
+				43E01AC62DD71D8D0016391C /* SCMNetwork.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		435E58252DD1C9E10005196F /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E0172D2DD3A6ED0016391C /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		43E01AC02DD71D8A0016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43E01AC42DD71D8D0016391C /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -49,7 +70,9 @@
 			files = (
 				435E58392DD1CB0D0005196F /* KakaoSDKCommon in Frameworks */,
 				435E58372DD1CB0D0005196F /* KakaoSDKAuth in Frameworks */,
+				43E01AC12DD71D8A0016391C /* SCMLogger.framework in Frameworks */,
 				435E583B2DD1CB0D0005196F /* KakaoSDKUser in Frameworks */,
+				43E01AC52DD71D8D0016391C /* SCMNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +84,7 @@
 			children = (
 				43E0172D2DD3A6ED0016391C /* Secret.xcconfig */,
 				435E58272DD1C9E10005196F /* SCMLogin */,
+				43E01ABF2DD71D8A0016391C /* Frameworks */,
 				435E58262DD1C9E10005196F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,6 +95,15 @@
 				435E58252DD1C9E10005196F /* SCMLogin.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		43E01ABF2DD71D8A0016391C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43E01AC42DD71D8D0016391C /* SCMNetwork.framework */,
+				43E01AC02DD71D8A0016391C /* SCMLogger.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,6 +127,7 @@
 				435E58212DD1C9E10005196F /* Sources */,
 				435E58222DD1C9E10005196F /* Frameworks */,
 				435E58232DD1C9E10005196F /* Resources */,
+				43E01AC32DD71D8A0016391C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

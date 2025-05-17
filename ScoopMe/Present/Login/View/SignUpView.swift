@@ -11,8 +11,8 @@ import SCMLogin
 
 struct SignUpView: View {
     
-    @EnvironmentObject private var route: Router
     @StateObject private var signupManager = SignUpManager()
+    private let router = SCMRouter<LoginPath>.shared
     
     @State private var email: String = ""
     @State private var password: String = ""
@@ -38,7 +38,7 @@ struct SignUpView: View {
             Image(.homeFill)
                 .basicImage(width: 25, color: .scmBlackSprout)
                 .asButton {
-                    route.popToLoginRoot()
+                    router.send(.popAll)
                 }
         }
         .showAlert(
@@ -51,7 +51,7 @@ struct SignUpView: View {
             title: StringLiterals.signupAlertTitle.text,
             message: StringLiterals.signupAlertMessage.text,
             action: {
-                route.popLoginRoute()
+                router.send(.pop)
             }
         )
         .lowercaseTextfield($email) {

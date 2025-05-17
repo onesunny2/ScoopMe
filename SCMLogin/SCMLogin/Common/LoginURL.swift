@@ -8,7 +8,7 @@
 import Foundation
 internal import SCMNetwork
 
-enum LoginURL {
+public enum LoginURL {
     case checkEmail(email: String)
     case join(email: String, pw: String, nick: String, phone: String?, device: String?)
     case emailLogin(email: String, pw: String, device: String?)

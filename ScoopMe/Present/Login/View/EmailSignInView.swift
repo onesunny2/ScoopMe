@@ -11,13 +11,12 @@ import SCMLogin
 
 struct EmailSignInView: View {
     
-    @EnvironmentObject private var router: Router
-    
     @State private var email: String = ""
     @State private var password: String = ""
     
     @State private var autoLoginStatus: Bool = false
     
+    private let router = SCMRouter<LoginPath>.shared
     let loginManager: LoginManager
     
     var body: some View {
@@ -94,7 +93,7 @@ struct EmailSignInView: View {
             Text(StringLiterals.signup.text)
                 .basicText(.PTBody2, .scmGray75)
                 .asButton {
-                    router.pushLoginRoute(.signup)
+                    router.send(.push(.signUp))
                 }
         }
         .defaultHorizontalPadding()
@@ -126,5 +125,4 @@ private enum StringLiterals {
 
 #Preview {
     EmailSignInView(loginManager: LoginManager())
-        .environmentObject(Router())
 }

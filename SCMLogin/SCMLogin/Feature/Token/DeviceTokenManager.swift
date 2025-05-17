@@ -21,6 +21,17 @@ public final class DeviceTokenManager: NetworkEmptyProtocol {
     
     private let userdefaultsKey = "deviceTokenChanged"
     
+    public func fetchToken(_ type: Keychain) -> String {
+        do {
+            let keychainManager = KeychainManager()
+            let token = try keychainManager.getToken(for: type)
+            return token
+        } catch {
+            Log.error("\(type.rawValue)의 토큰 정보를 불러오는데 실패했습니다.")
+            return ""
+        }
+    }
+    
     // device Token 저장
     public func saveDeviceToken(_ device: String) {
         do {

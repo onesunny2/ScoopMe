@@ -10,14 +10,14 @@ import Combine
 import SCMLogger
 internal import SCMNetwork
 
-public final class LoginManager: UserServiceProtocol {
+public final class LoginManager: NSObject, UserServiceProtocol {
     
     @Published public var loginFalied: Bool = false
     @Published public var alertMessage: String = ""
     
     public var alertTitle: String = "로그인 실패"
     
-    public init() {
+    public override init() {
         self.loginTokenManager = LoginTokenManager()
         self.deviceTokenManager = DeviceTokenManager()
         self.network = SCMNetworkImpl()

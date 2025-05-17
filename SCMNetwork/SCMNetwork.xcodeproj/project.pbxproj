@@ -6,8 +6,28 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		43E01AC92DD71DB40016391C /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC82DD71DB40016391C /* SCMLogger.framework */; };
+		43E01ACA2DD71DB40016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01AC82DD71DB40016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43E01ACB2DD71DB50016391C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				43E01ACA2DD71DB40016391C /* SCMLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		43AC4B0D2DD0A4FA0010D965 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43E01AC82DD71DB40016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43E01AC92DD71DB40016391C /* SCMLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				43AC4B0F2DD0A4FA0010D965 /* SCMNetwork */,
+				43E01AC72DD71DB40016391C /* Frameworks */,
 				43AC4B0E2DD0A4FA0010D965 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +78,14 @@
 				43AC4B0D2DD0A4FA0010D965 /* SCMNetwork.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		43E01AC72DD71DB40016391C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43E01AC82DD71DB40016391C /* SCMLogger.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,6 +109,7 @@
 				43AC4B092DD0A4FA0010D965 /* Sources */,
 				43AC4B0A2DD0A4FA0010D965 /* Frameworks */,
 				43AC4B0B2DD0A4FA0010D965 /* Resources */,
+				43E01ACB2DD71DB50016391C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

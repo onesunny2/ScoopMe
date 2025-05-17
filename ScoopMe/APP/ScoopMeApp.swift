@@ -13,8 +13,7 @@ import UserNotifications
 struct ScoopMeApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
-    @StateObject private var router = Router()
+    @StateObject private var flowSwitcher = SCMSwitcher.shared
     
     init() {
         // kakao sdk 초기화
@@ -25,19 +24,11 @@ struct ScoopMeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $router.loginPath) {
-                LoginView(loginManager: LoginManager())
-                    .navigationDestination(for: LoginRoute.self) { route in
-                        switch route {
-                        case let .emailLogin(manager): EmailSignInView(loginManager: manager)
-                        case .signup: SignUpView()
-                        }
-                    }
-                    .onOpenURL { url in
-                        _ = KakaoLoginConfiguration.handleKakaoCallback(url)
-                    }
-            }
-            .environmentObject(router)
+            ContentView()
+                .environmentObject(flowSwitcher)
+                .onOpenURL { url in
+                    _ = KakaoLoginConfiguration.handleKakaoCallback(url)
+                }
         }
     }
 }
