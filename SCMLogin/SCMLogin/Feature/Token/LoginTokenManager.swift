@@ -20,10 +20,10 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
         return UserDefaults.standard.bool(forKey: needLoginKey)
     }
     
-    private let autoLoginKey: String = "autoLoginStatus"
-    public var autoLoginAvailable: Bool {
-        return UserDefaults.standard.bool(forKey: autoLoginKey)
-    }
+//    private let autoLoginKey: String = "autoLoginStatus"
+//    public var autoLoginAvailable: Bool {
+//        return UserDefaults.standard.bool(forKey: autoLoginKey)
+//    }
     
     public override init() {
         self.keychainManager = KeychainManager()
@@ -71,6 +71,9 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
                 access: result.response.accessToken,
                 refresh: result.response.refreshToken
             )
+            
+            // 통신 성공했으면 다시 false로 전환
+            setNeedLoginStatus(false)
             
             // 갱신 완료 후 액션(API 재통신 or main화면 보내기)
             await onSuccess()

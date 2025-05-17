@@ -24,11 +24,24 @@ struct SplashView: View {
             shakeImage
         }
         .task {
+            
             try? await Task.sleep(for: .seconds(3))
-            withAnimation(.easeInOut(duration: 0.3)) {
-                flowSwitcher.switchTo(.login)
-            }
-//            await
+            
+            let access = loginTokenManager.fetchToken(.accessToken)
+            let refresh = loginTokenManager.fetchToken(.refreshToken)
+            
+            await loginTokenManager.requestRefreshToken(
+                access,
+                refresh) {
+                    if loginTokenManager.isNeedLogin {
+                        // 로그인 화면 보내기
+                        flowSwitcher.switchTo(.login)
+                    } else {
+                        // main 화면 보내기
+                        flowSwitcher.switchTo(.main)
+                    }
+                    
+                }
         }
     }
     
