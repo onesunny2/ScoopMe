@@ -39,6 +39,10 @@ extension SCMRouter where SCMRouter == SCMRouter<MainFlow> {
     static let shared = SCMRouter()
 }
 
+extension SCMRouter where SCMRouter == SCMRouter<TabFlow> {
+    static let shared = SCMRouter()
+}
+
 extension SCMRouter {
     enum Action {
         case push(P)
