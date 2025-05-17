@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SplashView: View {
     
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    
     @State private var angle: Double = 0
     @State private var scale: CGFloat = 1.0
     
@@ -18,6 +20,12 @@ struct SplashView: View {
                 .ignoresSafeArea()
             
             shakeImage
+        }
+        .task {
+            try? await Task.sleep(for: .seconds(3))
+            withAnimation(.easeInOut(duration: 0.3)) {
+                flowSwitcher.switchTo(.login)
+            }
         }
     }
     
