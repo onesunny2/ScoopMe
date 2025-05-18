@@ -164,7 +164,7 @@ extension LoginView {
         }
     }
     
-    func switchToMainView() async {
+    private func switchToMainView() async {
         showProgressView = true
         try? await Task.sleep(for: .seconds(2))
         showProgressView = false

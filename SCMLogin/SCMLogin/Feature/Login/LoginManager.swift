@@ -64,13 +64,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postEmailLogin(_ email: String, _ password: String) async {
+    public func postEmailLogin(_ email: String, _ password: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 이메일로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 이메일 login error: \(error)")
             loginFalied = true

@@ -11,6 +11,8 @@ import SCMLogin
 
 struct EmailSignInView: View {
     
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    private let router = SCMRouter<LoginPath>.shared
     private let loginManager = DIContainer.shared.loginManager
     private let loginTokenManager = DIContainer.shared.loginTokenManager
     
@@ -19,7 +21,7 @@ struct EmailSignInView: View {
     
     @State private var autoLoginStatus: Bool = false
     
-    private let router = SCMRouter<LoginPath>.shared
+    @State private var showProgressView: Bool = false
     
     var body: some View {
         ZStack {
@@ -27,6 +29,17 @@ struct EmailSignInView: View {
                 .ignoresSafeArea()
             
             vstackContents
+            
+            if showProgressView {
+                Rectangle()
+                    .fill(.scmGray100.opacity(0.3))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                    .overlay(alignment: .center) {
+                        ProgressView()
+                            .tint(.scmBlackSprout)
+                    }
+            }
         }
         .backButton(.scmBlackSprout)
     }
@@ -81,6 +94,7 @@ struct EmailSignInView: View {
         }
     }
     
+    @MainActor
     private var bottomLogin: some View {
         VStack(alignment: .trailing, spacing: 12) {
             NextButtonCell(
@@ -89,7 +103,9 @@ struct EmailSignInView: View {
             )
             .asButton {
                 Task {
-                    await loginManager.postEmailLogin(email, password)
+                    await loginManager.postEmailLogin(email, password) {
+                        await switchToMainView()
+                    }
                 }
             }
             
@@ -101,6 +117,15 @@ struct EmailSignInView: View {
         }
         .defaultHorizontalPadding()
         .padding(.top, 40)
+    }
+}
+
+extension EmailSignInView {
+    private func switchToMainView() async {
+        showProgressView = true
+        try? await Task.sleep(for: .seconds(2))
+        showProgressView = false
+        flowSwitcher.switchTo(.main)
     }
 }
 
