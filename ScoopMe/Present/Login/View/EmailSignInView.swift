@@ -11,8 +11,8 @@ import SCMLogin
 
 struct EmailSignInView: View {
     
-    @StateObject private var loginTokenManager: LoginTokenManager
-    @StateObject private var loginManager: LoginManager
+    private let loginManager = DIContainer.shared.loginManager
+    private let loginTokenManager = DIContainer.shared.loginTokenManager
     
     @State private var email: String = ""
     @State private var password: String = ""
@@ -20,11 +20,6 @@ struct EmailSignInView: View {
     @State private var autoLoginStatus: Bool = false
     
     private let router = SCMRouter<LoginPath>.shared
-    
-    init() {
-        self._loginTokenManager = StateObject(wrappedValue: LoginTokenManager())
-        self._loginManager = StateObject(wrappedValue: LoginManager())
-    }
     
     var body: some View {
         ZStack {

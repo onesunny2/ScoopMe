@@ -11,7 +11,7 @@ import SCMLogin
 
 struct SignUpView: View {
     
-    @StateObject private var signupManager = SignUpManager()
+    @StateObject private var signupManager = DIContainer.shared.signUpManager
     private let router = SCMRouter<LoginPath>.shared
     
     @State private var email: String = ""

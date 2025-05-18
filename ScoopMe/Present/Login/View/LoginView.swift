@@ -13,13 +13,9 @@ import SCMLogin
 struct LoginView: View {
     
     @StateObject private var router = SCMRouter<LoginPath>.shared
-    @StateObject private var loginManager: LoginManager
+    @StateObject private var loginManager = DIContainer.shared.loginManager
     
     private var horizontalPadding: CGFloat = 40
-    
-    init() {
-        self._loginManager = StateObject(wrappedValue: LoginManager())
-    }
     
     var body: some View {
         NavigationStack(path: $router.path) {
