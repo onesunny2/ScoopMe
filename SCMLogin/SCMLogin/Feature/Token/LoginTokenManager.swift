@@ -55,10 +55,7 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func requestRefreshToken(
-        onSuccess: @escaping () async -> ()
-    ) async {
-        do {
+    public func requestRefreshToken() async throws {
             let accessToken = fetchToken(.accessToken)
             let refreshToken = fetchToken(.refreshToken)
             
@@ -75,23 +72,6 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
             
             // 통신 성공했으면 다시 false로 전환
             setNeedLoginStatus(false)
-            
-            // 갱신 완료 후 액션(API 재통신 or main화면 보내기)
-            await onSuccess()
-        } catch {
-            // 리프레시 만료되면 재로그인으로 보내야 함
-            Log.error("❎ 리프레시토큰 갱신 error: \(error)")
-            
-            setNeedLoginStatus(true)
-            
-            guard let scmError = error as? SCMError else { return }
-            
-            switch scmError {
-            default:
-                alertTitle = "안내"
-                alertMessage = "세션이 만료되었습니다.\n다시 로그인 후 사용해주세요." // true이면 로그인 화면으로 보냄!
-            }
-        }
     }
     
     /// 로그아웃 - 나중에 로그아웃 하면 토큰 다 삭제하도록
