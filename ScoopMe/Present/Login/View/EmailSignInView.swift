@@ -29,17 +29,7 @@ struct EmailSignInView: View {
                 .ignoresSafeArea()
             
             vstackContents
-            
-            if showProgressView {
-                Rectangle()
-                    .fill(.scmGray100.opacity(0.3))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
-                    .overlay(alignment: .center) {
-                        ProgressView()
-                            .tint(.scmBlackSprout)
-                    }
-            }
+            progressView
         }
         .backButton(.scmBlackSprout)
     }
@@ -117,6 +107,20 @@ struct EmailSignInView: View {
         }
         .defaultHorizontalPadding()
         .padding(.top, 40)
+    }
+    
+    @ViewBuilder
+    private var progressView: some View {
+        if showProgressView {
+            Rectangle()
+                .fill(.scmGray100.opacity(0.3))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+                .overlay(alignment: .center) {
+                    ProgressView()
+                        .tint(.scmBlackSprout)
+                }
+        }
     }
 }
 

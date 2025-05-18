@@ -26,17 +26,7 @@ struct LoginView: View {
                     .ignoresSafeArea()
                 
                 vstackContents
-                
-                if showProgressView {
-                    Rectangle()
-                        .fill(.scmGray100.opacity(0.3))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .ignoresSafeArea()
-                        .overlay(alignment: .center) {
-                            ProgressView()
-                                .tint(.scmBlackSprout)
-                        }
-                }
+                progressView
             }
             .showAlert(
                 isPresented: $loginManager.loginFalied,
@@ -136,6 +126,20 @@ struct LoginView: View {
                     .padding(.horizontal, horizontalPadding)
                 }
             }
+    }
+    
+    @ViewBuilder
+    private var progressView: some View {
+        if showProgressView {
+            Rectangle()
+                .fill(.scmGray100.opacity(0.3))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+                .overlay(alignment: .center) {
+                    ProgressView()
+                        .tint(.scmBlackSprout)
+                }
+        }
     }
 }
 
