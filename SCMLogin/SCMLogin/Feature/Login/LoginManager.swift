@@ -79,12 +79,13 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     
     /// 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
     private func setTokens(result: HTTPResponse<LoginDTO>) async {
-        let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
-        await deviceTokenManager.updateDeviceToken(deviceToken)
         
         loginTokenManager.saveLoginTokens(
             access: result.response.accessToken,
             refresh: result.response.refreshToken
         )
+        
+        let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
+        await deviceTokenManager.updateDeviceToken(deviceToken)
     }
 }
