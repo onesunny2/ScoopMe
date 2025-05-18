@@ -21,7 +21,7 @@ final class DIContainer {
         register(LoginTokenManager.self) { LoginTokenManager() }
     }
     
-    func register<T: AnyObject>(
+    private func register<T: AnyObject>(
         _ type: T.Type,
         factory: @escaping () -> T
     ) {
