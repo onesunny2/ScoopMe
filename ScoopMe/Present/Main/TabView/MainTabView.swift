@@ -24,7 +24,9 @@ struct MainTabView: View {
                     .tag(1)
                 
                 ChatView()
-                    .tabImage(Image(.messageFill))
+                    .tabImage(
+                        Image(.tabMessageFill)
+                    )
                     .tag(2)
                 
                 CommunityView()
@@ -38,6 +40,7 @@ struct MainTabView: View {
             .toolbarBackground(.visible, for: .tabBar)
             .toolbarBackground(.scmGray0, for: .tabBar)
             .toolbarColorScheme(.none, for: .tabBar)
+            .tint(.scmBlackSprout)
         }
     }
 }
