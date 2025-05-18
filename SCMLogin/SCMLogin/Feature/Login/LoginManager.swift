@@ -47,13 +47,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postKakaoLogin(oauth token: String) async {
+    public func postKakaoLogin(oauth token: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 카카오로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 카카오 login error: \(error)")
             loginFalied = true

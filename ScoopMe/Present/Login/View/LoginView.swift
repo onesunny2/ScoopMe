@@ -12,9 +12,11 @@ import SCMLogin
 
 struct LoginView: View {
     
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher
     @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager = DIContainer.shared.loginManager
     
+    @State private var showProgressView: Bool = false
     private var horizontalPadding: CGFloat = 40
     
     var body: some View {
@@ -24,6 +26,17 @@ struct LoginView: View {
                     .ignoresSafeArea()
                 
                 vstackContents
+                
+                if showProgressView {
+                    Rectangle()
+                        .fill(.scmGray100.opacity(0.3))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .overlay(alignment: .center) {
+                            ProgressView()
+                                .tint(.scmBlackSprout)
+                        }
+                }
             }
             .showAlert(
                 isPresented: $loginManager.loginFalied,
@@ -68,6 +81,7 @@ struct LoginView: View {
         }
     }
     
+    @MainActor
     private func loginButton(_ type: LoginType) -> some View {
         
         RoundedRectangle(cornerRadius: 5)
@@ -97,7 +111,13 @@ struct LoginView: View {
                 case .kakao:
                     Task {
                         let data = try await KakaoLoginManager.shared.kakaoLogin()
-                        await loginManager.postKakaoLogin(oauth: data)
+                        await loginManager.postKakaoLogin(oauth: data) {
+                            // 로그인 성공 시 화면 이동
+                            showProgressView = true
+                            try? await Task.sleep(for: .seconds(2))
+                            showProgressView = false
+                            flowSwitcher.switchTo(.main)
+                        }
                     }
                 case .email:
                     router.send(.push(.emailLogin))
