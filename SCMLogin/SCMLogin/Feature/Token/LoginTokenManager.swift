@@ -82,13 +82,14 @@ public final class LoginTokenManager: NSObject, UserServiceProtocol {
             // 리프레시 만료되면 재로그인으로 보내야 함
             Log.error("❎ 리프레시토큰 갱신 error: \(error)")
             
+            setNeedLoginStatus(true)
+            
             guard let scmError = error as? SCMError else { return }
             
             switch scmError {
             default:
                 alertTitle = "안내"
-                alertMessage = "세션이 만료되었습니다.\n다시 로그인 후 사용해주세요."
-                setNeedLoginStatus(true)  // true이면 로그인 화면으로 보냄!
+                alertMessage = "세션이 만료되었습니다.\n다시 로그인 후 사용해주세요." // true이면 로그인 화면으로 보냄!
             }
         }
     }
