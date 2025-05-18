@@ -12,9 +12,11 @@ import SCMLogin
 
 struct LoginView: View {
     
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher
     @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager = DIContainer.shared.loginManager
     
+    @State private var showProgressView: Bool = false
     private var horizontalPadding: CGFloat = 40
     
     var body: some View {
@@ -24,6 +26,7 @@ struct LoginView: View {
                     .ignoresSafeArea()
                 
                 vstackContents
+                progressView
             }
             .showAlert(
                 isPresented: $loginManager.loginFalied,
@@ -68,6 +71,7 @@ struct LoginView: View {
         }
     }
     
+    @MainActor
     private func loginButton(_ type: LoginType) -> some View {
         
         RoundedRectangle(cornerRadius: 5)
@@ -97,7 +101,10 @@ struct LoginView: View {
                 case .kakao:
                     Task {
                         let data = try await KakaoLoginManager.shared.kakaoLogin()
-                        await loginManager.postKakaoLogin(oauth: data)
+                        await loginManager.postKakaoLogin(oauth: data) {
+                            // 로그인 성공 시 화면 이동
+                            await switchToMainView()
+                        }
                     }
                 case .email:
                     router.send(.push(.emailLogin))
@@ -121,6 +128,23 @@ struct LoginView: View {
             }
     }
     
+    @ViewBuilder
+    private var progressView: some View {
+        if showProgressView {
+            Rectangle()
+                .fill(.scmGray100.opacity(0.3))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+                .overlay(alignment: .center) {
+                    ProgressView()
+                        .tint(.scmBlackSprout)
+                }
+        }
+    }
+}
+
+extension LoginView {
+    
     /// 애플 로그인 결과 값에 대한 분기처리
     private func getAppleAuth(_ result: Result<ASAuthorization, any Error>) {
         switch result {
@@ -131,7 +155,9 @@ struct LoginView: View {
                     Log.debug("애플로그인 토큰: \(stringToken)")
                     
                     Task {
-                        await loginManager.postAppleLogin(id: stringToken)
+                        await loginManager.postAppleLogin(id: stringToken) {
+                            await switchToMainView()
+                        }
                     }
                 }
             }
@@ -140,6 +166,13 @@ struct LoginView: View {
             Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
             loginManager.alertMessage = "\(error.localizedDescription)"
         }
+    }
+    
+    private func switchToMainView() async {
+        showProgressView = true
+        try? await Task.sleep(for: .seconds(2))
+        showProgressView = false
+        flowSwitcher.switchTo(.main)
     }
 }
 

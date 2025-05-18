@@ -90,6 +90,7 @@ public enum LoginURL {
             ]
         case let .updateDeviceToken(_, access):
             return [
+                "accept": "application/json",
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
                 "Authorization": access

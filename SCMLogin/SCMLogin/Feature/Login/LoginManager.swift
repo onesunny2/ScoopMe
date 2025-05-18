@@ -32,13 +32,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     let network: SCMNetworkImpl
     
     @MainActor
-    public func postAppleLogin(id token: String) async {
+    public func postAppleLogin(id token: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 애플로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 애플 login error: \(error)")
             loginFalied = true
@@ -47,13 +48,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postKakaoLogin(oauth token: String) async {
+    public func postKakaoLogin(oauth token: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 카카오로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 카카오 login error: \(error)")
             loginFalied = true
@@ -62,13 +64,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postEmailLogin(_ email: String, _ password: String) async {
+    public func postEmailLogin(_ email: String, _ password: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 이메일로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 이메일 login error: \(error)")
             loginFalied = true
@@ -78,12 +81,13 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     
     /// 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
     private func setTokens(result: HTTPResponse<LoginDTO>) async {
-        let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
-        await deviceTokenManager.updateDeviceToken(deviceToken)
         
         loginTokenManager.saveLoginTokens(
             access: result.response.accessToken,
             refresh: result.response.refreshToken
         )
+        
+        let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
+        await deviceTokenManager.updateDeviceToken(deviceToken)
     }
 }
