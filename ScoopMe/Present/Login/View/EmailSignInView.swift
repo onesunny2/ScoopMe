@@ -127,7 +127,7 @@ struct EmailSignInView: View {
 extension EmailSignInView {
     private func switchToMainView() async {
         showProgressView = true
-        try? await Task.sleep(for: .seconds(2))
+        try? await Task.sleep(for: .seconds(1.5))
         showProgressView = false
         flowSwitcher.switchTo(.main)
     }
