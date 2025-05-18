@@ -113,10 +113,7 @@ struct LoginView: View {
                         let data = try await KakaoLoginManager.shared.kakaoLogin()
                         await loginManager.postKakaoLogin(oauth: data) {
                             // 로그인 성공 시 화면 이동
-                            showProgressView = true
-                            try? await Task.sleep(for: .seconds(2))
-                            showProgressView = false
-                            flowSwitcher.switchTo(.main)
+                            await switchToMainView()
                         }
                     }
                 case .email:
@@ -140,6 +137,9 @@ struct LoginView: View {
                 }
             }
     }
+}
+
+extension LoginView {
     
     /// 애플 로그인 결과 값에 대한 분기처리
     private func getAppleAuth(_ result: Result<ASAuthorization, any Error>) {
@@ -151,7 +151,9 @@ struct LoginView: View {
                     Log.debug("애플로그인 토큰: \(stringToken)")
                     
                     Task {
-                        await loginManager.postAppleLogin(id: stringToken)
+                        await loginManager.postAppleLogin(id: stringToken) {
+                            await switchToMainView()
+                        }
                     }
                 }
             }
@@ -160,6 +162,13 @@ struct LoginView: View {
             Log.error("애플로그인 오류: \(AppleError.invalidCredentail.localizedDescription)")
             loginManager.alertMessage = "\(error.localizedDescription)"
         }
+    }
+    
+    func switchToMainView() async {
+        showProgressView = true
+        try? await Task.sleep(for: .seconds(2))
+        showProgressView = false
+        flowSwitcher.switchTo(.main)
     }
 }
 

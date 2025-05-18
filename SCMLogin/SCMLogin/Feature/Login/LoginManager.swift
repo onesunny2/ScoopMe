@@ -32,13 +32,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     let network: SCMNetworkImpl
     
     @MainActor
-    public func postAppleLogin(id token: String) async {
+    public func postAppleLogin(id token: String, onSuccess: @escaping () async -> ()) async {
         do {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
             Log.debug("✅ 애플로그인 결과: \(result.response)")
             await setTokens(result: result)
+            await onSuccess()
         } catch {
             Log.error("❎ 애플 login error: \(error)")
             loginFalied = true
