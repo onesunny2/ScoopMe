@@ -12,12 +12,6 @@ import SCMLogin
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     
-//    private let deviceTokenManager: DeviceTokenManager
-//    
-//    override init() {
-//        self.deviceTokenManager = DeviceTokenManager()
-//    }
-    
     private let deviceTokenManager = DIContainer.shared.deviceTokenManager
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
