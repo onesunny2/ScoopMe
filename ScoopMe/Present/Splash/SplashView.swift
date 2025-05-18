@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMLogger
 import SCMLogin
 
 struct SplashView: View {
@@ -57,6 +58,7 @@ extension SplashView {
                     flowSwitcher.switchTo(.main)
                 }
             } catch {
+                Log.error("❎ 리프레시토큰 갱신 error: \(error)")
                 // 기본적으로는 로그인 화면으로 이동
                 flowSwitcher.switchTo(.login)
             }
