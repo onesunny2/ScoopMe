@@ -24,20 +24,9 @@ struct SplashView: View {
             shakeImage
         }
         .task {
-            
             try? await Task.sleep(for: .seconds(3))
             
-            if loginTokenManager.autoLoginAvailable {
-                await loginTokenManager.requestRefreshToken {
-                    if loginTokenManager.isNeedLogin {
-                        flowSwitcher.switchTo(.login)
-                    } else {
-                        flowSwitcher.switchTo(.main)
-                    }
-                }
-            } else {
-                flowSwitcher.switchTo(.login)
-            }
+            await setAutoLogin()
         }
     }
     
@@ -53,6 +42,27 @@ struct SplashView: View {
                     scale = 1.1
                 }
             }
+    }
+}
+
+extension SplashView {
+    private func setAutoLogin() async {
+        if loginTokenManager.autoLoginAvailable {
+            do {
+                try await loginTokenManager.requestRefreshToken()
+                
+                if loginTokenManager.isNeedLogin {
+                    flowSwitcher.switchTo(.login)
+                } else {
+                    flowSwitcher.switchTo(.main)
+                }
+            } catch {
+                // 기본적으로는 로그인 화면으로 이동
+                flowSwitcher.switchTo(.login)
+            }
+        } else {
+            flowSwitcher.switchTo(.login)
+        }
     }
 }
 
