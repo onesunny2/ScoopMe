@@ -6,41 +6,23 @@
 //
 
 import Foundation
+import Combine
 import SCMLogger
 import SCMLogin
 
 final class DIContainer {
-    static var shared = DIContainer()
-    
-    private var services: [ObjectIdentifier: () -> AnyObject]
+    static let shared: DIContainer = DIContainer()
     
     private init() {
-        self.services = [:]
-        
-        register(LoginManager.self) { LoginManager() }
-        register(LoginTokenManager.self) { LoginTokenManager() }
+        self.loginManager = LoginManager()
+        self.signUpManager = SignUpManager()
+        self.loginTokenManager = LoginTokenManager()
+        self.deviceTokenManager = DeviceTokenManager()
     }
     
-    private func register<T: AnyObject>(
-        _ type: T.Type,
-        factory: @escaping () -> T
-    ) {
-        let key = ObjectIdentifier(type)
-        
-        if services[key] != nil {
-            Log.error("DIContainer: \(type) is already registered. Overwriting...")
-        }
-        
-        services[key] = factory
-    }
-    
-    func resolve<T: AnyObject>(_ type: T.Type) -> T {
-        let key = ObjectIdentifier(type)
-        guard let factory = services[key] as? () -> T else {
-            fatalError("DIContainer: \(type) not registered")
-            Log.error("DIContainer: \(type) not registered")
-        }
-        
-        return factory()
-    }
+    /// SCMLogin
+    private(set) var loginManager: LoginManager
+    private(set) var signUpManager: SignUpManager
+    private(set) var loginTokenManager: LoginTokenManager
+    private(set) var deviceTokenManager: DeviceTokenManager
 }
