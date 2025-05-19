@@ -11,19 +11,24 @@ import CoreLocation
 
 struct HomeView: View {
     
+    @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager = DIContainer.shared.locationManager
     
     var body: some View {
-        testButton
-            .task {
-                await locationManager.checkDeviceCondition()
+        NavigationStack {
+            ZStack {
+                testButton
+                    .task {
+                        await locationManager.checkDeviceCondition()
+                    }
+                    .showAlert(
+                        isPresented: $locationManager.showAlert,
+                        title: "안내",
+                        message: locationManager.alertMessage, action: {
+                            locationManager.openSettings()
+                        })
             }
-            .showAlert(
-                isPresented: $locationManager.showAlert,
-                title: "안내",
-                message: locationManager.alertMessage, action: {
-                    locationManager.openSettings()
-                })
+        }
     }
     
     private var testButton: some View {
