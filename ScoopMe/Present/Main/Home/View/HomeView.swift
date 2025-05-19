@@ -18,35 +18,45 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $router.path) {
             ZStack {
-                testButton
-                    .task {
-                        await locationManager.checkDeviceCondition()
-                    }
-                    .showAlert(
-                        isPresented: $locationManager.showAlert,
-                        title: "안내",
-                        message: locationManager.alertMessage, action: {
-                            locationManager.openSettings()
-                        })
+                Color.scmBrightSprout
+                    .ignoresSafeArea()
             }
+            .task {
+                await locationManager.checkDeviceCondition()
+            }
+            .showAlert(
+                isPresented: $locationManager.showAlert,
+                title: "안내",
+                message: locationManager.alertMessage, action: {
+                    locationManager.openSettings()
+                })
             .navigationDestination(for: HomePath.self) { router in
                 switch router {
                 case .detail: HomeDetailView()
                 }
             }
+            .toolbarItem (leading: {
+                addressButton
+            })
         }
     }
     
-    private var testButton: some View {
+    private var addressButton: some View {
         Button {
-            Task {
-                await locationManager.startCurrentLocation()
-            }
+            Log.debug("addressButton tapped")
         } label: {
-            VStack {
-                Text("\(locationManager.currentLocation.coordinate.latitude)")
-                Text("\(locationManager.currentLocation.coordinate.longitude)")
-                Text("주소: \(locationManager.currentAddress)")
+            HStack(alignment: .center, spacing: 8) {
+                Image(.location)
+                    .basicImage(width: 24, color: .scmGray90)
+                
+                Text("\(locationManager.currentAddress)")
+                    .basicText(.PTTitle3, .scmGray90)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.5)
+                
+                Image(.detail)
+                    .basicImage(width: 24, color: .scmGray90)
             }
         }
     }
