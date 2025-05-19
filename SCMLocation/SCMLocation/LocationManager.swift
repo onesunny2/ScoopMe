@@ -84,14 +84,45 @@ extension LocationManager {
         }
     }
     
-    /// 디바이스 시스템 위치서비스 활성화 위해 설정 앱으로 이동
-    @MainActor
-    private func openSettings() {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url) { success in
-                if success { Log.debug("설정앱 이동 성공")  } else { Log.error("설정 앱 이동 실패") }
-            }
+    /// 위치 좌표를 주소로 변환
+    private func getGeocodeLacation(_ location: CLLocation) async throws -> String {
+        
+        let placemarks = try await LocationManager.geocoder.reverseGeocodeLocation(location)
+        
+        guard let placemark = placemarks.first else {
+            Log.error("주소 정보 없음")
+            throw GeoLocationError.noAddressFound
         }
+        
+        return formatAddress(from: placemark)
     }
     
+    /// placemark 주소 포맷팅
+    private func formatAddress(from placemark: CLPlacemark) -> String {
+        
+        var components = [String]()
+        
+        // 국가
+        if let country = placemark.country { components.append(country) }
+        
+        // 시도
+        if let administrativeArea = placemark.administrativeArea { components.append(administrativeArea) }
+        
+        // 구/군
+        if let locality = placemark.locality { components.append(locality) }
+        
+        // 도로명
+        if let thoroughfare = placemark.thoroughfare {
+            var thoroughfareComponent = thoroughfare
+            
+            // 번지
+            if let subThoroughfare = placemark.subThoroughfare {
+                thoroughfareComponent += " \(subThoroughfare)"
+            }
+            
+            components.append(thoroughfareComponent)
+        }
+        
+        return components.joined(separator: " ")
+    }
 }
