@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SCMLocation
+import SCMLogger
 import CoreLocation
 
 struct HomeView: View {
@@ -15,7 +16,7 @@ struct HomeView: View {
     @StateObject private var locationManager = DIContainer.shared.locationManager
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             ZStack {
                 testButton
                     .task {
@@ -27,6 +28,11 @@ struct HomeView: View {
                         message: locationManager.alertMessage, action: {
                             locationManager.openSettings()
                         })
+            }
+            .navigationDestination(for: HomePath.self) { router in
+                switch router {
+                case .detail: HomeDetailView()
+                }
             }
         }
     }
