@@ -15,14 +15,24 @@ public final class LocationManager: NSObject, ObservableObject {
     private let manager = CLLocationManager()
     static let geocoder = CLGeocoder()
     
-    @Published public var currentLocation: CLLocation = CLLocation(latitude: 37.266710, longitude: 127.001148)
+    @Published public var currentLocation: CLLocation
     @Published public var isLoading: Bool = false
     @Published public var permissionStatus: Bool = true
     @Published public var showAlert: Bool = false
     
     public var alertMessage: String = "현재 위치를 찾기 위해서는 설정 앱에서 위치 권한 설정이 필요합니다.\n확인을 누르면 설정으로 이동합니다."
     
+    private let addressStorageKey: String = "savedAddresses"
+    private let selectedAddressKey: String = "selectedAddress"
+    
     public override init() {
+        
+        let selectedAddress = UserDefaults.standard.fetchStruct(SavedLocation.self, for: selectedAddressKey)
+        self.currentLocation = CLLocation(
+            latitude: selectedAddress?.latitude ?? 37.266710,
+            longitude: selectedAddress?.longitude ?? 127.001148
+        )
+        
         super.init()
         
         manager.delegate = self
@@ -155,25 +165,19 @@ extension LocationManager {
         
         // 국가
         if let country = placemark.country { components.append(country) }
-        
         // 시도
         if let administrativeArea = placemark.administrativeArea { components.append(administrativeArea) }
-        
         // 구/군
         if let locality = placemark.locality { components.append(locality) }
-        
         // 도로명
         if let thoroughfare = placemark.thoroughfare {
             var thoroughfareComponent = thoroughfare
-            
             // 번지
             if let subThoroughfare = placemark.subThoroughfare {
                 thoroughfareComponent += " \(subThoroughfare)"
             }
-            
             components.append(thoroughfareComponent)
         }
-        
         return components.joined(separator: " ")
     }
 }
