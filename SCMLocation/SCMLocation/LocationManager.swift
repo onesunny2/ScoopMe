@@ -13,6 +13,14 @@ import SCMLogger
 public final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private let manager = CLLocationManager()
+    static let geocoder = CLGeocoder()
+    
+    @Published public var currentLocation: CLLocation = CLLocation(latitude: 37.266710, longitude: 127.001148)
+    @Published public var isLoading: Bool = false
+    
+    public var permissionStatus: Bool {
+        return !CLLocationManager.locationServicesEnabled() || manager.authorizationStatus == .denied
+    }
     
     public override init() {
         super.init()
@@ -32,34 +40,31 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
         }
     }
     
-    /// 현재 시스템 설정 권한 없거나, 허용을 denied 했을 때 설정하도록 보내기
-    public func sendSettinApp() async {
-        guard !CLLocationManager.locationServicesEnabled() || manager.authorizationStatus == .denied else { return }
-        
-        await openSettings()
+    /// 디바이스 시스템 위치서비스 활성화 위해 설정 앱으로 이동
+    @MainActor
+    public func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url) { success in
+                if success { Log.debug("설정앱 이동 성공")  } else { Log.error("설정 앱 이동 실패") }
+            }
+        }
     }
     
     /// 현재 위치 요청
-    public func getCurrentLocation() async {
-        guard CLLocationManager.locationServicesEnabled() else {
-            Log.debug("위치권한 서비스 미설정")
-            await openSettings()
+    public func startCurrentLocation() {
+        guard !permissionStatus else {
+            // TODO: 설정 앱 보내야 함
             return
         }
         
-        let authStatus = manager.authorizationStatus
-        guard authStatus != .denied else {
-            Log.debug("위치권한 서비스 미설정")
-            await openSettings()
-            return
-        }
-        
+        isLoading = true
         manager.startUpdatingLocation()
     }
     
     /// 위치 업데이트 중지
     public func stopUpdateLocation() {
         manager.stopUpdatingLocation()
+        isLoading = false
     }
 }
 
