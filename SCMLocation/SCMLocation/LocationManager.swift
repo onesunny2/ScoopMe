@@ -10,17 +10,17 @@ import Combine
 import CoreLocation
 import SCMLogger
 
-public final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+public final class LocationManager: NSObject, ObservableObject {
     
     private let manager = CLLocationManager()
     static let geocoder = CLGeocoder()
     
     @Published public var currentLocation: CLLocation = CLLocation(latitude: 37.266710, longitude: 127.001148)
     @Published public var isLoading: Bool = false
+    @Published public var permissionStatus: Bool = true
+    @Published public var showAlert: Bool = false
     
-    public var permissionStatus: Bool {
-        return !CLLocationManager.locationServicesEnabled() || manager.authorizationStatus == .denied
-    }
+    public var alertMessage: String = "현재 위치를 찾기 위해서는 설정 앱에서 위치 권한 설정이 필요합니다.\n확인을 누르면 설정으로 이동합니다."
     
     public override init() {
         super.init()
@@ -31,6 +31,9 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
     
     /// 현재 시스템 설정 자체 권한 상태 확인
     public func checkDeviceCondition() async {
+        
+        await updatePermissionStatus()
+        
         if CLLocationManager.locationServicesEnabled() {
             // 활성화 되었으면 허용 케이스 나누고
             await checkPermission()
@@ -51,9 +54,13 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
     }
     
     /// 현재 위치 요청
-    public func startCurrentLocation() {
+    @MainActor
+    public func startCurrentLocation() async {
+        
+        await updatePermissionStatus()
+        
         guard !permissionStatus else {
-            // TODO: 설정 앱 보내야 함
+            showAlert = true
             return
         }
         
@@ -67,7 +74,17 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
         isLoading = false
     }
     
-
+    public func updatePermissionStatus() async {
+        
+        // locationServicesEnabled >> 이 작업을 메인스레드에서 돌아가도록 하면 안됨
+        let locationServicesEnabled = await Task.detached {
+            return CLLocationManager.locationServicesEnabled()
+        }.value
+        
+        await MainActor.run {
+            permissionStatus = !locationServicesEnabled || manager.authorizationStatus == .denied
+        }
+    }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
@@ -106,7 +123,6 @@ extension LocationManager {
         switch manager.authorizationStatus {
         case .notDetermined:  // 앱 첫시작 or 한번만 허용 (권한 상태가 정해지지 않음)
             Log.debug("위치 권한 아직 미정")
-            manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.requestWhenInUseAuthorization()
         case .denied:  // 위치 권한 거부 -> 나중에 권한 거부 상태이면 인터렉션 할 때 다 alert창 띄울 것
             Log.debug("위치 권한 거부 - 추후 알럿창 알림")
