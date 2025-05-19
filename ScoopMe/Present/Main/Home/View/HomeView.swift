@@ -15,11 +15,19 @@ struct HomeView: View {
     @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager = DIContainer.shared.locationManager
     
+    @State private var searchKeyword: String = ""
+    
     var body: some View {
         NavigationStack(path: $router.path) {
             ZStack {
                 Color.scmBrightSprout
                     .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack {
+                        searchField
+                    }
+                }
             }
             .task {
                 await locationManager.checkDeviceCondition()
@@ -42,23 +50,39 @@ struct HomeView: View {
     }
     
     private var addressButton: some View {
-        Button {
-            Log.debug("addressButton tapped")
-        } label: {
-            HStack(alignment: .center, spacing: 8) {
-                Image(.location)
-                    .basicImage(width: 24, color: .scmGray90)
-                
-                Text("\(locationManager.currentAddress)")
-                    .basicText(.PTTitle3, .scmGray90)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: UIScreen.main.bounds.width * 0.5)
-                
-                Image(.detail)
-                    .basicImage(width: 24, color: .scmGray90)
-            }
+        HStack(alignment: .center, spacing: 8) {
+            Image(.location)
+                .basicImage(width: 24, color: .scmGray90)
+            
+            Text("\(locationManager.currentAddress)")
+                .basicText(.PTTitle3, .scmGray90)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.5)
+            
+            Image(.detail)
+                .basicImage(width: 24, color: .scmGray90)
         }
+        .asButton {
+            Log.debug("addressButton tapped")
+        }
+    }
+    
+    private var searchField: some View {
+        HomeSearchField(
+            placeholder: StringLiterals.placeholder.text,
+            keyword: $searchKeyword
+        )
+        .defaultHorizontalPadding()
+        .padding(.top, 8)
+    }
+}
+
+private enum StringLiterals: String {
+    case placeholder = "검색어를 입력해주세요."
+    
+    var text: String {
+        return self.rawValue
     }
 }
 
