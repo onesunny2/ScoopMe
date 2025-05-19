@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SCMLogger
 import SCMLogin
+import SCMLocation
 
 final class DIContainer {
     static let shared: DIContainer = DIContainer()
@@ -18,6 +19,8 @@ final class DIContainer {
         self.signUpManager = SignUpManager()
         self.loginTokenManager = LoginTokenManager()
         self.deviceTokenManager = DeviceTokenManager()
+        
+        self.locationManager = LocationManager()
     }
     
     /// SCMLogin
@@ -25,4 +28,7 @@ final class DIContainer {
     private(set) var signUpManager: SignUpManager
     private(set) var loginTokenManager: LoginTokenManager
     private(set) var deviceTokenManager: DeviceTokenManager
+    
+    /// SCMLocation
+    private(set) var locationManager: LocationManager
 }

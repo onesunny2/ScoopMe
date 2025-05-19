@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:SCMLocation/SCMLocation.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SCMLogger/SCMLogger.xcodeproj">
    </FileRef>
    <FileRef
