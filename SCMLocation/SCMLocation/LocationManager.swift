@@ -66,6 +66,36 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
         manager.stopUpdatingLocation()
         isLoading = false
     }
+    
+
+}
+
+extension LocationManager: CLLocationManagerDelegate {
+    
+    /// 사용자 위치 획득 성공 후 실행
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        guard let coordinate = locations.last?.coordinate else { return }
+        
+        currentLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        
+        Log.debug("현재위치: \(currentLocation)")
+        
+        stopUpdateLocation()
+    }
+    
+    /// 사용자 위치 획득에 실패한 경우 (서비스 설정 거부)
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        Log.error("사용자 위치 업데이트 실패")
+        stopUpdateLocation()
+    }
+    
+    /// 권한 변경 일어나면 다시 체크
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task {
+            await checkPermission()
+        }
+    }
 }
 
 extension LocationManager {
