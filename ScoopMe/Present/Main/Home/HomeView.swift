@@ -6,10 +6,17 @@
 //
 
 import SwiftUI
+import SCMLocation
 
 struct HomeView: View {
+    
+    private let locationManager = DIContainer.shared.locationManager
+    
     var body: some View {
         Text("HomeView")
+            .task {
+                await locationManager.checkDeviceCondition()
+            }
     }
 }
 
