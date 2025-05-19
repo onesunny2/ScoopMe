@@ -28,15 +28,15 @@ extension Font {
     static let PTBody2: Font = .custom(Name.pretendardM.text, size: 14)
     static let PTBody3: Font = .custom(Name.pretendardM.text, size: 13)
     
-    static let PTCaption1: Font = .custom(Name.pretendardR.text, size: 12)
-    static let PTCaption2: Font = .custom(Name.pretendardR.text, size: 10)
-    static let PTCaption3: Font = .custom(Name.pretendardR.text, size: 8)
+    static let PTCaption1: Font = .custom(Name.pretendardSB.text, size: 12)
+    static let PTCaption2: Font = .custom(Name.pretendardSB.text, size: 10)
+    static let PTCaption3: Font = .custom(Name.pretendardSB.text, size: 8)
     
     enum Name: String {
         case pretendardB = "Pretendard-Bold"
         case pretendardM = "Pretendard-Medium"
         case pretendardR = "Pretendard-Regular"
-        case pretendartSM = "Pretendard-SemiBold"
+        case pretendardSB = "Pretendard-SemiBold"
         case jalnanGothic = "JalnanGothic"
         
         var text: String {
