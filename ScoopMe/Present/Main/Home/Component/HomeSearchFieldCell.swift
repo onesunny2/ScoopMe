@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeSearchField: View {
+struct HomeSearchFieldCell: View {
     
     let placeholder: String
     @Binding var keyword: String

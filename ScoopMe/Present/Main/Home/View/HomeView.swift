@@ -23,7 +23,9 @@ struct HomeView: View {
         "새싹 베이커리",
         "달콤 카페",
         "새싹 치킨 도봉점"
-      ]
+    ]
+    
+    private let testCategoried: [String: Image] = [:]
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -84,7 +86,7 @@ struct HomeView: View {
     }
     
     private var searchField: some View {
-        HomeSearchField(
+        HomeSearchFieldCell(
             placeholder: StringLiterals.placeholder.text,
             keyword: $searchKeyword
         )
