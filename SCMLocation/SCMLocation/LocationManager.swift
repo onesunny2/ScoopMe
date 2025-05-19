@@ -38,6 +38,29 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
         
         await openSettings()
     }
+    
+    /// 현재 위치 요청
+    public func getCurrentLocation() async {
+        guard CLLocationManager.locationServicesEnabled() else {
+            Log.debug("위치권한 서비스 미설정")
+            await openSettings()
+            return
+        }
+        
+        let authStatus = manager.authorizationStatus
+        guard authStatus != .denied else {
+            Log.debug("위치권한 서비스 미설정")
+            await openSettings()
+            return
+        }
+        
+        manager.startUpdatingLocation()
+    }
+    
+    /// 위치 업데이트 중지
+    public func stopUpdateLocation() {
+        manager.stopUpdatingLocation()
+    }
 }
 
 extension LocationManager {
