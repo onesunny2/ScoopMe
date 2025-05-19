@@ -31,6 +31,13 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
             Log.info("사용자 위치 권한 서비스 미설정")
         }
     }
+    
+    /// 현재 시스템 설정 권한 없거나, 허용을 denied 했을 때 설정하도록 보내기
+    public func sendSettinApp() async {
+        guard !CLLocationManager.locationServicesEnabled() || manager.authorizationStatus == .denied else { return }
+        
+        await openSettings()
+    }
 }
 
 extension LocationManager {
