@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+struct SavedLocation: Codable, Equatable {
+    let latitude: Double
+    let longitude: Double
+    let longAddress: String
+    let shortAddress: String
+    let adressDetail: String
+}
