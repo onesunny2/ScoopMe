@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SCMLocation
+import CoreLocation
 
 struct HomeView: View {
     
@@ -31,9 +32,12 @@ struct HomeView: View {
                 await locationManager.startCurrentLocation()
             }
         } label: {
-            Text("\(locationManager.currentLocation)")
+            VStack {
+                Text("\(locationManager.currentLocation.coordinate.latitude)")
+                Text("\(locationManager.currentLocation.coordinate.longitude)")
+                Text("주소: \(locationManager.currentAddress)")
+            }
         }
-        .buttonStyle(.bordered)
     }
 }
 

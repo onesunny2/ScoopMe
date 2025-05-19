@@ -16,6 +16,7 @@ public final class LocationManager: NSObject, ObservableObject {
     static let geocoder = CLGeocoder()
     
     @Published public var currentLocation: CLLocation
+    @Published public var currentAddress: String = ""
     @Published public var isLoading: Bool = false
     @Published public var permissionStatus: Bool = true
     @Published public var showAlert: Bool = false
@@ -37,6 +38,8 @@ public final class LocationManager: NSObject, ObservableObject {
         
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        applyGeoAddress()
     }
     
     /// 현재 시스템 설정 자체 권한 상태 확인
@@ -108,6 +111,7 @@ extension LocationManager: CLLocationManagerDelegate {
         
         Log.debug("현재위치: \(currentLocation)")
         
+        applyGeoAddress()
         stopUpdateLocation()
     }
     
@@ -142,6 +146,20 @@ extension LocationManager {
             Log.debug("위치 권한 항상 허용")
         default:
             Log.error("알 수 없는 위치 권한 상태 입니다")
+        }
+    }
+    
+    /// 주소 -> @published 변수에 적용
+    private func applyGeoAddress() {
+        Task {
+            do {
+                let address = try await getGeocodeLacation(currentLocation)
+                await MainActor.run {
+                    self.currentAddress = address
+                }
+            } catch {
+                Log.error("주소 변환 실패: \(error)")
+            }
         }
     }
     
