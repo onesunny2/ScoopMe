@@ -11,6 +11,7 @@
 		435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 435E58322DD1CA030005196F /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		436532A52DDC991500313379 /* SCMScoopInfo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532A42DDC991400313379 /* SCMScoopInfo.framework */; };
 		436532A62DDC991500313379 /* SCMScoopInfo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532A42DDC991400313379 /* SCMScoopInfo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		436532AE2DDCA67200313379 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 436532AD2DDCA67200313379 /* NukeUI */; };
 		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
@@ -77,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
+				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
 				43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */,
 				436532A52DDC991500313379 /* SCMScoopInfo.framework in Frameworks */,
@@ -140,6 +142,7 @@
 			);
 			name = ScoopMe;
 			packageProductDependencies = (
+				436532AD2DDCA67200313379 /* NukeUI */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -169,6 +172,9 @@
 			);
 			mainGroup = 43AC47E22DCF19040010D965;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
 			projectDirPath = "";
@@ -417,6 +423,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		436532AD2DDCA67200313379 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 43AC47E32DCF19040010D965 /* Project object */;
 }
