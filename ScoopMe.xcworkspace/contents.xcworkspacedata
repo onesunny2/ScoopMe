@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:SCMScoopInfo/SCMScoopInfo.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SCMLocation/SCMLocation.xcodeproj">
    </FileRef>
    <FileRef
