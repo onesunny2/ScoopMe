@@ -123,6 +123,7 @@ struct HomeView: View {
             
             aiAlgorithm
                 .defaultHorizontalPadding()
+                .padding(.bottom, 14)
         }
         .background(.scmGray15)
     }
