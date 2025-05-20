@@ -101,7 +101,7 @@ struct HomeView: View {
     }
     
     private var categoryButtons: some View {
-        HomeCategoryCell()
+        HomeCategoryCell(repository: DIContainer.shared.foodCategoryRepository)
         .defaultHorizontalPadding()
         .padding(.vertical, 20)
         .background(.scmGray15)

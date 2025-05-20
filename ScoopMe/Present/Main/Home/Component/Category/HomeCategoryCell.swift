@@ -7,19 +7,18 @@
 
 import SwiftUI
 import SCMLogger
+import SCMScoopInfo
 
 struct HomeCategoryCell: View {
     
-    @State private var testCategoryText: [String] = [
-        "커피", "패스트푸드", "디저트", "베이커리", "더보기", "한식", "일식", "분식", "샐러드", "샌드위치"
-    ]
-    @State private var testCategoryImage: [Image] = [
-        Image(.coffee), Image(.fastFood), Image(.dessert), Image(.bakery), Image(.more),
-        Image(.hansik), Image(.ilsik), Image(.bunsik), Image(.salad), Image(.sandwich)
-    ]
+    @StateObject private var foodCategoryRepository: AnyFoodCategoryDisplayable
     
     @State private var selectedCategory: Int = 0
     @State private var showMoreCategory: Bool = false
+    
+    init(repository: AnyFoodCategoryDisplayable) {
+        self._foodCategoryRepository = StateObject(wrappedValue: repository)
+    }
     
     private let categorySpacing = (UIScreen.main.bounds.size.width - 320) / 4
     
@@ -39,15 +38,17 @@ struct HomeCategoryCell: View {
         HStack(spacing: categorySpacing) {
             ForEach(0..<5, id: \.self) { index in
                 HomeCategoryButtonCell(
-                    image: testCategoryImage[index],
-                    title: testCategoryText[index],
-                    isSelected: (index == selectedCategory && testCategoryText[selectedCategory] != "더보기") ? true : false
+                    image: foodCategoryRepository.categoryImages[index],
+                    title: foodCategoryRepository.categoryNames[index],
+                    isSelected: (index == selectedCategory && foodCategoryRepository.categoryNames[selectedCategory] != "더보기") ? true : false
                 )
                 .asButton {
-                    if index == 4 && testCategoryText[index] == "더보기" {
+                    if index == 4 && foodCategoryRepository.categoryNames[index] == "더보기" {
                         changeCategory(show: true, switch: 9)
                     } else {
                         selectedCategory = index
+                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
+                        Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
                     }
                     Log.debug("버튼 클릭")
                 }
@@ -57,17 +58,19 @@ struct HomeCategoryCell: View {
     
     private var bottomCategory: some View {
         HStack(spacing: categorySpacing) {
-            ForEach(5..<testCategoryText.count, id: \.self) { index in
+            ForEach(5..<foodCategoryRepository.categoryNames.count, id: \.self) { index in
                 HomeCategoryButtonCell(
-                    image: testCategoryImage[index],
-                    title: testCategoryText[index],
+                    image: foodCategoryRepository.categoryImages[index],
+                    title: foodCategoryRepository.categoryNames[index],
                     isSelected: (index == selectedCategory) ? true : false
                 )
                 .asButton {
-                    if index == 9 && testCategoryText[index] == "접기" {
+                    if index == 9 && foodCategoryRepository.categoryNames[index] == "접기" {
                         changeCategory(show: false, switch: 4)
                     } else {
                         selectedCategory = index
+                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
+                        Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
                     }
                     Log.debug("버튼 클릭")
                 }
@@ -80,14 +83,14 @@ extension HomeCategoryCell {
     
     private func changeCategory(show: Bool, switch index: Int) {
         withAnimation(.easeInOut) {
-            testCategoryText.swapAt(4, 9)
-            testCategoryImage.swapAt(4, 9)
-            testCategoryText[index] = (index == 4) ? "더보기" : "접기"
+            foodCategoryRepository.categoryNames.swapAt(4, 9)
+            foodCategoryRepository.categoryImages.swapAt(4, 9)
+            foodCategoryRepository.categoryNames[index] = (index == 4) ? "더보기" : "접기"
             showMoreCategory = show
         }
     }
 }
 
 #Preview {
-    HomeCategoryCell()
+    HomeCategoryCell(repository: DIContainer.shared.foodCategoryRepository)
 }

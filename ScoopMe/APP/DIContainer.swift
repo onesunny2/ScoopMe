@@ -10,6 +10,7 @@ import Combine
 import SCMLogger
 import SCMLogin
 import SCMLocation
+import SCMScoopInfo
 
 final class DIContainer {
     static let shared: DIContainer = DIContainer()
@@ -21,6 +22,9 @@ final class DIContainer {
         self.deviceTokenManager = DeviceTokenManager()
         
         self.locationManager = LocationManager()
+        
+        let repo = MockFoodCategoryRepository()
+        self.foodCategoryRepository = AnyFoodCategoryDisplayable(repo)
     }
     
     /// SCMLogin
@@ -31,4 +35,7 @@ final class DIContainer {
     
     /// SCMLocation
     private(set) var locationManager: LocationManager
+    
+    /// SCMScoopInfo
+    private(set) var foodCategoryRepository: AnyFoodCategoryDisplayable
 }
