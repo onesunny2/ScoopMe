@@ -42,6 +42,7 @@ struct HomeView: View {
                         popularKeywords
                         categoryButtons
                         realtimePopularScoop(testRealtimes)
+                        adBanners()
                     }
                 }
             }
@@ -135,6 +136,12 @@ struct HomeView: View {
             Text(StringLiterals.aiAlgoritym.text)
                 .basicText(.PTCaption2, .scmGray45)
         }
+    }
+    
+    private func adBanners() -> some View {
+        Rectangle()
+            .fill(.scmBrightForsythia)
+            .frame(maxWidth: .infinity, minHeight: 100)
     }
 }
 
