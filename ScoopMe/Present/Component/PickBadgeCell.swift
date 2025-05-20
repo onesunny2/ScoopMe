@@ -12,7 +12,6 @@ struct PickBadgeCell: View {
         InsetRibbonShape(notchDepth: 8)
             .fill(.scmBlackSprout)
             .frame(width: 70, height: 20)
-            .padding(5)
             .overlay(alignment: .leading) {
                 HStack(alignment: .center, spacing: 4) {
                     Image(.pickFill)
@@ -20,7 +19,7 @@ struct PickBadgeCell: View {
                     Text(StringLiterals.title.text)
                         .basicText(.PTCaption2, .scmGray15)
                 }
-                .padding(.leading, 12)
+                .padding(.leading, 6)
             }
     }
 }
