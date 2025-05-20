@@ -19,13 +19,24 @@ struct HomeView: View {
     @State private var keywordIndex: Int = 0
     @State private var timer: Timer? = nil
     
+    @State private var selectedCategory: Int = 0
+    @State private var showMoreCategory: Bool = false
+    
+    private let categorySpacing = (UIScreen.main.bounds.size.width - 320) / 4
+    
     private let testPopulars: [String] = [
         "새싹 베이커리",
         "달콤 카페",
         "새싹 치킨 도봉점"
     ]
     
-    private let testCategoried: [String: Image] = [:]
+    @State private var testCategoryText: [String] = [
+        "커피", "패스트푸드", "디저트", "베이커리", "더보기", "한식", "일식", "분식", "샐러드", "샌드위치"
+    ]
+    @State private var testCategoryImage: [Image] = [
+        Image(.coffee), Image(.fastFood), Image(.dessert), Image(.bakery), Image(.more),
+        Image(.hansik), Image(.ilsik), Image(.bunsik), Image(.salad), Image(.sandwich)
+    ]
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -37,6 +48,7 @@ struct HomeView: View {
                     VStack(alignment: .leading) {
                         searchField
                         popularKeywords
+                        categoryButtons
                     }
                 }
             }
@@ -108,8 +120,65 @@ struct HomeView: View {
                 .transition(.push(from: .bottom).combined(with: .opacity))
                 .id("keyword_\(keywordIndex)")
         }
-        .padding(.top, 8)
+        .padding(.vertical, 8)
         .defaultHorizontalPadding()
+    }
+    
+    private var categoryButtons: some View {
+        VStack(alignment: .center, spacing: 8) {
+            HStack(spacing: categorySpacing) {
+                ForEach(0..<5, id: \.self) { index in
+                    HomeCategoryButtonCell(
+                        image: testCategoryImage[index],
+                        title: testCategoryText[index],
+                        isSelected: (index == selectedCategory && testCategoryText[selectedCategory] != "더보기") ? true : false
+                    )
+                    .asButton {
+                        if index == 4 && testCategoryText[index] == "더보기" {
+                            withAnimation(.easeInOut) {
+                                showMoreCategory = true
+                                testCategoryText.swapAt(4, 9)
+                                testCategoryImage.swapAt(4, 9)
+                                testCategoryText[9] = "접기"
+                            }
+                        } else {
+                            selectedCategory = index
+                        }
+                        Log.debug("버튼 클릭")
+                    }
+                }
+            }
+            
+            if showMoreCategory {
+                HStack(spacing: categorySpacing) {
+                    ForEach(5..<testCategoryText.count, id: \.self) { index in
+                        HomeCategoryButtonCell(
+                            image: testCategoryImage[index],
+                            title: testCategoryText[index],
+                            isSelected: (index == selectedCategory) ? true : false
+                        )
+                        .asButton {
+                            if index == 9 && testCategoryText[index] == "접기" {
+                                withAnimation(.easeInOut) {
+                                    showMoreCategory = false
+                                    testCategoryText.swapAt(4, 9)
+                                    testCategoryImage.swapAt(4, 9)
+                                    testCategoryText[4] = "더보기"
+                                }
+                            } else {
+                                selectedCategory = index
+                            }
+                            Log.debug("버튼 클릭")
+                        }
+                    }
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .id("category_\(selectedCategory)")
+            }
+        }
+        .defaultHorizontalPadding()
+        .padding(.vertical, 20)
+        .background(.scmGray15)
     }
 }
 
