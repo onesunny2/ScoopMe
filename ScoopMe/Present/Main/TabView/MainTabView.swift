@@ -9,39 +9,36 @@ import SwiftUI
 
 struct MainTabView: View {
     
-    @StateObject private var router = SCMRouter<TabFlow>.shared
     @State private var selectedTab: Int = 0
     
     var body: some View {
-        NavigationStack(path: $router.path) {
-            TabView(selection: $selectedTab) {
-                Group {
-                    HomeView()
-                        .tabImage(Image(.homeFill))
-                        .tag(0)
-                    
-                    OrderView()
-                        .tabImage(Image(.orderFill))
-                        .tag(1)
-                    
-                    ChatView()
-                        .tabImage(
-                            Image(.tabMessageFill)
-                        )
-                        .tag(2)
-                    
-                    CommunityView()
-                        .tabImage(Image(.communityFill))
-                        .tag(3)
-                    
-                    ProfileView()
-                        .tabImage(Image(.profileFill))
-                        .tag(4)
-                }
-                .toolbarBackground(.scmGray0, for: .tabBar)
-                .toolbarBackground(.visible, for: .tabBar)
+        TabView(selection: $selectedTab) {
+            Group {
+                HomeView()
+                    .tabImage(Image(.homeFill))
+                    .tag(0)
+                
+                OrderView()
+                    .tabImage(Image(.orderFill))
+                    .tag(1)
+                
+                ChatView()
+                    .tabImage(
+                        Image(.tabMessageFill)
+                    )
+                    .tag(2)
+                
+                CommunityView()
+                    .tabImage(Image(.communityFill))
+                    .tag(3)
+                
+                ProfileView()
+                    .tabImage(Image(.profileFill))
+                    .tag(4)
             }
-            .tint(.scmBlackSprout)
+            .toolbarBackground(.scmGray0, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
         }
+        .tint(.scmBlackSprout)
     }
 }
