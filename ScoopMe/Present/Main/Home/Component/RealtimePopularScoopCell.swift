@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 import SCMLogger
 import SCMScoopInfo
 
@@ -21,7 +22,7 @@ struct RealtimePopularScoopCell: View {
     }
     
     private var topSection: some View {
-        Image(.mangoTest)
+        LazyImage(url: URL(string: store.storeImage))
             .basicImage(.fill, width: 135, height: 122)
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
             .overlay(alignment: .topLeading) {
@@ -31,8 +32,8 @@ struct RealtimePopularScoopCell: View {
     
     private var badges: some View {
         HStack(alignment: .center) {
-            Image(.likeFill)
-                .basicImage(width: 24, color: .scmBlackSprout)
+            Image(store.likeStatus ? .likeFill : .likeEmpty)
+                .basicImage(width: 24, color: store.likeStatus ? .scmBlackSprout : .scmGray45)
                 .padding([.top, .leading], 5)
                 .asButton {
                     Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
@@ -41,6 +42,7 @@ struct RealtimePopularScoopCell: View {
             Spacer()
             
             PickBadgeCell()
+                .opacity(store.picchelinStatus ? 1 : 0)
         }
     }
     
@@ -86,14 +88,3 @@ struct RealtimePopularScoopCell: View {
         }
     }
 }
-
-//#Preview {
-//    ZStack {
-//        Color.scmGray75
-//            .ignoresSafeArea()
-//        
-//        RealtimePopularScoopCell(
-//            store: DIContainer.shared.foodCategoryRepository.getPopularStoresInfo().first!
-//        )
-//    }
-//}
