@@ -14,5 +14,8 @@ public protocol FoodCategoryDisplayable: AnyObject {
     
     func getPopularKeyword() async -> PopularSearchKeywordEntity
     func getPopularStoreInfo() async -> RealtimePopularScoopEntity
-    func getAroundStoreInfo(_ type: AroundType) async -> AroundStoreInfoEntity
+    func getAroundStoreInfo(
+        _ round: AroundType,
+        _ filter: AroundFilterType
+    ) async -> AroundStoreInfoEntity
 }
