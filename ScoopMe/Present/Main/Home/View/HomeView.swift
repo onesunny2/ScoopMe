@@ -17,6 +17,19 @@ struct HomeView: View {
     
     @State private var searchKeyword: String = ""
     
+    private let testRealtimes: [RealtimePopularScoopEntity] = Array(
+        repeating: RealtimePopularScoopEntity(
+            scoopID: 0,
+            scoopImage: Image(.mangoTest),
+            likeStatus: true,
+            scoopName: "새싹 망빙 전문점",
+            likeCount: "100개",
+            distance: "0.5km",
+            pickupCount: "111회"
+        ),
+        count: 10
+    )
+    
     var body: some View {
         NavigationStack(path: $router.path) {
             ZStack {
@@ -24,10 +37,11 @@ struct HomeView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 0) {
                         searchField
                         popularKeywords
                         categoryButtons
+                        realtimePopularScoop(testRealtimes)
                     }
                 }
             }
@@ -81,7 +95,7 @@ struct HomeView: View {
     
     private var popularKeywords: some View {
         PopularKeywordCell()
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
         .defaultHorizontalPadding()
     }
     
@@ -91,10 +105,42 @@ struct HomeView: View {
         .padding(.vertical, 20)
         .background(.scmGray15)
     }
+    
+    private func realtimePopularScoop(_ scoops: [RealtimePopularScoopEntity]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(StringLiterals.realtime_popular_scoop.text)
+                .basicText(.PTTitle4, .scmGray90)
+                .defaultHorizontalPadding()
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(scoops, id: \.scoopID) { scoop in
+                        RealtimePopularScoopCell(scoop: scoop)
+                    }
+                }
+                .defaultHorizontalPadding()
+            }
+            
+            aiAlgorithm
+                .defaultHorizontalPadding()
+        }
+        .background(.scmGray15)
+    }
+    
+    private var aiAlgorithm: some View {
+        HStack(alignment: .center, spacing: 2) {
+            Image(.default)
+                .basicImage(width: 16, color: .scmGray45)
+            Text(StringLiterals.aiAlgoritym.text)
+                .basicText(.PTCaption2, .scmGray45)
+        }
+    }
 }
 
 private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
+    case realtime_popular_scoop = "실시간 인기 스쿱"
+    case aiAlgoritym = "스쿱미 AI 알고리즘 기반으로 추천된 맛집입니다."
     
     var text: String {
         return self.rawValue

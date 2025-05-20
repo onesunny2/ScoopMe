@@ -10,6 +10,7 @@ import SCMLogger
 
 struct RealtimePopularScoopEntity {
     let scoopID: Int
+    let scoopImage: Image
     let likeStatus: Bool
     let scoopName: String
     let likeCount: String
@@ -29,7 +30,7 @@ struct RealtimePopularScoopCell: View {
     }
     
     private var topSection: some View {
-        Image(.mangoTest)
+        scoop.scoopImage
             .basicImage(.fill, width: 135, height: 122)
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
             .overlay(alignment: .topLeading) {
@@ -103,6 +104,7 @@ struct RealtimePopularScoopCell: View {
         RealtimePopularScoopCell(
             scoop: RealtimePopularScoopEntity(
                 scoopID: 0,
+                scoopImage: Image(.mangoTest),
                 likeStatus: true,
                 scoopName: "새싹 망빙 전문점",
                 likeCount: "100개",
