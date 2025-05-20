@@ -1,8 +1,8 @@
 //
 //  Secret.swift
-//  SCMLogin
+//  SCMImageRequest
 //
-//  Created by Lee Wonsun on 5/14/25.
+//  Created by Lee Wonsun on 5/21/25.
 //
 
 import Foundation

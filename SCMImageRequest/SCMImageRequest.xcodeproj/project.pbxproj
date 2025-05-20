@@ -6,13 +6,46 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		436532D62DDCDC4600313379 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532D52DDCDC4600313379 /* SCMNetwork.framework */; };
+		436532D72DDCDC4600313379 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532D52DDCDC4600313379 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		436532DA2DDCDC4A00313379 /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532D92DDCDC4A00313379 /* SCMLogger.framework */; };
+		436532DB2DDCDC4A00313379 /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532D92DDCDC4A00313379 /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		436532E52DDCE38600313379 /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532E42DDCE38600313379 /* SCMLogin.framework */; };
+		436532E62DDCE38600313379 /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532E42DDCE38600313379 /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		436532EC2DDCE48500313379 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 436532EB2DDCE48500313379 /* Secret.xcconfig */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		436532D82DDCDC4600313379 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				436532DB2DDCDC4A00313379 /* SCMLogger.framework in Embed Frameworks */,
+				436532D72DDCDC4600313379 /* SCMNetwork.framework in Embed Frameworks */,
+				436532E62DDCE38600313379 /* SCMLogin.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		436532C72DDCDC0800313379 /* SCMImageRequest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMImageRequest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		436532D52DDCDC4600313379 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		436532D92DDCDC4A00313379 /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		436532E42DDCE38600313379 /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		436532EB2DDCE48500313379 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		436532CE2DDCDC0800313379 /* Exceptions for "SCMImageRequest" folder in "SCMImageRequest" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
 			publicHeaders = (
 				SCMImageRequest.h,
 			);
@@ -36,6 +69,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				436532DA2DDCDC4A00313379 /* SCMLogger.framework in Frameworks */,
+				436532D62DDCDC4600313379 /* SCMNetwork.framework in Frameworks */,
+				436532E52DDCE38600313379 /* SCMLogin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +81,9 @@
 		436532BD2DDCDC0800313379 = {
 			isa = PBXGroup;
 			children = (
+				436532EB2DDCE48500313379 /* Secret.xcconfig */,
 				436532C92DDCDC0800313379 /* SCMImageRequest */,
+				436532D42DDCDC4600313379 /* Frameworks */,
 				436532C82DDCDC0800313379 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +94,16 @@
 				436532C72DDCDC0800313379 /* SCMImageRequest.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		436532D42DDCDC4600313379 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				436532E42DDCE38600313379 /* SCMLogin.framework */,
+				436532D92DDCDC4A00313379 /* SCMLogger.framework */,
+				436532D52DDCDC4600313379 /* SCMNetwork.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -79,6 +127,7 @@
 				436532C32DDCDC0800313379 /* Sources */,
 				436532C42DDCDC0800313379 /* Frameworks */,
 				436532C52DDCDC0800313379 /* Resources */,
+				436532D82DDCDC4600313379 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -132,6 +181,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				436532EC2DDCE48500313379 /* Secret.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +200,7 @@
 /* Begin XCBuildConfiguration section */
 		436532D02DDCDC0800313379 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 436532EB2DDCE48500313379 /* Secret.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -161,6 +212,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SCMImageRequest/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -199,6 +251,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SCMImageRequest/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
