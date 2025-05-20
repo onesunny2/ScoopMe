@@ -36,11 +36,7 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
             repeating: RealtimePopularScoopEntity(
                 storeID: "id_\(Int.random(in: 0...222))",
                 storeName: "스쿱스쿱",
-                storeImage: [
-                    "/data/stores/alexandra-tran-oXULSch338E-unsplash_1747128618331.jpg",
-                    "/data/stores/d-pham-MU0pYUnrT68-unsplash_1747128618513.jpg",
-                    "/data/stores/deepthi-clicks--UUkXJIXgy4-unsplash_1747128618888.jpg"
-                  ],
+                storeImage: "/data/stores/alexandra-tran-oXULSch338E-unsplash_1747128618331.jpg",
                 likeStatus: true,
                 picchelinStatus: false,
                 likeCount: "100개",

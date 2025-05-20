@@ -6,29 +6,23 @@
 //
 
 import SwiftUI
+import CoreLocation
 import SCMLocation
 import SCMLogger
-import CoreLocation
+import SCMScoopInfo
 
 struct HomeView: View {
     
+    @StateObject private var foodCategoryRepository: AnyFoodCategoryDisplayable
     @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager = DIContainer.shared.locationManager
     
     @State private var searchKeyword: String = ""
+    @State private var populerStores: [RealtimePopularScoopEntity] = []
     
-    private let testRealtimes: [RealtimePopularScoopEntity] = Array(
-        repeating: RealtimePopularScoopEntity(
-            scoopID: 0,
-            scoopImage: Image(.mangoTest),
-            likeStatus: true,
-            scoopName: "새싹 망빙 전문점",
-            likeCount: "100개",
-            distance: "0.5km",
-            pickupCount: "111회"
-        ),
-        count: 10
-    )
+    init(repository: AnyFoodCategoryDisplayable) {
+        self._foodCategoryRepository = StateObject(wrappedValue: repository)
+    }
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -41,13 +35,16 @@ struct HomeView: View {
                         searchField
                         popularKeywords
                         categoryButtons
-                        realtimePopularScoop(testRealtimes)
+                        realtimePopularScoop(populerStores)
                         adBanners()
                     }
                 }
             }
             .task {
                 await locationManager.checkDeviceCondition()
+                
+                let popularStores = await foodCategoryRepository.getPopularStoresInfo()
+                self.populerStores = popularStores
             }
             .showAlert(
                 isPresented: $locationManager.showAlert,
@@ -115,8 +112,8 @@ struct HomeView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(scoops, id: \.scoopID) { scoop in
-                        RealtimePopularScoopCell(scoop: scoop)
+                    ForEach(scoops, id: \.storeID) { scoop in
+                        RealtimePopularScoopCell(store: scoop)
                     }
                 }
                 .defaultHorizontalPadding()
@@ -156,5 +153,5 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    HomeView()
+    HomeView(repository: DIContainer.shared.foodCategoryRepository)
 }

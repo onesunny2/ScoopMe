@@ -8,12 +8,32 @@
 import SwiftUI
 
 public struct RealtimePopularScoopEntity: Hashable {
-    let storeID: String
-    let storeName: String
-    let storeImage: [String]
-    let likeStatus: Bool
-    let picchelinStatus: Bool
-    let likeCount: String
-    let distance: String
-    let orderCount: String
+    public let storeID: String
+    public let storeName: String
+    public let storeImage: String
+    public let likeStatus: Bool
+    public let picchelinStatus: Bool
+    public let likeCount: String
+    public let distance: String
+    public let orderCount: String
+    
+    public init(
+            storeID: String,
+            storeName: String,
+            storeImage: String,
+            likeStatus: Bool,
+            picchelinStatus: Bool,
+            likeCount: String,
+            distance: String,
+            orderCount: String
+        ) {
+            self.storeID = storeID
+            self.storeName = storeName
+            self.storeImage = storeImage
+            self.likeStatus = likeStatus
+            self.picchelinStatus = picchelinStatus
+            self.likeCount = likeCount
+            self.distance = distance
+            self.orderCount = orderCount
+        }
 }

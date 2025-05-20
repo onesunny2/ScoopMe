@@ -14,7 +14,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             Group {
-                HomeView()
+                HomeView(repository: DIContainer.shared.foodCategoryRepository)
                     .tabImage(Image(.homeFill))
                     .tag(0)
                 

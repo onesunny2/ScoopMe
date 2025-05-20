@@ -11,17 +11,14 @@ import Combine
 public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, ObservableObject {
     private let _base: any FoodCategoryDisplayable
     
-    // ObservableObject 요구사항 충족을 위한 Published 속성
     @Published public var categoryNames: [String] {
         didSet {
-            // 내부 객체의 값도 업데이트
             _base.categoryNames = categoryNames
         }
     }
     
     @Published public var categoryImages: [Image] {
         didSet {
-            // 내부 객체의 값도 업데이트
             _base.categoryImages = categoryImages
         }
     }

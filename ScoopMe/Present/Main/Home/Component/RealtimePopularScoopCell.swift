@@ -7,20 +7,11 @@
 
 import SwiftUI
 import SCMLogger
-
-struct RealtimePopularScoopEntity {
-    let scoopID: Int
-    let scoopImage: Image
-    let likeStatus: Bool
-    let scoopName: String
-    let likeCount: String
-    let distance: String
-    let pickupCount: String
-}
+import SCMScoopInfo
 
 struct RealtimePopularScoopCell: View {
     
-    let scoop: RealtimePopularScoopEntity
+    let store: RealtimePopularScoopEntity
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -30,7 +21,7 @@ struct RealtimePopularScoopCell: View {
     }
     
     private var topSection: some View {
-        scoop.scoopImage
+        Image(.mangoTest)
             .basicImage(.fill, width: 135, height: 122)
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
             .overlay(alignment: .topLeading) {
@@ -59,58 +50,50 @@ struct RealtimePopularScoopCell: View {
             .frame(width: 135, height: 73)
             .overlay(alignment: .leading) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(scoop.scoopName)
+                    Text(store.storeName)
                         .basicText(.PTBody3, .scmGray90)
-                    
+
                     likeCount
                     .padding(.bottom, 6)
-                    
+
                     distanceAndPickup
                 }
                 .padding(.leading, 8)
             }
     }
-    
+
     private var likeCount: some View {
         HStack(alignment: .center, spacing: 2) {
             Image(.likeFill)
                 .basicImage(width: 16, color: .scmBrightForsythia)
-            Text(scoop.likeCount)
+            Text(store.likeCount)
                 .basicText(.PTBody3, .scmGray90)
         }
     }
-    
+
     private var distanceAndPickup: some View {
         HStack(alignment: .center, spacing: 2) {
             Image(.distance)
                 .basicImage(width: 16, color: .scmBlackSprout)
-            Text(scoop.distance)
+            Text(store.distance)
                 .basicText(.PTBody4, .scmGray75)
                 .padding(.trailing, 4)
-            
+
             Image(.run)
                 .basicImage(width: 16, color: .scmBlackSprout)
-            Text(scoop.pickupCount)
+            Text(store.orderCount)
                 .basicText(.PTBody4, .scmGray75)
         }
     }
 }
 
-#Preview {
-    ZStack {
-        Color.scmGray75
-            .ignoresSafeArea()
-        
-        RealtimePopularScoopCell(
-            scoop: RealtimePopularScoopEntity(
-                scoopID: 0,
-                scoopImage: Image(.mangoTest),
-                likeStatus: true,
-                scoopName: "새싹 망빙 전문점",
-                likeCount: "100개",
-                distance: "0.5km",
-                pickupCount: "111회"
-            )
-        )
-    }
-}
+//#Preview {
+//    ZStack {
+//        Color.scmGray75
+//            .ignoresSafeArea()
+//        
+//        RealtimePopularScoopCell(
+//            store: DIContainer.shared.foodCategoryRepository.getPopularStoresInfo().first!
+//        )
+//    }
+//}
