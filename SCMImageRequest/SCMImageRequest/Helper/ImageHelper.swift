@@ -22,7 +22,6 @@ public final class ImageHelper {
     private let tokenManager: LoginTokenManager
     
     public func createImageRequest(image url: String) -> ImageRequest? {
-        
         do {
             let accessToken = tokenManager.fetchToken(.accessToken)
             

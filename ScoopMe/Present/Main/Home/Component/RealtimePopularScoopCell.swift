@@ -7,12 +7,19 @@
 
 import SwiftUI
 import NukeUI
+import SCMImageRequest
 import SCMLogger
 import SCMScoopInfo
 
 struct RealtimePopularScoopCell: View {
     
+    private let imageHelper: ImageHelper
     let store: RealtimePopularScoopEntity
+    
+    init(imageHelper: ImageHelper, store: RealtimePopularScoopEntity) {
+        self.imageHelper = imageHelper
+        self.store = store
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -21,13 +28,30 @@ struct RealtimePopularScoopCell: View {
         }
     }
     
+    @ViewBuilder
     private var topSection: some View {
-        LazyImage(url: URL(string: store.storeImage))
-            .basicImage(.fill, width: 135, height: 122)
-            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
-            .overlay(alignment: .topLeading) {
-                badges
+        if let request = imageHelper.createImageRequest(image: store.storeImage) {
+            LazyImage(request: request) { state in
+                if let image = state.image {
+                    image
+                        .basicImage(.fill, width: 135, height: 122)
+                        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
+                        .overlay(alignment: .topLeading) {
+                            badges
+                        }
+                } else if let error = state.error {
+                    UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
+                        .fill(.scmBrightForsythia)
+                } else {
+                    ProgressView()
+                }
             }
+            .frame(width: 135, height: 122)
+        } else {
+            UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
+                .fill(.scmBrightForsythia)
+                .frame(width: 135, height: 122)
+        }
     }
     
     private var badges: some View {
