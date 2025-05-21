@@ -113,7 +113,7 @@ struct HomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(scoops, id: \.storeID) { scoop in
-                        RealtimePopularScoopCell(store: scoop)
+                        RealtimePopularScoopCell(imageHelper: DIContainer.shared.imageHelper, store: scoop)
                     }
                 }
                 .defaultHorizontalPadding()
@@ -146,6 +146,7 @@ private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case realtime_popular_scoop = "실시간 인기 스쿱"
     case aiAlgoritym = "스쿱미 AI 알고리즘 기반으로 추천된 맛집입니다."
+    case around_scoop = "내 근처 스쿱"
     
     var text: String {
         return self.rawValue

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMImageRequest
 import SCMLogger
 import SCMLogin
 import SCMLocation
@@ -25,6 +26,8 @@ final class DIContainer {
         
         let repo = MockFoodCategoryRepository()
         self.foodCategoryRepository = AnyFoodCategoryDisplayable(repo)
+        
+        self.imageHelper = ImageHelper.shared
     }
     
     /// SCMLogin
@@ -38,4 +41,7 @@ final class DIContainer {
     
     /// SCMScoopInfo
     private(set) var foodCategoryRepository: AnyFoodCategoryDisplayable
+    
+    /// SCMImageRequest
+    private(set) var imageHelper: ImageHelper
 }
