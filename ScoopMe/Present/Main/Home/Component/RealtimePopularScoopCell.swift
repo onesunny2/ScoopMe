@@ -30,28 +30,18 @@ struct RealtimePopularScoopCell: View {
     
     @ViewBuilder
     private var topSection: some View {
-        if let request = imageHelper.createImageRequest(image: store.storeImage) {
-            LazyImage(request: request) { state in
-                if let image = state.image {
-                    image
-                        .basicImage(.fill, width: 135, height: 122)
-                        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10))
-                        .overlay(alignment: .topLeading) {
-                            badges
-                        }
-                } else if let error = state.error {
-                    UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
-                        .fill(.scmBrightForsythia)
-                } else {
-                    ProgressView()
-                }
-            }
-            .frame(width: 135, height: 122)
-        } else {
-            UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
-                .fill(.scmBrightForsythia)
-                .frame(width: 135, height: 122)
-        }
+        NukeRequestImageCell(
+            imageHelper: imageHelper,
+            likeStatus: store.likeStatus,
+            picchelinStatus: store.picchelinStatus,
+            url: store.storeImage,
+            topLeading: 10,
+            bottomLeading: 0,
+            bottomTrailing: 0,
+            topTrailing: 10,
+            width: 135,
+            height: 122
+        )
     }
     
     private var badges: some View {
