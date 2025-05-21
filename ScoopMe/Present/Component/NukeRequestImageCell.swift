@@ -24,7 +24,7 @@ struct NukeRequestImageCell: View {
     let width: CGFloat
     let height: CGFloat
     
-    var likeButtonAction: () -> Void
+    var likeButtonAction: (() -> Void)?
     
     var body: some View {
         if let request = imageHelper.createImageRequest(image: url) {
@@ -69,7 +69,7 @@ struct NukeRequestImageCell: View {
                 .basicImage(width: 24, color: likeStatus ? .scmBlackSprout : .scmGray45)
                 .padding([.top, .leading], 5)
                 .asButton {
-                    likeButtonAction()
+                    likeButtonAction?()
                 }
                 .opacity(likeOpacity)
             
