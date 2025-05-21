@@ -20,6 +20,7 @@ struct HomeView: View {
     @State private var searchKeyword: String = ""
     @State private var populerStores: [RealtimePopularScoopEntity] = []
     
+    @State private var aroundScoopFilter: AroundFilterType = .거리순
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
     
@@ -163,13 +164,20 @@ struct HomeView: View {
             Spacer()
             
             HStack(alignment: .center, spacing: 4) {
-                Text(AroundFilterType.거리순.text)
+                Text(aroundScoopFilter.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
                 Image(.list)
                     .basicImage(width: 16, color: .scmBlackSprout)
             }
             .asButton {
                 // 내 근처스쿱 필터링 버튼
+                switch aroundScoopFilter {
+                case .거리순: return aroundScoopFilter = .별점순
+                case .별점순: return aroundScoopFilter = .주문_많은순
+                case .주문_많은순: return aroundScoopFilter = .즐겨찾기순
+                case .즐겨찾기순: return aroundScoopFilter = .거리순
+                @unknown default: return aroundScoopFilter = .거리순
+                }
             }
         }
     }
