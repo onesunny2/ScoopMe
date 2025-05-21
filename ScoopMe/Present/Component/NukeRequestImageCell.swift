@@ -23,6 +23,8 @@ struct NukeRequestImageCell: View {
     let width: CGFloat
     let height: CGFloat
     
+    var likeButtonAction: () -> Void
+    
     var body: some View {
         if let request = imageHelper.createImageRequest(image: url) {
             LazyImage(request: request) { state in
@@ -66,7 +68,7 @@ struct NukeRequestImageCell: View {
                 .basicImage(width: 24, color: likeStatus ? .scmBlackSprout : .scmGray45)
                 .padding([.top, .leading], 5)
                 .asButton {
-                    Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
+                    likeButtonAction()
                 }
             
             Spacer()
@@ -89,5 +91,7 @@ struct NukeRequestImageCell: View {
         topTrailing: 10,
         width: 200,
         height: 200
-    )
+    ) {
+        Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
+    }
 }

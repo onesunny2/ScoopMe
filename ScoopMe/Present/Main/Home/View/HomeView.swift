@@ -118,7 +118,12 @@ struct HomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(scoops, id: \.storeID) { scoop in
-                        RealtimePopularScoopCell(imageHelper: DIContainer.shared.imageHelper, store: scoop)
+                        RealtimePopularScoopCell(
+                            imageHelper: DIContainer.shared.imageHelper,
+                            store: scoop
+                        ) {
+                            Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
+                        }
                     }
                 }
                 .defaultHorizontalPadding()

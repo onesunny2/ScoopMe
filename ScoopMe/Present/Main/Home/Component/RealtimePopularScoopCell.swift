@@ -16,9 +16,16 @@ struct RealtimePopularScoopCell: View {
     private let imageHelper: ImageHelper
     let store: RealtimePopularScoopEntity
     
-    init(imageHelper: ImageHelper, store: RealtimePopularScoopEntity) {
+    var likeButtonAction: () -> Void
+    
+    init(
+        imageHelper: ImageHelper,
+        store: RealtimePopularScoopEntity,
+        likeButtonAction: @escaping () -> Void
+    ) {
         self.imageHelper = imageHelper
         self.store = store
+        self.likeButtonAction = likeButtonAction
     }
     
     var body: some View {
@@ -41,22 +48,8 @@ struct RealtimePopularScoopCell: View {
             topTrailing: 10,
             width: 135,
             height: 122
-        )
-    }
-    
-    private var badges: some View {
-        HStack(alignment: .center) {
-            Image(store.likeStatus ? .likeFill : .likeEmpty)
-                .basicImage(width: 24, color: store.likeStatus ? .scmBlackSprout : .scmGray45)
-                .padding([.top, .leading], 5)
-                .asButton {
-                    Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
-                }
-            
-            Spacer()
-            
-            PickBadgeCell()
-                .opacity(store.picchelinStatus ? 1 : 0)
+        ) {
+            likeButtonAction()
         }
     }
     
