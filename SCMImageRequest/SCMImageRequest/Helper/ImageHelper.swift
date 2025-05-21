@@ -30,7 +30,7 @@ public final class ImageHelper {
                 "Authorization": accessToken,
                 "SeSACKey": Secret.apiKey
             ]
-            Log.debug("액세스: \(accessToken), 새싹키: \(Secret.apiKey)")
+            
             let request = HTTPRequest(
                 scheme: scheme,
                 method: .get,
@@ -41,7 +41,7 @@ public final class ImageHelper {
                 .setCachePolicy(.returnCacheDataElseLoad)
             
             let urlRequest = try request.urlRequest()
-            Log.debug("urlRequest: \(urlRequest)")
+            
             var imageRequest = ImageRequest(urlRequest: urlRequest)
             
             imageRequest.priority = .normal

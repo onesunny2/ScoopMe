@@ -15,6 +15,7 @@ struct NukeRequestImageCell: View {
     let imageHelper: ImageHelper
     let likeStatus: Bool
     let picchelinStatus: Bool
+    let likeOpacity: Double
     let url: String
     let topLeading: CGFloat
     let bottomLeading: CGFloat
@@ -70,6 +71,7 @@ struct NukeRequestImageCell: View {
                 .asButton {
                     likeButtonAction()
                 }
+                .opacity(likeOpacity)
             
             Spacer()
             
@@ -84,6 +86,7 @@ struct NukeRequestImageCell: View {
         imageHelper: DIContainer.shared.imageHelper,
         likeStatus: true,
         picchelinStatus: false,
+        likeOpacity: 1,
         url: "/v1/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg",
         topLeading: 10,
         bottomLeading: 10,

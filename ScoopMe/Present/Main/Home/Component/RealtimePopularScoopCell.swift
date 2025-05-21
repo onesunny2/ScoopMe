@@ -15,16 +15,18 @@ struct RealtimePopularScoopCell: View {
     
     private let imageHelper: ImageHelper
     let store: RealtimePopularScoopEntity
-    
+    let likeButtonOpacity: Double
     var likeButtonAction: () -> Void
     
     init(
         imageHelper: ImageHelper,
         store: RealtimePopularScoopEntity,
+        likeButtonOpacity: Double,
         likeButtonAction: @escaping () -> Void
     ) {
         self.imageHelper = imageHelper
         self.store = store
+        self.likeButtonOpacity = likeButtonOpacity
         self.likeButtonAction = likeButtonAction
     }
     
@@ -41,6 +43,7 @@ struct RealtimePopularScoopCell: View {
             imageHelper: imageHelper,
             likeStatus: store.likeStatus,
             picchelinStatus: store.picchelinStatus,
+            likeOpacity: likeButtonOpacity,
             url: store.storeImage,
             topLeading: 10,
             bottomLeading: 0,

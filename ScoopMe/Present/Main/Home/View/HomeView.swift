@@ -120,7 +120,8 @@ struct HomeView: View {
                     ForEach(scoops, id: \.storeID) { scoop in
                         RealtimePopularScoopCell(
                             imageHelper: DIContainer.shared.imageHelper,
-                            store: scoop
+                            store: scoop,
+                            likeButtonOpacity: 1
                         ) {
                             Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
                         }
