@@ -41,16 +41,19 @@ struct RealtimePopularScoopCell: View {
     private var topSection: some View {
         NukeRequestImageCell(
             imageHelper: imageHelper,
-            likeStatus: store.likeStatus,
-            picchelinStatus: store.picchelinStatus,
-            likeOpacity: likeButtonOpacity,
             url: store.storeImage,
             topLeading: 10,
             bottomLeading: 0,
             bottomTrailing: 0,
-            topTrailing: 10,
-            width: 135,
-            height: 122
+            topTrailing: 10
+        )
+        .frame(width: 135, height: 122)
+        .clippedUnevenRectangle(10, 0, 0, 10)
+        .badgeOverlay(
+            likeStatus: store.likeStatus,
+            picchelinStatus: store.picchelinStatus,
+            likeOpacity: likeButtonOpacity,
+            padding: 4
         ) {
             likeButtonAction()
         }
