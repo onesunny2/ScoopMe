@@ -20,6 +20,9 @@ struct HomeView: View {
     @State private var searchKeyword: String = ""
     @State private var populerStores: [RealtimePopularScoopEntity] = []
     
+    @State private var isPicchelined: Bool = true
+    @State private var isMyPicked: Bool = false
+    
     init(repository: AnyFoodCategoryDisplayable) {
         self._foodCategoryRepository = StateObject(wrappedValue: repository)
     }
@@ -37,6 +40,7 @@ struct HomeView: View {
                         categoryButtons
                         realtimePopularScoop(populerStores)
                         adBanners()
+                        aroundScoop()
                     }
                 }
             }
@@ -139,6 +143,55 @@ struct HomeView: View {
         Rectangle()
             .fill(.scmBrightForsythia)
             .frame(maxWidth: .infinity, minHeight: 100)
+    }
+    
+    private func aroundScoop() -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            aroundScoopTitleAndFilter
+            pickButton
+        }
+        .defaultHorizontalPadding()
+        .padding(.vertical, 18)
+        .background(.scmGray15)
+    }
+    
+    private var aroundScoopTitleAndFilter: some View {
+        HStack(alignment: .center) {
+            Text(StringLiterals.around_scoop.text)
+                .basicText(.PTBody2, .scmGray90)
+            
+            Spacer()
+            
+            HStack(alignment: .center, spacing: 4) {
+                Text(AroundFilterType.거리순.text)
+                    .basicText(.PTCaption1, .scmBlackSprout)
+                Image(.list)
+                    .basicImage(width: 16, color: .scmBlackSprout)
+            }
+            .asButton {
+                // 내 근처스쿱 필터링 버튼
+            }
+        }
+    }
+    
+    private var pickButton: some View {
+        HStack(alignment: .center, spacing: 12) {
+            AroundPickTypeButtonCell(isPicked: $isPicchelined, title: AroundType.픽슐랭.text) {
+                setAroundPickStatus(&isPicchelined, &isMyPicked)
+            }
+            
+            AroundPickTypeButtonCell(isPicked: $isMyPicked, title: AroundType.마이스쿱.text) {
+                setAroundPickStatus(&isMyPicked, &isPicchelined)
+            }
+        }
+        .padding(.top, 16)
+    }
+}
+
+extension HomeView {
+    private func setAroundPickStatus(_ main: inout Bool, _ sub: inout Bool) {
+        main = (main == true) ? false : true
+        sub = !main
     }
 }
 

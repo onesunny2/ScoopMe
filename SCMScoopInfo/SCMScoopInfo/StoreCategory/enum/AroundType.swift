@@ -9,9 +9,9 @@ import Foundation
 
 public enum AroundType: String {
     case 픽슐랭
-    case 마이스쿱 = "My Scoop"
+    case 마이스쿱 = "마이 스쿱"
     
-    var text: String {
+    public var text: String {
         return self.rawValue
     }
 }

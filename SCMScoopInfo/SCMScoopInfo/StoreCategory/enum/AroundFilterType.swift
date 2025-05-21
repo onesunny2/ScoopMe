@@ -13,7 +13,7 @@ public enum AroundFilterType: String {
     case 즐겨찾기순
     case 주문_많은순 = "주문 많은 순"
     
-    var text: String {
+    public var text: String {
         return self.rawValue
     }
 }
