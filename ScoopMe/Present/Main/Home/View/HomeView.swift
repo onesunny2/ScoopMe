@@ -23,6 +23,7 @@ struct HomeView: View {
     @State private var aroundScoopFilter: AroundFilterType = .거리순
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
+    @State private var aroundStores: [AroundStoreInfoEntity] = []
     
     init(repository: AnyFoodCategoryDisplayable) {
         self._foodCategoryRepository = StateObject(wrappedValue: repository)
@@ -50,6 +51,9 @@ struct HomeView: View {
                 
                 let popularStores = await foodCategoryRepository.getPopularStoresInfo()
                 self.populerStores = popularStores
+                
+                let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .거리순)
+                self.aroundStores = aroundStores
             }
             .showAlert(
                 isPresented: $locationManager.showAlert,
@@ -156,6 +160,7 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 0) {
             aroundScoopTitleAndFilter
             pickButton
+            aroundScoopsCell
         }
         .defaultHorizontalPadding()
         .padding(.vertical, 18)
@@ -165,7 +170,7 @@ struct HomeView: View {
     private var aroundScoopTitleAndFilter: some View {
         HStack(alignment: .center) {
             Text(StringLiterals.around_scoop.text)
-                .basicText(.PTBody2, .scmGray90)
+                .basicText(.PTTitle4, .scmGray90)
             
             Spacer()
             
@@ -196,6 +201,17 @@ struct HomeView: View {
             
             AroundPickTypeButtonCell(isPicked: $isMyPicked, title: AroundType.마이스쿱.text) {
                 setAroundPickStatus(&isMyPicked, &isPicchelined)
+            }
+        }
+        .padding(.top, 16)
+    }
+    
+    private var aroundScoopsCell: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            ForEach(aroundStores, id: \.storeID) { store in
+                AroundScoopCell(imageHelper: DIContainer.shared.imageHelper, store: store) {
+                    Log.debug("하트버튼 클릭")
+                }
             }
         }
         .padding(.top, 16)

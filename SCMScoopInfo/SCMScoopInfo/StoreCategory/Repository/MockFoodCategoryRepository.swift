@@ -54,9 +54,9 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
                 storeID: "68232364ca81ef0db5a4628d",
                 storeName: "스쿱 베이커리",
                 storeImage: [
-                    "/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
-                    "/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",
-                    "/data/stores/shourav-sheikh-a66sGfOnnqQ-unsplash_1747128644500.jpg"
+                    Secret.baseURL + "/v1/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
+                    Secret.baseURL + "/v1/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",
+                    Secret.baseURL + "/v1/data/stores/shourav-sheikh-a66sGfOnnqQ-unsplash_1747128644500.jpg"
                   ],
                 likeStatus: true,
                 picchelinStatus: true,
@@ -71,9 +71,9 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
                 storeID: "68231cb9ca81ef0db5a46063",
                 storeName: "스쿱 치킨 점바점",
                 storeImage: [
-                    "/data/stores/ante-samarzija-lsmu0rUhUOk-unsplash_1747128571997.jpg",
-                    "/data/stores/demi-deherrera-L-sm1B4L1Ns-unsplash_1747128572138.jpg",
-                    "/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg"
+                    Secret.baseURL + "/v1/data/stores/ante-samarzija-lsmu0rUhUOk-unsplash_1747128571997.jpg",
+                    Secret.baseURL + "/v1/data/stores/demi-deherrera-L-sm1B4L1Ns-unsplash_1747128572138.jpg",
+                    Secret.baseURL + "/v1/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg"
                   ],
                 likeStatus: false,
                 picchelinStatus: true,
@@ -88,9 +88,9 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
                 storeID: "68231d1dca81ef0db5a4609b",
                 storeName: "달콤 스쿱",
                 storeImage: [
-                    "/data/stores/ante-samarzija-lsmu0rUhUOk-unsplash_1747128571997.jpg",
-                    "/data/stores/demi-deherrera-L-sm1B4L1Ns-unsplash_1747128572138.jpg",
-                    "/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg"
+                    Secret.baseURL + "/v1/data/stores/heather-ford-POM4KxWZcG8-unsplash_1747137090839.jpg",
+                    Secret.baseURL + "/v1/data/stores/heather-barnes-WbZesfqwR-A-unsplash_1747137090961.jpg",
+                    Secret.baseURL + "/v1/data/stores/kobby-mendez-q54Oxq44MZs-unsplash_1747137091086.jpg"
                   ],
                 likeStatus: true,
                 picchelinStatus: true,
