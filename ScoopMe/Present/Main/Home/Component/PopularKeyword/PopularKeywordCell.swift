@@ -6,25 +6,35 @@
 //
 
 import SwiftUI
+import SCMScoopInfo
 
 struct PopularKeywordCell: View {
     
+    @ObservedObject var foodCategoryRepository: AnyFoodCategoryDisplayable
+    
+    @State private var keywords: [String] = []
     @State private var keywordIndex: Int = 0
     @State private var timer: Timer? = nil
     
-    private let testPopulars: [String] = [
-        "새싹 베이커리",
-        "달콤 카페",
-        "새싹 치킨 도봉점"
-    ]
-    
     var body: some View {
         popularKeywords
+            .task {
+                let keywords = await foodCategoryRepository.getPopularKeywords()
+                self.keywords = keywords
+            }
             .onAppear {
                 startTimer()
             }
             .onDisappear {
                 stopTimer()
+            }
+            .onChange(of: keywords) { newKeywords in
+                if !newKeywords.isEmpty {
+                    keywordIndex = 0
+                    startTimer()
+                } else {
+                    stopTimer()
+                }
             }
     }
     
@@ -51,7 +61,7 @@ extension PopularKeywordCell {
     private func updateKeywordIndex() async {
         await MainActor.run {
             withAnimation(.easeInOut(duration: 0.3)) {
-                if keywordIndex < testPopulars.count - 1 {
+                if keywordIndex < keywords.count - 1 {
                     keywordIndex += 1
                 } else {
                     keywordIndex = 0
@@ -61,7 +71,7 @@ extension PopularKeywordCell {
     }
     
     private func currentPopularKeyword() -> String {
-        return "\(keywordIndex + 1).  \(testPopulars[keywordIndex])"
+        return "\(keywordIndex + 1).  \(keywords[at: keywordIndex])"
     }
     
     /// 타이머
@@ -89,6 +99,3 @@ private enum StringLiterals: String {
     }
 }
 
-#Preview {
-    PopularKeywordCell()
-}
