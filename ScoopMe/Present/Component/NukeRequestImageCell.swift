@@ -19,6 +19,7 @@ struct NukeRequestImageCell: View {
     let bottomLeading: CGFloat
     let bottomTrailing: CGFloat
     let topTrailing: CGFloat
+    var contentMode: ContentMode = .fill
     
     var body: some View {
         if let request = imageHelper.createImageRequest(image: url) {
@@ -26,7 +27,7 @@ struct NukeRequestImageCell: View {
                 if let image = state.image {
                     image
                         .resizable()
-                        .scaledToFill()
+                        .aspectRatio(contentMode: contentMode)
                 } else if (state.error) != nil {
                     unevenRectangle
                         .fill(.scmBrightForsythia)

@@ -45,6 +45,7 @@ struct PopularKeywordCell: View {
     }
 }
 
+// MARK: method
 extension PopularKeywordCell {
     /// 인기검색어 세팅
     private func updateKeywordIndex() async {

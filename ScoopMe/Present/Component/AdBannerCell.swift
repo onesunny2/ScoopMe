@@ -10,6 +10,9 @@ import SCMImageRequest
 
 struct AdBannerCell: View {
     
+    @State private var timer: Timer? = nil
+    @State private var selectedTab = 0
+    
     private let width = UIScreen.main.bounds.size.width
     
     let imageHelper: ImageHelper
@@ -20,7 +23,7 @@ struct AdBannerCell: View {
       ]
     
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ForEach(banner.indices, id: \.self) { index in
                 NukeRequestImageCell(
                     imageHelper: imageHelper,
@@ -43,10 +46,50 @@ struct AdBannerCell: View {
                         }
                         .padding([.bottom, .trailing], 12)
                 }
+                .tag(index)
             }
         }
         .frame(width: width, height: width * 0.26)
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .onAppear {
+            startTimer()
+        }
+        .onDisappear {
+            stopTimer()
+        }
+        .onChange(of: selectedTab) { _ in
+            startTimer()
+        }
+    }
+}
+
+// MARK: method
+extension AdBannerCell {
+    
+    private func updateTabViewIndex() async {
+        await MainActor.run {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                if selectedTab < banner.count - 1 {
+                    selectedTab += 1
+                } else {
+                    selectedTab = 0
+                }
+            }
+        }
+    }
+    
+    /// 타이머
+    private func startTimer() {
+        stopTimer()
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
+            Task { await updateTabViewIndex() }
+        }
+    }
+    
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 

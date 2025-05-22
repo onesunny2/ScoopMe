@@ -153,9 +153,7 @@ struct HomeView: View {
     }
     
     private func adBanners() -> some View {
-        Rectangle()
-            .fill(.scmBrightForsythia)
-            .frame(maxWidth: .infinity, minHeight: 100)
+        AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
     }
     
     private func aroundScoop() -> some View {
