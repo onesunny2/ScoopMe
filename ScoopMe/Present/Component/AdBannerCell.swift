@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import Nuke
 import SCMImageRequest
 
 struct AdBannerCell: View {
-    
+
     @State private var timer: Timer? = nil
     @State private var selectedTab = 0
     
@@ -49,9 +50,11 @@ struct AdBannerCell: View {
                 .tag(index)
             }
         }
-        .frame(width: width, height: width * 0.26)
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .animation(.easeInOut(duration: 1), value: selectedTab)
+        .frame(width: width, height: width * 0.26)
         .onAppear {
+            preloadImages()
             startTimer()
         }
         .onDisappear {
@@ -66,15 +69,19 @@ struct AdBannerCell: View {
 // MARK: method
 extension AdBannerCell {
     
-    private func updateTabViewIndex() async {
-        await MainActor.run {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                if selectedTab < banner.count - 1 {
-                    selectedTab += 1
-                } else {
-                    selectedTab = 0
-                }
+    private func preloadImages() {
+        let pipeline = ImagePipeline.shared
+        for url in banner {
+            if let imageURL = URL(string: url) {
+                let request = ImageRequest(url: imageURL, processors: [.resize(width: width)])
+                pipeline.loadImage(with: request) { _ in }
             }
+        }
+    }
+    
+    private func updateTabViewIndex() {
+            withAnimation(.default) {
+                selectedTab = (selectedTab + 1) % banner.count
         }
     }
     
@@ -82,8 +89,8 @@ extension AdBannerCell {
     private func startTimer() {
         stopTimer()
         
-        timer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
-            Task { await updateTabViewIndex() }
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            updateTabViewIndex()
         }
     }
     

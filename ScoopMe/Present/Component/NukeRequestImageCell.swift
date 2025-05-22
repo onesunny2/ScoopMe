@@ -32,9 +32,13 @@ struct NukeRequestImageCell: View {
                     unevenRectangle
                         .fill(.scmBrightForsythia)
                 } else {
-                    ProgressView()
+                    unevenRectangle
+                        .fill(.gray.opacity(0.2)) // 부드러운 플레이스홀더
+                        .overlay(ProgressView())
                 }
             }
+            .pipeline(.shared) // Nuke의 캐싱 파이프라인 명시
+            .processors([.resize(width: UIScreen.main.bounds.width)])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
         } else {
