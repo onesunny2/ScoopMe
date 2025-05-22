@@ -35,7 +35,7 @@ struct HomeView: View {
                 Color.scmBrightSprout
                     .ignoresSafeArea()
                 
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         searchField
                         popularKeywords
