@@ -49,11 +49,13 @@ struct HomeView: View {
             .task {
                 await locationManager.checkDeviceCondition()
                 
-                let popularStores = await foodCategoryRepository.getPopularStoresInfo()
-                self.populerStores = popularStores
-                
-                let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .거리순)
-                self.aroundStores = aroundStores
+                if self.populerStores.isEmpty || self.aroundStores.isEmpty {
+                    let popularStores = await foodCategoryRepository.getPopularStoresInfo()
+                    self.populerStores = popularStores
+                    
+                    let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .거리순)
+                    self.aroundStores = aroundStores
+                }
             }
             .showAlert(
                 isPresented: $locationManager.showAlert,
@@ -208,8 +210,12 @@ struct HomeView: View {
     
     private var aroundScoopsCell: some View {
         VStack(alignment: .leading, spacing: 5) {
-            ForEach(aroundStores, id: \.storeID) { store in
-                AroundScoopCell(imageHelper: DIContainer.shared.imageHelper, store: store) {
+            ForEach(aroundStores.indices, id: \.self) { index in
+                AroundScoopCell(
+                    imageHelper: DIContainer.shared.imageHelper,
+                    store: aroundStores[index],
+                    needDivider: index != (aroundStores.count - 1)
+                ) {
                     Log.debug("하트버튼 클릭")
                 }
             }

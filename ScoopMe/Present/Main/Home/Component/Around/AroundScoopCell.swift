@@ -14,6 +14,7 @@ struct AroundScoopCell: View {
     
     let imageHelper: ImageHelper
     let store: AroundStoreInfoEntity
+    let needDivider: Bool
     
     var likeButtonAction: () -> Void
     
@@ -21,6 +22,12 @@ struct AroundScoopCell: View {
         VStack(alignment: .leading, spacing: 16) {
             imageCell
             storeInfoCell
+            
+            if needDivider {
+                divider
+                    .padding(.top, -4)
+                    .padding(.bottom, 8)
+            }
         }
     }
     
@@ -99,6 +106,12 @@ struct AroundScoopCell: View {
             }
         }
     }
+    
+    private var divider: some View {
+        Rectangle()
+            .fill(.scmGray30)
+            .frame(height: 1)
+    }
 }
 
 #Preview {
@@ -121,7 +134,7 @@ struct AroundScoopCell: View {
             closeTime: "10PM",
             orderCount: "88회",
             hashTags: ["#스쿱미", "#맛있어요"]
-        )
+        ), needDivider: true
     ) {
         Log.debug("좋아요 버튼 클릭")
     }
