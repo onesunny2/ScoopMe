@@ -24,11 +24,13 @@ extension Font {
     static let PTTitie2: Font = .custom(Name.pretendardM.text, size: 20)
     static let PTTitle3: Font = .custom(Name.pretendardB.text, size: 16)
     static let PTTitle4: Font = .custom(Name.pretendardB.text, size: 14)
+    static let PTTitle5: Font = .custom(Name.pretendardR.text, size: 16)
     
     static let PTBody1: Font = .custom(Name.pretendardM.text, size: 16)
     static let PTBody2: Font = .custom(Name.pretendardM.text, size: 14)
     static let PTBody3: Font = .custom(Name.pretendardB.text, size: 12)
     static let PTBody4: Font = .custom(Name.pretendardM.text, size: 12)
+    static let PTBody5: Font = .custom(Name.pretendardR.text, size: 14)
     
     static let PTCaption1: Font = .custom(Name.pretendardSB.text, size: 12)
     static let PTCaption2: Font = .custom(Name.pretendardSB.text, size: 10)

@@ -15,6 +15,7 @@ public struct AroundStoreInfoEntity: Hashable {
     public let picchelinStatus: Bool
     public let likeCount: String
     public let totalRating: String
+    public let totalReview: String
     public let distance: String
     public let closeTime: String
     public let orderCount: String
@@ -28,6 +29,7 @@ public struct AroundStoreInfoEntity: Hashable {
         picchelinStatus: Bool,
         likeCount: String,
         totalRating: String,
+        totalReview: String,
         distance: String,
         closeTime: String,
         orderCount: String,
@@ -40,6 +42,7 @@ public struct AroundStoreInfoEntity: Hashable {
         self.picchelinStatus = picchelinStatus
         self.likeCount = likeCount
         self.totalRating = totalRating
+        self.totalReview = totalReview
         self.distance = distance
         self.closeTime = closeTime
         self.orderCount = orderCount

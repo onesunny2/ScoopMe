@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Nuke
 import NukeUI
 import SCMImageRequest
 import SCMLogger
@@ -32,7 +33,9 @@ struct NukeRequestImageCell: View {
                 } else {
                     ProgressView()
                 }
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
         } else {
             unevenRectangle
                 .fill(.scmBrightForsythia)

@@ -20,6 +20,7 @@ struct AroundScoopCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             imageCell
+            storeInfoCell
         }
     }
     
@@ -33,6 +34,70 @@ struct AroundScoopCell: View {
             height: 180) {
                 likeButtonAction()
             }
+    }
+    
+    private var storeInfoCell: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            storeTitleAndRate
+            storeManageInfo
+            hashTagBadge
+        }
+    }
+    
+    private var storeTitleAndRate: some View {
+        HStack(alignment: .center) {
+            Text(store.storeName)
+                .basicText(.PTTitle3, .scmGray90)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            
+            HStack(alignment: .center, spacing: 2) {
+                Image(.likeFill)
+                    .basicImage(width: 20, color: .scmBrightForsythia)
+                Text(store.likeCount)
+                    .basicText(.PTTitle3, .scmGray90)
+                    .padding(.trailing, 6)
+                
+                Image(.favoriteFill)
+                    .basicImage(width: 20, color: .scmBrightForsythia)
+                Text(store.totalRating)
+                    .basicText(.PTTitle3, .scmGray90)
+                Text(store.totalReview)
+                    .basicText(.PTTitle5, .scmGray60)
+            }
+        }
+    }
+    
+    private var storeManageInfo: some View {
+        HStack(alignment: .center, spacing: 2) {
+            Image(.distance)
+                .basicImage(width: 20, color: .scmBlackSprout)
+            Text(store.distance)
+                .basicText(.PTBody5, .scmGray60)
+                .padding(.trailing, 6)
+            
+            Image(.time)
+                .basicImage(width: 20, color: .scmBlackSprout)
+            Text(store.closeTime)
+                .basicText(.PTBody5, .scmGray60)
+                .padding(.trailing, 6)
+            
+            Image(.run)
+                .basicImage(width: 20, color: .scmBlackSprout)
+            Text(store.orderCount)
+                .basicText(.PTBody5, .scmGray60)
+                .padding(.trailing, 6)
+        }
+    }
+    
+    private var hashTagBadge: some View {
+        HStack(alignment: .center, spacing: 8) {
+            ForEach(store.hashTags, id: \.self) { tag in
+                Text(tag)
+                    .basicText(.PTCaption1, .scmGray0)
+                    .tagBadge(.scmDeepSprout)
+            }
+        }
     }
 }
 
@@ -50,7 +115,8 @@ struct AroundScoopCell: View {
             likeStatus: true,
             picchelinStatus: true,
             likeCount: "5번",
-            totalRating: "4.8(2)",
+            totalRating: "4.8",
+            totalReview: "(12)",
             distance: "3.2km",
             closeTime: "10PM",
             orderCount: "88회",
