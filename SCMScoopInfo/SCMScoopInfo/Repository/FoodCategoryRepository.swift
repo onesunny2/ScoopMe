@@ -13,15 +13,10 @@ internal import SCMNetwork
 
 public final class FoodCategoryRepository: FoodCategoryDisplayable {
     
-    @Published public var categoryNames: [String] = [
-        "커피", "패스트푸드", "디저트", "베이커리", "더보기", "한식", "일식", "분식", "샐러드", "샌드위치"
-    ]
-    @Published public var categoryImages: [Image] = [
-        Image(.coffee), Image(.fastFood), Image(.dessert), Image(.bakery), Image(.more),
-        Image(.hansik), Image(.ilsik), Image(.bunsik), Image(.salad), Image(.sandwich)
-    ]
+    @Published public var categoryNames: [String]
+    @Published public var categoryImages: [Image]
     
-    @Published public var selectedCategory: String = "커피"
+    @Published public var selectedCategory: Category = .커피
     
     private let loginTokenManager: LoginTokenManager
     private let network: SCMNetworkImpl
@@ -29,6 +24,9 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     public init() {
         self.loginTokenManager = LoginTokenManager()
         self.network = SCMNetworkImpl()
+        
+        self.categoryNames = Category.allCases.map { $0.text }
+        self.categoryImages = Category.allCases.map { $0.image }
     }
     
     public func getPopularKeywords() async -> [String] {

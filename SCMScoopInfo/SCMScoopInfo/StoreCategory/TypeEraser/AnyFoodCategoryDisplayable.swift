@@ -23,7 +23,7 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         }
     }
     
-    @Published public var selectedCategory: String {
+    @Published public var selectedCategory: Category {
         didSet {
             _base.selectedCategory = selectedCategory
         }

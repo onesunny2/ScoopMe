@@ -37,4 +37,9 @@ public enum Category: String, CaseIterable {
         case .샌드위치: Image(.sandwich)
         }
     }
+    
+    public static func from(_ string: String) -> Category {
+        guard let category = Category(rawValue: string) else { return .커피 }
+        return category
+    }
 }

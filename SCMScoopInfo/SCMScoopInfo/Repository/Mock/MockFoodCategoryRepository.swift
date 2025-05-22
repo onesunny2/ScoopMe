@@ -18,7 +18,7 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
         Image(.hansik), Image(.ilsik), Image(.bunsik), Image(.salad), Image(.sandwich)
     ]
     
-    @Published public var selectedCategory: String = "커피"
+    @Published public var selectedCategory: Category = .커피
     
     public init() { }
     

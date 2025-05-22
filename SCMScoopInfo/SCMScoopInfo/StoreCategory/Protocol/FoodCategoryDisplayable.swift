@@ -13,7 +13,7 @@ public protocol FoodCategoryDisplayable: AnyObject, ObservableObject {
     var categoryNames: [String] { get set }
     var categoryImages: [Image] { get set }
     
-    var selectedCategory: String { get set }
+    var selectedCategory: Category { get set }
     
     func getPopularKeywords() async -> [String]
     func getPopularStoresInfo() async -> [RealtimePopularScoopEntity]

@@ -47,7 +47,8 @@ struct HomeCategoryCell: View {
                         changeCategory(show: true, switch: 9)
                     } else {
                         selectedCategory = index
-                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
+                        foodCategoryRepository.selectedCategory = Category.from(foodCategoryRepository.categoryNames[index])
+                        
                         Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
                     }
                     Log.debug("버튼 클릭")
@@ -69,7 +70,8 @@ struct HomeCategoryCell: View {
                         changeCategory(show: false, switch: 4)
                     } else {
                         selectedCategory = index
-                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
+                        foodCategoryRepository.selectedCategory = Category.from(foodCategoryRepository.categoryNames[index])
+                        
                         Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
                     }
                     Log.debug("버튼 클릭")
