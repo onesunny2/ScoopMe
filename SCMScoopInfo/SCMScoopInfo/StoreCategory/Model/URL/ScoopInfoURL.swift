@@ -10,6 +10,7 @@ internal import SCMNetwork
 
 public enum ScoopInfoURL {
     case popularKeyword(access: String)
+    case realtimePopularStores(access: String, category: Category)
     
     var baseURL: String {
         return Secret.baseURL
@@ -17,7 +18,7 @@ public enum ScoopInfoURL {
     
     var method: HTTPMethods {
         switch self {
-        case .popularKeyword:
+        default:
             return .get
         }
     }
@@ -25,11 +26,14 @@ public enum ScoopInfoURL {
     var path: String {
         switch self {
         case .popularKeyword: "/v1/stores/searches-popular"
+        case .realtimePopularStores: "v1/stores/popular-stores"
         }
     }
     
     var parameters: [String: String]? {
         switch self {
+        case let .realtimePopularStores(_, category):
+            return ["category" : category.text]
         default: return nil
         }
     }
@@ -37,6 +41,12 @@ public enum ScoopInfoURL {
     var headers: [String: String] {
         switch self {
         case let .popularKeyword(access):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .realtimePopularStores(access, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
