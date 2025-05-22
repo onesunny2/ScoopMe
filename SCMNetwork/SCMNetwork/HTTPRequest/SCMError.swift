@@ -15,7 +15,7 @@ public enum SCMError: Error {
     case decodingFailed(Error)
     case serverError(statusCode: Int, message: String)
     
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .invalidURL: return "유효하지 않은 URL입니다."
         case .invalidResponse: return "유효하지 않은 응답입니다."

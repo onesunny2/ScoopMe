@@ -7,7 +7,7 @@
 
 import Foundation
 import SCMLogger
-internal import SCMNetwork
+import SCMNetwork
 internal import Security
 
 public final class KeychainManager {

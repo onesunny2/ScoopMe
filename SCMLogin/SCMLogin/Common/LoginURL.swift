@@ -6,7 +6,7 @@
 //
 
 import Foundation
-internal import SCMNetwork
+import SCMNetwork
 
 public enum LoginURL {
     case checkEmail(email: String)

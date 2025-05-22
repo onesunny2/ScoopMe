@@ -24,7 +24,7 @@ final class DIContainer {
         
         self.locationManager = LocationManager()
         
-        let repo = MockFoodCategoryRepository()
+        let repo = FoodCategoryRepository()
         self.foodCategoryRepository = AnyFoodCategoryDisplayable(repo)
         
         self.imageHelper = ImageHelper.shared

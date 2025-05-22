@@ -6,7 +6,7 @@
 //
 
 import Foundation
-internal import SCMNetwork
+import SCMNetwork
 
 protocol NetworkEmptyProtocol: NetworkServiceProtocol {
     var network: SCMNetworkImpl { get }

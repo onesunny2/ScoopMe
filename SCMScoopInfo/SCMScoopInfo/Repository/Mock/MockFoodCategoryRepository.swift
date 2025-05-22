@@ -22,13 +22,13 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
     
     public init() { }
     
-    public func getPopularKeywords() async -> PopularSearchKeywordEntity {
+    public func getPopularKeywords() async -> [String] {
         let keywords = [
             "스쿱 베이커리",
             "달콤 스쿱",
             "스쿱 치킨 점바점"
         ]
-        return PopularSearchKeywordEntity(keywords: keywords)
+        return keywords
     }
     
     public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {

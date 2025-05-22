@@ -6,7 +6,7 @@
 //
 
 import Foundation
-internal import SCMNetwork
+import SCMNetwork
 
 protocol UserServiceProtocol: NetworkServiceProtocol {
     
