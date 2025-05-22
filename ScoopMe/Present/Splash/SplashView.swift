@@ -32,8 +32,8 @@ struct SplashView: View {
     }
     
     private var shakeImage: some View {
-        Image(.splash3D)
-            .basicImage(width: 270)
+        Image(.splashFood)
+            .basicImage(width: 430)
             .scaleEffect(scale)
             .onAppear {
                 withAnimation(
@@ -70,4 +70,5 @@ extension SplashView {
 
 #Preview {
     SplashView()
+        .environmentObject(SCMSwitcher.shared)
 }

@@ -9,13 +9,12 @@ import SwiftUI
 
 struct MainTabView: View {
     
-    @StateObject private var router = SCMRouter<TabFlow>.shared
     @State private var selectedTab: Int = 0
     
     var body: some View {
-        NavigationStack(path: $router.path) {
-            TabView(selection: $selectedTab) {
-                HomeView()
+        TabView(selection: $selectedTab) {
+            Group {
+                HomeView(repository: DIContainer.shared.foodCategoryRepository)
                     .tabImage(Image(.homeFill))
                     .tag(0)
                 
@@ -37,10 +36,9 @@ struct MainTabView: View {
                     .tabImage(Image(.profileFill))
                     .tag(4)
             }
-            .toolbarBackground(.visible, for: .tabBar)
             .toolbarBackground(.scmGray0, for: .tabBar)
-            .toolbarColorScheme(.none, for: .tabBar)
-            .tint(.scmBlackSprout)
+            .toolbarBackground(.visible, for: .tabBar)
         }
+        .tint(.scmBlackSprout)
     }
 }

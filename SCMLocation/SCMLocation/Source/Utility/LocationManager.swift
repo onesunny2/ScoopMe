@@ -181,8 +181,6 @@ extension LocationManager {
         
         var components = [String]()
         
-        // 국가
-        if let country = placemark.country { components.append(country) }
         // 시도
         if let administrativeArea = placemark.administrativeArea { components.append(administrativeArea) }
         // 구/군

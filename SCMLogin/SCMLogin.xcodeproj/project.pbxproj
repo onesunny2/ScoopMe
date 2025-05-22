@@ -34,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		435E58252DD1C9E10005196F /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		436533192DDDA7B300313379 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		43E0172D2DD3A6ED0016391C /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		43E01AC02DD71D8A0016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E01AC42DD71D8D0016391C /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +101,7 @@
 		43E01ABF2DD71D8A0016391C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				436533192DDDA7B300313379 /* XCTest.framework */,
 				43E01AC42DD71D8D0016391C /* SCMNetwork.framework */,
 				43E01AC02DD71D8A0016391C /* SCMLogger.framework */,
 			);
@@ -153,6 +155,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					435E58242DD1C9E10005196F = {
