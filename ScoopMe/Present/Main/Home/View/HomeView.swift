@@ -22,7 +22,7 @@ struct HomeView: View {
     @StateObject private var loginTokenManager: LoginTokenManager
     
     @State private var searchKeyword: String = ""
-    @State private var populerStores: [RealtimePopularScoopEntity] = []
+    @State private var popularStores: [RealtimePopularScoopEntity] = []
     
     @State private var aroundScoopFilter: AroundFilterType = .distance
     @State private var isPicchelined: Bool = true
@@ -60,10 +60,10 @@ struct HomeView: View {
             }
             .task {
                 await locationManager.checkDeviceCondition()
-                
-                if self.populerStores.isEmpty || self.aroundStores.isEmpty {
+
+                if self.popularStores.isEmpty || self.aroundStores.isEmpty {
                     let popularStores = await foodCategoryRepository.getPopularStoresInfo()
-                    self.populerStores = popularStores
+                    self.popularStores = popularStores
                     
                     let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
                     self.aroundStores = aroundStores
@@ -83,6 +83,12 @@ struct HomeView: View {
                     switcher.switchTo(.login)
                 }
             )
+            .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
+                Task {
+                    let popularStores = await foodCategoryRepository.getPopularStoresInfo()
+                    self.popularStores = popularStores
+                }
+            }
             .toolbarItem (leading: {
                 addressButton
             })
@@ -146,22 +152,7 @@ struct HomeView: View {
                 .defaultHorizontalPadding()
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(populerStores.indices, id: \.self) { index in
-                        RealtimePopularScoopCell(
-                            imageHelper: DIContainer.shared.imageHelper,
-                            store: populerStores[index],
-                            likeButtonOpacity: 1
-                        ) {
-                            Log.debug("좋아요 버튼 클릭")
-                            Task {
-                                await postLikeStatus(index)
-                            }
-                        }
-                    }
-                    
-                }
-                .defaultHorizontalPadding()
+                realtimeScrollCell
             }
             
             aiAlgorithm
@@ -169,6 +160,24 @@ struct HomeView: View {
                 .padding(.bottom, 14)
         }
         .background(.scmGray15)
+    }
+    
+    private var realtimeScrollCell: some View {
+        HStack {
+            ForEach(popularStores.indices, id: \.self) { index in
+                RealtimePopularScoopCell(
+                    imageHelper: DIContainer.shared.imageHelper,
+                    store: popularStores[index],
+                    likeButtonOpacity: 1
+                ) {
+                    Log.debug("좋아요 버튼 클릭")
+                    Task {
+                        await postLikeStatus(index)
+                    }
+                }
+            }
+        }
+        .defaultHorizontalPadding()
     }
     
     private var aiAlgorithm: some View {
@@ -259,9 +268,9 @@ extension HomeView {
     
     private func postLikeStatus(_ index: Int) async {
         do {
-            try await foodCategoryRepository.postStoreLikeStatus(store: populerStores[index].storeID, like: !populerStores[index].likeStatus)
+            try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
             
-            populerStores[index].likeStatus.toggle()
+            popularStores[index].likeStatus.toggle()
         } catch {
             await checkTokenValidation(error)
         }
