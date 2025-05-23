@@ -44,7 +44,7 @@ public enum LoginURL {
         }
     }
     
-    var parameters: [String: String?]? {
+    var jsonBody: [String: Any?]? {
         switch self {
         case let .checkEmail(email):
             return ["email": email]

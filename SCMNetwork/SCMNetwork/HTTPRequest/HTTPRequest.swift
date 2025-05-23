@@ -13,6 +13,7 @@ public struct HTTPRequest {
     private let method: HTTPMethods
     private var path: String = ""
     private var parameters: [String: String?]? = nil
+    private var jsonBody: [String: Any]? = nil
     private var httpHeaders: [String: String] = [:]
     private var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
     private var successStatusCodes: Set<Int>
@@ -52,6 +53,12 @@ extension HTTPRequest: Requestable {
         return request
     }
     
+    public func addJSONBody(_ body: [String: Any]?) -> Self {
+        var request = self
+        request.jsonBody = body
+        return request
+    }
+    
     public func addHeaders(_ headers: [String: String]) -> Self {
         var request = self
         request.httpHeaders = headers
@@ -79,28 +86,28 @@ extension HTTPRequest: Requestable {
             request.setValue(value, forHTTPHeaderField: key)
         }
         
-        // parameter
-        if let parameters {
-            switch method {
-            case .get:
+        switch method {
+        case .get:
+            if let parameters {
                 var components = URLComponents(string: urlString)
                 components?.queryItems = parameters.map {
                     URLQueryItem(name: $0.key, value: $0.value)
                 }
                 guard let url = components?.url else { throw SCMError.invalidURL }
                 request.url = url
-                
-            case .post, .put:
+            }
+            
+        case .post, .put:
+            if let jsonBody {
                 do {
-                    let nonNilParameters = parameters.compactMapValues { $0 }
-                    let jsonData = try JSONSerialization.data(withJSONObject: nonNilParameters, options: [])
+                    let jsonData = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
                     request.httpBody = jsonData
                 } catch {
                     throw SCMError.invalidParameter
                 }
-                
-            default: break
             }
+            
+        default: break
         }
         
         return request

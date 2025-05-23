@@ -24,7 +24,7 @@ extension NetworkEmptyProtocol {
         )
             .addBaseURL(value.baseURL)
             .addPath(value.path)
-            .addParameters(value.parameters)
+            .addJSONBody(value.jsonBody)
             .addHeaders(value.headers)
         
         return try await network.fetchEmptyData(request)
