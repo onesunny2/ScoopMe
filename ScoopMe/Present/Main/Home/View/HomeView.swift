@@ -272,18 +272,22 @@ extension HomeView {
             
             popularStores[index].likeStatus.toggle()
         } catch {
-            await checkTokenValidation(error)
+            await checkTokenValidation(error) {
+                try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
+                
+                popularStores[index].likeStatus.toggle()
+            }
         }
     }
     
-    private func checkTokenValidation(_ error: Error) async {
+    private func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
         if let scmError = error as? SCMError {
             switch scmError {
             case .serverError(let statusCode, _):
                 switch statusCode {
                 case 419: // access 만료 -> refresh 통신 진행
                     Log.debug("✅ accessToken만료")
-                    await checkRefreshToken()
+                    await checkRefreshToken(complete: complete)
                 case 401, 418: // refresh 토큰 오류 및 만료 -> 로그인 화면으로 보내기
                     loginTokenManager.alertTitle = "안내"
                     loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
@@ -295,9 +299,10 @@ extension HomeView {
         }
     }
     
-    private func checkRefreshToken() async {
+    private func checkRefreshToken(complete: @escaping () async throws -> ()) async {
         do {
             try await loginTokenManager.requestRefreshToken()
+            try await complete()
         } catch {
             loginTokenManager.alertTitle = "안내"
             loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
