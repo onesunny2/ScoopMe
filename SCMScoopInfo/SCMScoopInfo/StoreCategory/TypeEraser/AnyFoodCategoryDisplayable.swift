@@ -47,4 +47,8 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
     public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {
         await _base.getAroundStoreInfo(round, filter)
     }
+    
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        try await _base.postStoreLikeStatus(store: id, like: status)
+    }
 }

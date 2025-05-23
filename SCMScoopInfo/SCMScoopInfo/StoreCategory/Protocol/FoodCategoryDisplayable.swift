@@ -21,4 +21,5 @@ public protocol FoodCategoryDisplayable: AnyObject, ObservableObject {
         _ round: AroundType,
         _ filter: AroundFilterType
     ) async -> [AroundStoreInfoEntity]
+    func postStoreLikeStatus(store id: String, like status: Bool) async throws
 }

@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct LikeStoreResponseDTO: Codable {
+    let like_status: Bool
+}

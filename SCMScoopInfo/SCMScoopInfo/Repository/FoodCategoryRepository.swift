@@ -34,7 +34,6 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     }
     
     public func getPopularKeywords() async -> [String] {
-
         do {
             let accesToken = loginTokenManager.fetchToken(.accessToken)
             let value = ScoopInfoURL.popularKeyword(access: accesToken)
@@ -147,6 +146,15 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             )
         ]
     }
+    
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let value = ScoopInfoURL.postStoreLike(access: accessToken, storeID: id, status: status)
+        let result = try await callRequest(value, type: LikeStoreResponseDTO.self)
+        
+        Log.debug("✅ 가게 좋아요 post 완료: \(result.response)")
+    }
 }
 
 // MARK: private func
@@ -160,6 +168,7 @@ extension FoodCategoryRepository {
             .addBaseURL(value.baseURL)
             .addPath(value.path)
             .addParameters(value.parameters)
+            .addJSONBody(value.jsonBody)
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)

@@ -106,4 +106,8 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
             )
         ]
     }
+    
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        print(#function)
+    }
 }

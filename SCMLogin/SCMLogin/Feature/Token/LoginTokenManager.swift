@@ -12,8 +12,8 @@ import SCMNetwork
 
 public final class LoginTokenManager: NSObject, UserServiceProtocol {
     
-    @Published var alertTitle: String = ""
-    @Published var alertMessage: String = ""
+    @Published public var alertTitle: String = ""
+    @Published public var alertMessage: String = ""
     
     private let needLoginKey: String = "needLoginStatus"
     public var isNeedLogin: Bool {

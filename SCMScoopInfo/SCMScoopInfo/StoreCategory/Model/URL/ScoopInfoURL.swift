@@ -13,6 +13,7 @@ public enum ScoopInfoURL {
     case nearbyStoreNext(access: String, category: String, longitude: Float, latitude: Float, next: String, limit: Int, orderBy: AroundFilterType)
     case popularKeyword(access: String)
     case realtimePopularStores(access: String, category: Category)
+    case postStoreLike(access: String, storeID: String, status: Bool)
     
     var baseURL: String {
         return Secret.baseURL
@@ -20,6 +21,8 @@ public enum ScoopInfoURL {
     
     var method: HTTPMethods {
         switch self {
+        case .postStoreLike:
+            return .post
         default:
             return .get
         }
@@ -30,6 +33,7 @@ public enum ScoopInfoURL {
         case .nearbyStoreFirst, .nearbyStoreNext: "/v1/stores"
         case .popularKeyword: "/v1/stores/searches-popular"
         case .realtimePopularStores: "/v1/stores/popular-stores"
+        case let .postStoreLike(_, storeID, _): "/v1/stores/\(storeID)/like"
         }
     }
     
@@ -58,6 +62,14 @@ public enum ScoopInfoURL {
         }
     }
     
+    var jsonBody: [String: Any?]? {
+        switch self {
+        case let .postStoreLike(_, _, likeStatus):
+            return ["like_status": likeStatus]
+        default: return nil
+        }
+    }
+    
     var headers: [String: String] {
         switch self {
         case let .nearbyStoreFirst(access, _, _, _, _, _):
@@ -79,6 +91,12 @@ public enum ScoopInfoURL {
                 "Authorization": access
             ]
         case let .realtimePopularStores(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .postStoreLike(access, _, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,

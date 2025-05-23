@@ -8,14 +8,18 @@
 import SwiftUI
 import CoreLocation
 import SCMLocation
+import SCMLogin
 import SCMLogger
+import SCMNetwork
 import SCMScoopInfo
 
 struct HomeView: View {
     
     @StateObject private var foodCategoryRepository: AnyFoodCategoryDisplayable
+    @StateObject private var switcher = SCMSwitcher.shared
     @StateObject private var router = SCMRouter<HomePath>.shared
-    @StateObject private var locationManager = DIContainer.shared.locationManager
+    @StateObject private var locationManager: LocationManager
+    @StateObject private var loginTokenManager: LoginTokenManager
     
     @State private var searchKeyword: String = ""
     @State private var populerStores: [RealtimePopularScoopEntity] = []
@@ -25,8 +29,16 @@ struct HomeView: View {
     @State private var isMyPicked: Bool = false
     @State private var aroundStores: [AroundStoreInfoEntity] = []
     
-    init(repository: AnyFoodCategoryDisplayable) {
+    @State private var showAlert: Bool = false
+    
+    init(
+        repository: AnyFoodCategoryDisplayable,
+        locationManager: LocationManager,
+        loginTokenManager: LoginTokenManager
+    ) {
         self._foodCategoryRepository = StateObject(wrappedValue: repository)
+        self._locationManager = StateObject(wrappedValue: locationManager)
+        self._loginTokenManager = StateObject(wrappedValue: loginTokenManager)
     }
     
     var body: some View {
@@ -40,7 +52,7 @@ struct HomeView: View {
                         searchField
                         popularKeywords
                         categoryButtons
-                        realtimePopularScoop(populerStores)
+                        realtimePopularScoop()
                         adBanners()
                         aroundScoop()
                     }
@@ -63,6 +75,14 @@ struct HomeView: View {
                 message: locationManager.alertMessage, action: {
                     locationManager.openSettings()
                 })
+            .showAlert(
+                isPresented: $showAlert,
+                title: loginTokenManager.alertTitle,
+                message: loginTokenManager.alertMessage,
+                action: {
+                    switcher.switchTo(.login)
+                }
+            )
             .toolbarItem (leading: {
                 addressButton
             })
@@ -115,7 +135,7 @@ struct HomeView: View {
         .background(.scmGray15)
     }
     
-    private func realtimePopularScoop(_ scoops: [RealtimePopularScoopEntity]) -> some View {
+    private func realtimePopularScoop() -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(StringLiterals.realtime_popular_scoop.text)
                 .basicText(.PTTitle4, .scmGray90)
@@ -123,15 +143,19 @@ struct HomeView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(scoops, id: \.storeID) { scoop in
+                    ForEach(populerStores.indices, id: \.self) { index in
                         RealtimePopularScoopCell(
                             imageHelper: DIContainer.shared.imageHelper,
-                            store: scoop,
+                            store: populerStores[index],
                             likeButtonOpacity: 1
                         ) {
-                            Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
+                            Log.debug("좋아요 버튼 클릭")
+                            Task {
+                                await postLikeStatus(index)
+                            }
                         }
                     }
+                    
                 }
                 .defaultHorizontalPadding()
             }
@@ -222,10 +246,50 @@ struct HomeView: View {
     }
 }
 
+// MARK: action
 extension HomeView {
     private func setAroundPickStatus(_ main: inout Bool, _ sub: inout Bool) {
         main = (main == true) ? false : true
         sub = !main
+    }
+    
+    private func postLikeStatus(_ index: Int) async {
+        do {
+            try await foodCategoryRepository.postStoreLikeStatus(store: populerStores[index].storeID, like: !populerStores[index].likeStatus)
+            
+            populerStores[index].likeStatus.toggle()
+        } catch {
+            await checkTokenValidation(error)
+        }
+    }
+    
+    private func checkTokenValidation(_ error: Error) async {
+        if let scmError = error as? SCMError {
+            switch scmError {
+            case .serverError(let statusCode, _):
+                switch statusCode {
+                case 419: // access 만료 -> refresh 통신 진행
+                    Log.debug("✅ accessToken만료")
+                    await checkRefreshToken()
+                case 401, 418: // refresh 토큰 오류 및 만료 -> 로그인 화면으로 보내기
+                    loginTokenManager.alertTitle = "안내"
+                    loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+                    showAlert = true
+                default: break
+                }
+            default: break
+            }
+        }
+    }
+    
+    private func checkRefreshToken() async {
+        do {
+            try await loginTokenManager.requestRefreshToken()
+        } catch {
+            loginTokenManager.alertTitle = "안내"
+            loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+            showAlert = true
+        }
     }
 }
 
@@ -241,5 +305,9 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    HomeView(repository: DIContainer.shared.foodCategoryRepository)
+    HomeView(
+        repository: DIContainer.shared.foodCategoryRepository,
+        locationManager: DIContainer.shared.locationManager,
+        loginTokenManager: DIContainer.shared.loginTokenManager
+    )
 }
