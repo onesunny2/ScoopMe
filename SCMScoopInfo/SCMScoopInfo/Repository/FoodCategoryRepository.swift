@@ -33,19 +33,15 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         self.categoryImages = Category.allCases.map { $0.image }
     }
     
-    public func getPopularKeywords() async -> [String] {
-        do {
-            let accesToken = loginTokenManager.fetchToken(.accessToken)
-            let value = ScoopInfoURL.popularKeyword(access: accesToken)
-            let result = try await callRequest(value, type: PopularSearchKeywordDTO.self)
-            
-            Log.debug("✅ 인기검색어 통신 성공: \(result.response.data)")
-            
-            return PopularSearchKeywordEntity(keywords: result.response.data).keywords
-        } catch {
-            Log.error("인기검색어 통신 오류")
-            return []
-        }
+    public func getPopularKeywords() async throws -> [String] {
+        
+        let accesToken = loginTokenManager.fetchToken(.accessToken)
+        let value = ScoopInfoURL.popularKeyword(access: accesToken)
+        let result = try await callRequest(value, type: PopularSearchKeywordDTO.self)
+        
+        Log.debug("✅ 인기검색어 통신 성공: \(result.response.data)")
+        
+        return PopularSearchKeywordEntity(keywords: result.response.data).keywords
     }
     
     public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {

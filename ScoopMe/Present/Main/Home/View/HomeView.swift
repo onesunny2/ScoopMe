@@ -123,7 +123,11 @@ struct HomeView: View {
     }
     
     private var popularKeywords: some View {
-        PopularKeywordCell(foodCategoryRepository: foodCategoryRepository)
+        PopularKeywordCell(
+            foodCategoryRepository: foodCategoryRepository,
+            loginTokenManager: loginTokenManager,
+            showAlert: $showAlert
+        )
         .padding(.vertical, 12)
         .defaultHorizontalPadding()
     }

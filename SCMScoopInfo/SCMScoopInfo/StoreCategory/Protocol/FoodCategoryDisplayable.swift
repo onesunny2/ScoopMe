@@ -15,7 +15,7 @@ public protocol FoodCategoryDisplayable: AnyObject, ObservableObject {
     
     var selectedCategory: Category { get set }
     
-    func getPopularKeywords() async -> [String]
+    func getPopularKeywords() async throws -> [String]
     func getPopularStoresInfo() async -> [RealtimePopularScoopEntity]
     func getAroundStoreInfo(
         _ round: AroundType,

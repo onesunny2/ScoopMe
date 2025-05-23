@@ -36,8 +36,8 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         self.selectedCategory = base.selectedCategory
     }
     
-    public func getPopularKeywords() async -> [String] {
-        await _base.getPopularKeywords()
+    public func getPopularKeywords() async throws -> [String] {
+        try await _base.getPopularKeywords()
     }
     
     public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {

@@ -22,7 +22,7 @@ public final class MockFoodCategoryRepository: FoodCategoryDisplayable {
     
     public init() { }
     
-    public func getPopularKeywords() async -> [String] {
+    public func getPopularKeywords() async throws -> [String] {
         let keywords = [
             "스쿱 베이커리",
             "달콤 스쿱",
