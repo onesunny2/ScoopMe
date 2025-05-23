@@ -20,7 +20,7 @@ struct HomeView: View {
     @State private var searchKeyword: String = ""
     @State private var populerStores: [RealtimePopularScoopEntity] = []
     
-    @State private var aroundScoopFilter: AroundFilterType = .거리순
+    @State private var aroundScoopFilter: AroundFilterType = .distance
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
     @State private var aroundStores: [AroundStoreInfoEntity] = []
@@ -53,7 +53,7 @@ struct HomeView: View {
                     let popularStores = await foodCategoryRepository.getPopularStoresInfo()
                     self.populerStores = popularStores
                     
-                    let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .거리순)
+                    let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
                     self.aroundStores = aroundStores
                 }
             }
@@ -183,11 +183,11 @@ struct HomeView: View {
             .asButton {
                 // 내 근처스쿱 필터링 버튼
                 switch aroundScoopFilter {
-                case .거리순: return aroundScoopFilter = .별점순
-                case .별점순: return aroundScoopFilter = .주문_많은순
-                case .주문_많은순: return aroundScoopFilter = .즐겨찾기순
-                case .즐겨찾기순: return aroundScoopFilter = .거리순
-                @unknown default: return aroundScoopFilter = .거리순
+                case .distance: return aroundScoopFilter = .reviews
+                case .reviews: return aroundScoopFilter = .orders
+                case .orders: return aroundScoopFilter = .favorites
+                case .favorites: return aroundScoopFilter = .distance
+                @unknown default: return aroundScoopFilter = .distance
                 }
             }
         }

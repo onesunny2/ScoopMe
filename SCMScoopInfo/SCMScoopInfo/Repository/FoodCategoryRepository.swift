@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SCMLocation
 internal import SCMLogin
 import SCMLogger
 internal import SCMNetwork
@@ -17,12 +18,15 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     @Published public var categoryImages: [Image]
     
     @Published public var selectedCategory: Category = .커피
+    @Published public var selectedFiltering: AroundFilterType = .distance
     
     private let loginTokenManager: LoginTokenManager
+    private let locationManager: LocationManager
     private let network: SCMNetworkImpl
     
     public init() {
         self.loginTokenManager = LoginTokenManager()
+        self.locationManager = LocationManager()
         self.network = SCMNetworkImpl()
         
         self.categoryNames = Category.allCases.map { $0.text }
@@ -30,7 +34,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     }
     
     public func getPopularKeywords() async -> [String] {
-        
+
         do {
             let accesToken = loginTokenManager.fetchToken(.accessToken)
             let value = ScoopInfoURL.popularKeyword(access: accesToken)
@@ -46,19 +50,42 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     }
     
     public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {
-        return Array(
-            repeating: RealtimePopularScoopEntity(
-                storeID: "id_\(Int.random(in: 0...222))",
-                storeName: "스쿱스쿱",
-                storeImage: Secret.baseURL + "/v1/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg",
-                likeStatus: false,
-                picchelinStatus: true,
-                likeCount: "100개",
-                distance: "22.2km",
-                orderCount: "22회"
-            ),
-            count: 10
-        )
+        
+        do {
+            let accesToken = loginTokenManager.fetchToken(.accessToken)
+            let value = ScoopInfoURL.realtimePopularStores(access: accesToken, category: selectedCategory)
+            let result = try await callRequest(value, type: RealtimePopularStoreDTO.self)
+            
+            Log.debug("✅ 근처 인기스쿱 통신 성공: \(result.response)")
+            
+            var entity: [RealtimePopularScoopEntity] = []
+            
+            result.response.data.forEach { data in
+                
+                guard let image = data.storeImageUrls.first.map({ Secret.baseURL + "/v1" + $0 }) else { return }
+                
+                Log.debug("이미지 링크: \(image)")
+                
+                let data = RealtimePopularScoopEntity(
+                    storeID: data.storeID,
+                    storeName: data.name,
+                    storeImage: image,
+                    likeStatus: data.isPick,
+                    picchelinStatus: data.isPicchelin,
+                    likeCount: "\(data.pickCount)개",
+                    distance: "2.2km",
+                    orderCount: "\(data.totalOrderCount)회"
+                )
+                
+                entity.append(data)
+            }
+            
+            return entity
+            
+        } catch {
+            Log.error("근처 인기스쿱 통신 오류: \(error)")
+            return []
+        }
     }
     
     public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {
@@ -120,7 +147,10 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             )
         ]
     }
-    
+}
+
+// MARK: private func
+extension FoodCategoryRepository {
     private func callRequest<T: Decodable>(_ value: ScoopInfoURL, type: T.Type) async throws -> HTTPResponse<T> {
         let request = HTTPRequest(
             scheme: .http,
@@ -133,5 +163,26 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)
+    }
+    
+    private func getAllStoresFirst() async {
+        do {
+            let accessToken = loginTokenManager.fetchToken(.accessToken)
+            let location = locationManager.currentLocation
+            let value = ScoopInfoURL.nearbyStoreFirst(
+                access: accessToken,
+                category: selectedCategory.text,
+                longitude: Float(location.coordinate.longitude),
+                latitude: Float(location.coordinate.latitude),
+                limit: 5,
+                orderBy: selectedFiltering
+            )
+            let result = try await callRequest(value, type: AllStoreListResponseDTO.self)
+            
+            Log.debug("근처 전체 검색결과: \(result.response.data)")
+            
+        } catch {
+            Log.error("근처 가게 전체검색 실패: \(error)")
+        }
     }
 }

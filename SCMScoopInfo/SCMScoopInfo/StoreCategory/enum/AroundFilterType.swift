@@ -8,12 +8,21 @@
 import Foundation
 
 public enum AroundFilterType: String {
-    case 거리순
-    case 별점순 = "별점 높은 순"
-    case 즐겨찾기순
-    case 주문_많은순 = "주문 많은 순"
+    case distance
+    case reviews = "별점 높은 순"
+    case favorites
+    case orders = "주문 많은 순"
+    
+    public var query: String {
+        return self.rawValue
+    }
     
     public var text: String {
-        return self.rawValue
+        switch self {
+        case .distance: return "거리순"
+        case .reviews: return "리뷰순"
+        case .favorites: return "즐겨찾기순"
+        case .orders: return "주문순"
+        }
     }
 }
