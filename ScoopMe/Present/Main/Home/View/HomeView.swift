@@ -62,8 +62,7 @@ struct HomeView: View {
                 await locationManager.checkDeviceCondition()
 
                 if self.popularStores.isEmpty || self.aroundStores.isEmpty {
-                    let popularStores = await foodCategoryRepository.getPopularStoresInfo()
-                    self.popularStores = popularStores
+                    await getStoreInfo()
                     
                     let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
                     self.aroundStores = aroundStores
@@ -85,8 +84,7 @@ struct HomeView: View {
             )
             .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
                 Task {
-                    let popularStores = await foodCategoryRepository.getPopularStoresInfo()
-                    self.popularStores = popularStores
+                    await getStoreInfo()
                 }
             }
             .toolbarItem (leading: {
@@ -266,6 +264,7 @@ extension HomeView {
         sub = !main
     }
     
+    // 리프레시 토큰 갱신 로직 포함
     private func postLikeStatus(_ index: Int) async {
         do {
             try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
@@ -276,6 +275,19 @@ extension HomeView {
                 try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
                 
                 popularStores[index].likeStatus.toggle()
+            }
+        }
+    }
+    
+    // 리프레시 토큰 갱신 로직 포함
+    private func getStoreInfo() async {
+        do {
+            let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+            self.popularStores = popularStores
+        } catch {
+            await checkTokenValidation(error) {
+                let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+                self.popularStores = popularStores
             }
         }
     }

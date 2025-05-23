@@ -39,48 +39,40 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         let value = ScoopInfoURL.popularKeyword(access: accesToken)
         let result = try await callRequest(value, type: PopularSearchKeywordDTO.self)
         
-        Log.debug("✅ 인기검색어 통신 성공: \(result.response.data)")
+        Log.debug("✅ 인기검색어 통신 성공")
         
         return PopularSearchKeywordEntity(keywords: result.response.data).keywords
     }
     
-    public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {
+    public func getPopularStoresInfo() async throws -> [RealtimePopularScoopEntity] {
         
-        do {
-            let accesToken = loginTokenManager.fetchToken(.accessToken)
-            let value = ScoopInfoURL.realtimePopularStores(access: accesToken, category: selectedCategory)
-            let result = try await callRequest(value, type: RealtimePopularStoreDTO.self)
+        let accesToken = loginTokenManager.fetchToken(.accessToken)
+        let value = ScoopInfoURL.realtimePopularStores(access: accesToken, category: selectedCategory)
+        let result = try await callRequest(value, type: RealtimePopularStoreDTO.self)
+        
+        Log.debug("✅ 근처 인기스쿱 통신 성공")
+        
+        var entity: [RealtimePopularScoopEntity] = []
+        
+        result.response.data.forEach { data in
             
-            Log.debug("✅ 근처 인기스쿱 통신 성공: \(result.response)")
+            guard let image = data.storeImageUrls.first.map({ Secret.baseURL + "/v1" + $0 }) else { return }
             
-            var entity: [RealtimePopularScoopEntity] = []
+            let data = RealtimePopularScoopEntity(
+                storeID: data.storeID,
+                storeName: data.name,
+                storeImage: image,
+                likeStatus: data.isPick,
+                picchelinStatus: data.isPicchelin,
+                likeCount: "\(data.pickCount)개",
+                distance: "2.2km",
+                orderCount: "\(data.totalOrderCount)회"
+            )
             
-            result.response.data.forEach { data in
-                
-                guard let image = data.storeImageUrls.first.map({ Secret.baseURL + "/v1" + $0 }) else { return }
-                
-                Log.debug("이미지 링크: \(image)")
-                
-                let data = RealtimePopularScoopEntity(
-                    storeID: data.storeID,
-                    storeName: data.name,
-                    storeImage: image,
-                    likeStatus: data.isPick,
-                    picchelinStatus: data.isPicchelin,
-                    likeCount: "\(data.pickCount)개",
-                    distance: "2.2km",
-                    orderCount: "\(data.totalOrderCount)회"
-                )
-                
-                entity.append(data)
-            }
-            
-            return entity
-            
-        } catch {
-            Log.error("근처 인기스쿱 통신 오류: \(error)")
-            return []
+            entity.append(data)
         }
+        
+        return entity
     }
     
     public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {

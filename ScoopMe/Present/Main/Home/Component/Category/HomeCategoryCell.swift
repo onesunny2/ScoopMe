@@ -96,10 +96,6 @@ extension HomeCategoryCell {
          Log.debug("현재 선택한 카테고리: \(categoryName)")
 
         foodCategoryRepository.selectedCategory = category
-//         // Repository의 updateCategory 메서드 호출
-//         Task {
-//             await foodCategoryRepository.updateCategory(category)
-//         }
      }
 }
 

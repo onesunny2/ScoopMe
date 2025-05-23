@@ -40,8 +40,8 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         try await _base.getPopularKeywords()
     }
     
-    public func getPopularStoresInfo() async -> [RealtimePopularScoopEntity] {
-        await _base.getPopularStoresInfo()
+    public func getPopularStoresInfo() async throws -> [RealtimePopularScoopEntity] {
+        try await _base.getPopularStoresInfo()
     }
     
     public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {
