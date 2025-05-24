@@ -10,7 +10,6 @@ import Foundation
 public enum AroundFilterType: String {
     case distance
     case reviews = "별점 높은 순"
-    case favorites
     case orders = "주문 많은 순"
     
     public var query: String {
@@ -21,7 +20,6 @@ public enum AroundFilterType: String {
         switch self {
         case .distance: return "거리순"
         case .reviews: return "리뷰순"
-        case .favorites: return "즐겨찾기순"
         case .orders: return "주문순"
         }
     }

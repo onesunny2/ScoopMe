@@ -20,6 +20,9 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     @Published public var selectedCategory: Category = .커피
     @Published public var selectedFiltering: AroundFilterType = .distance
     
+    @Published public var isLoading: Bool = false
+    @Published public var lastStoreID: String = ""
+    
     private let loginTokenManager: LoginTokenManager
     private let locationManager: LocationManager
     private let network: SCMNetworkImpl
@@ -75,64 +78,91 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         return entity
     }
     
-    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {
+    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async throws -> [AroundStoreInfoEntity] {
         // round는 픽슐랭, filter는 거리순을 기준으로 둠!
-        return [
-            AroundStoreInfoEntity(
-                storeID: "68232364ca81ef0db5a4628d",
-                storeName: "스쿱 베이커리",
-                storeImage: [
-                    Secret.baseURL + "/v1/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
-                    Secret.baseURL + "/v1/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",
-                    Secret.baseURL + "/v1/data/stores/shourav-sheikh-a66sGfOnnqQ-unsplash_1747128644500.jpg"
-                  ],
-                likeStatus: true,
-                picchelinStatus: true,
-                likeCount: "5개",
-                totalRating: "4.8",
-                totalReview: "(12)",
-                distance: "3.2km",
-                closeTime: "10PM",
-                orderCount: "88회",
-                hashTags: ["#스쿱미", "#맛있어요"]
-            ),
-            AroundStoreInfoEntity(
-                storeID: "68231cb9ca81ef0db5a46063",
-                storeName: "스쿱 치킨 점바점",
-                storeImage: [
-                    Secret.baseURL + "/v1/data/stores/ante-samarzija-lsmu0rUhUOk-unsplash_1747128571997.jpg",
-                    Secret.baseURL + "/v1/data/stores/demi-deherrera-L-sm1B4L1Ns-unsplash_1747128572138.jpg",
-                    Secret.baseURL + "/v1/data/stores/jeremy-yap-jn-HaGWe4yw-unsplash_1747128572373.jpg"
-                  ],
-                likeStatus: false,
-                picchelinStatus: true,
-                likeCount: "55개",
-                totalRating: "5.0",
-                totalReview: "(30)",
-                distance: "0.6km",
-                closeTime: "11PM",
-                orderCount: "143회",
-                hashTags: ["#점바점", "#우리지점이짱"]
-            ),
-            AroundStoreInfoEntity(
-                storeID: "68231d1dca81ef0db5a4609b",
-                storeName: "달콤 스쿱 달콤 스쿱 달콤 스쿱 달콤 스쿱 달콤 스쿱 달콤 스쿱",
-                storeImage: [
-                    Secret.baseURL + "/v1/data/stores/heather-ford-POM4KxWZcG8-unsplash_1747137090839.jpg",
-                    Secret.baseURL + "/v1/data/stores/heather-barnes-WbZesfqwR-A-unsplash_1747137090961.jpg",
-                    Secret.baseURL + "/v1/data/stores/kobby-mendez-q54Oxq44MZs-unsplash_1747137091086.jpg"
-                  ],
-                likeStatus: true,
-                picchelinStatus: true,
-                likeCount: "182개",
-                totalRating: "4.9",
-                totalReview: "(121)",
-                distance: "1.6km",
-                closeTime: "11PM",
-                orderCount: "325회",
-                hashTags: ["#달콤~한", "#스쿱스쿱"]
-            )
-        ]
+        
+        let result = try await getAllStores(store: lastStoreID)
+        var entity: [AroundStoreInfoEntity] = []
+        
+        Log.debug("통신 결과: \(result)")
+        
+        switch round {
+        case .픽슐랭:
+            var data = result.filter { $0.isPicchelin }
+            
+            switch filter {
+            case .distance:
+                data.sort { $0.distance < $1.distance }
+            case .reviews:
+                data.sort { $0.totalReviewCount > $1.totalReviewCount }
+            case .orders:
+                data.sort { $0.totalOrderCount > $1.totalOrderCount }
+            }
+            
+            data.forEach {
+                
+                let result = AroundStoreInfoEntity(
+                    storeID: $0.storeID,
+                    storeName: $0.name,
+                    storeImage: $0.storeImageUrls.map { Secret.baseURL + "/v1" + $0 },
+                    likeStatus: $0.isPick,
+                    picchelinStatus: $0.isPicchelin,
+                    likeCount: "\($0.pickCount)개",
+                    totalRating: "\($0.totalRating)",
+                    totalReview: "(\($0.totalReviewCount))",
+                    distance: "\($0.distance)km",
+                    closeTime: "\($0.close.prefix(2))시",
+                    orderCount: "\($0.totalOrderCount)회",
+                    hashTags: $0.hashTags
+                )
+                
+                entity.append(result)
+            }
+            
+            lastStoreID = entity.last?.storeID ?? ""
+            
+            Log.debug("✅ 전체 스쿱 통신 성공: \(entity)")
+            
+            return entity
+            
+        case .마이스쿱:
+            var data = result.filter { $0.isPick }
+            
+            switch filter {
+            case .distance:
+                data.sort { $0.distance < $1.distance }
+            case .reviews:
+                data.sort { $0.totalReviewCount > $1.totalReviewCount }
+            case .orders:
+                data.sort { $0.totalOrderCount > $1.totalOrderCount }
+            }
+            
+            data.forEach {
+                
+                let result = AroundStoreInfoEntity(
+                    storeID: $0.storeID,
+                    storeName: $0.name,
+                    storeImage: $0.storeImageUrls.map { Secret.baseURL + "/v1" + $0 },
+                    likeStatus: $0.isPick,
+                    picchelinStatus: $0.isPicchelin,
+                    likeCount: "\($0.pickCount)개",
+                    totalRating: "\($0.totalRating)",
+                    totalReview: "(\($0.totalReviewCount))",
+                    distance: "\($0.distance)km",
+                    closeTime: "\($0.close.prefix(2))시",
+                    orderCount: "\($0.totalOrderCount)회",
+                    hashTags: $0.hashTags
+                )
+                
+                entity.append(result)
+            }
+            
+            Log.debug("✅ 전체 스쿱 통신 성공: \(entity)")
+            
+            lastStoreID = entity.last?.storeID ?? ""
+            
+            return entity
+        }
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
@@ -162,24 +192,23 @@ extension FoodCategoryRepository {
         return try await network.fetchData(request, T.self)
     }
     
-    private func getAllStoresFirst() async {
-        do {
-            let accessToken = loginTokenManager.fetchToken(.accessToken)
-            let location = locationManager.currentLocation
-            let value = ScoopInfoURL.nearbyStoreFirst(
-                access: accessToken,
-                category: selectedCategory.text,
-                longitude: Float(location.coordinate.longitude),
-                latitude: Float(location.coordinate.latitude),
-                limit: 5,
-                orderBy: selectedFiltering
-            )
-            let result = try await callRequest(value, type: AllStoreListResponseDTO.self)
-            
-            Log.debug("근처 전체 검색결과: \(result.response.data)")
-            
-        } catch {
-            Log.error("근처 가게 전체검색 실패: \(error)")
-        }
+    private func getAllStores(store id: String) async throws -> [AllStoreInfo] {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let location = locationManager.currentLocation
+        let value = ScoopInfoURL.nearbyStore(
+            access: accessToken,
+            category: selectedCategory.text,
+            longitude: Float(location.coordinate.longitude),
+            latitude: Float(location.coordinate.latitude),
+            next: id,
+            limit: 3,
+            orderBy: selectedFiltering
+        )
+        let result = try await callRequest(value, type: AllStoreListResponseDTO.self)
+        
+        Log.debug("근처 전체 검색결과: \(result.response.data)")
+        
+        return result.response.data
     }
 }

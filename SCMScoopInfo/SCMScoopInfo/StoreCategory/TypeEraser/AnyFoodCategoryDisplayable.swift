@@ -29,11 +29,25 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         }
     }
     
+    @Published public var isLoading: Bool {
+        didSet {
+            _base.isLoading = isLoading
+        }
+    }
+    
+    @Published public var lastStoreID: String {
+        didSet {
+            _base.lastStoreID = lastStoreID
+        }
+    }
+    
     public init(_ base: any FoodCategoryDisplayable) {
         self._base = base
         self.categoryNames = base.categoryNames
         self.categoryImages = base.categoryImages
         self.selectedCategory = base.selectedCategory
+        self.isLoading = base.isLoading
+        self.lastStoreID = base.lastStoreID
     }
     
     public func getPopularKeywords() async throws -> [String] {
@@ -44,8 +58,8 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         try await _base.getPopularStoresInfo()
     }
     
-    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async -> [AroundStoreInfoEntity] {
-        await _base.getAroundStoreInfo(round, filter)
+    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async throws -> [AroundStoreInfoEntity] {
+        try await _base.getAroundStoreInfo(round, filter)
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {

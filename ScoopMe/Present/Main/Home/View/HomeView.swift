@@ -62,10 +62,8 @@ struct HomeView: View {
                 await locationManager.checkDeviceCondition()
 
                 if self.popularStores.isEmpty || self.aroundStores.isEmpty {
-                    await getStoreInfo()
-                    
-                    let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
-                    self.aroundStores = aroundStores
+                    await getPopularStoreInfo()
+                    await getAroundStoreInfo()
                 }
             }
             .showAlert(
@@ -84,7 +82,9 @@ struct HomeView: View {
             )
             .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
                 Task {
-                    await getStoreInfo()
+                    await getPopularStoreInfo()
+                    self.aroundStores = []
+                    await getAroundStoreInfo()
                 }
             }
             .toolbarItem (leading: {
@@ -220,8 +220,7 @@ struct HomeView: View {
                 switch aroundScoopFilter {
                 case .distance: return aroundScoopFilter = .reviews
                 case .reviews: return aroundScoopFilter = .orders
-                case .orders: return aroundScoopFilter = .favorites
-                case .favorites: return aroundScoopFilter = .distance
+                case .orders: return aroundScoopFilter = .distance
                 @unknown default: return aroundScoopFilter = .distance
                 }
             }
@@ -242,15 +241,35 @@ struct HomeView: View {
     }
     
     private var aroundScoopsCell: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            ForEach(aroundStores.indices, id: \.self) { index in
-                AroundScoopCell(
-                    imageHelper: DIContainer.shared.imageHelper,
-                    store: aroundStores[index],
-                    needDivider: index != (aroundStores.count - 1)
-                ) {
-                    Log.debug("하트버튼 클릭")
+        LazyVStack {
+            LazyVStack(alignment: .leading, spacing: 5) {
+                ForEach(aroundStores.indices, id: \.self) { index in
+                    AroundScoopCell(
+                        imageHelper: DIContainer.shared.imageHelper,
+                        store: aroundStores[index],
+                        needDivider: index != (aroundStores.count - 1)
+                    ) {
+                        Log.debug("하트버튼 클릭")
+                    }
+                    .onAppear {
+                        if aroundStores[index].storeID == foodCategoryRepository.lastStoreID {
+                            // 페이지네이션 추가
+                            foodCategoryRepository.isLoading = true
+                            
+                            Task {
+                                await getAroundStoreInfo()
+                            }
+                            
+                            foodCategoryRepository.isLoading = false
+                        }
+                    }
                 }
+            }
+            
+            // 데이터 로드 전용 indicatorView
+            if foodCategoryRepository.isLoading {
+                ProgressView()
+                    .padding(5)
             }
         }
         .padding(.top, 16)
@@ -280,7 +299,7 @@ extension HomeView {
     }
     
     // 리프레시 토큰 갱신 로직 포함
-    private func getStoreInfo() async {
+    private func getPopularStoreInfo() async {
         do {
             let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
             self.popularStores = popularStores
@@ -288,6 +307,19 @@ extension HomeView {
             await checkTokenValidation(error) {
                 let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
                 self.popularStores = popularStores
+            }
+        }
+    }
+    
+    // 내 근처스쿱
+    private func getAroundStoreInfo() async {
+        do {
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
+            self.aroundStores.append(contentsOf: aroundStores)
+        } catch {
+            await checkTokenValidation(error) {
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
+                self.aroundStores.append(contentsOf: aroundStores)
             }
         }
     }
