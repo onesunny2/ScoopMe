@@ -79,7 +79,6 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
     }
     
     public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async throws -> [AroundStoreInfoEntity] {
-        // round는 픽슐랭, filter는 거리순을 기준으로 둠!
         
         let result = try await getAllStores(store: lastStoreID)
         var entity: [AroundStoreInfoEntity] = []

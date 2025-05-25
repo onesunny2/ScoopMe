@@ -31,6 +31,10 @@ struct HomeView: View {
     
     @State private var showAlert: Bool = false
     
+    private var currentCheckbox: AroundType {
+        return (isPicchelined == true) ? .픽슐랭 : .마이스쿱
+    }
+    
     init(
         repository: AnyFoodCategoryDisplayable,
         locationManager: LocationManager,
@@ -63,7 +67,7 @@ struct HomeView: View {
 
                 if self.popularStores.isEmpty || self.aroundStores.isEmpty {
                     await getPopularStoreInfo()
-                    await getAroundStoreInfo()
+                    await getAroundStoreInfo(currentCheckbox)
                 }
             }
             .showAlert(
@@ -84,7 +88,25 @@ struct HomeView: View {
                 Task {
                     await getPopularStoreInfo()
                     self.aroundStores = []
-                    await getAroundStoreInfo()
+                    await getAroundStoreInfo(currentCheckbox)
+                }
+            }
+            .onChange(of: isPicchelined) { newValue in
+                if newValue {
+                    Log.debug("✅ isPicchelined 상태: \(newValue)")
+                    Task {
+                        self.aroundStores = []
+                        await getAroundStoreInfo(currentCheckbox)
+                    }
+                }
+            }
+            .onChange(of: isMyPicked) { newValue in
+                if newValue {
+                    Log.debug("✅ isPicked 상태: \(newValue)")
+                    Task {
+                        self.aroundStores = []
+                        await getAroundStoreInfo(currentCheckbox)
+                    }
                 }
             }
             .toolbarItem (leading: {
@@ -230,10 +252,12 @@ struct HomeView: View {
     private var pickButton: some View {
         HStack(alignment: .center, spacing: 12) {
             AroundPickTypeButtonCell(isPicked: $isPicchelined, title: AroundType.픽슐랭.text) {
+                Log.debug("픽슐랭 버튼 클릭")
                 setAroundPickStatus(&isPicchelined, &isMyPicked)
             }
             
             AroundPickTypeButtonCell(isPicked: $isMyPicked, title: AroundType.마이스쿱.text) {
+                Log.debug("마이픽 버튼 클릭")
                 setAroundPickStatus(&isMyPicked, &isPicchelined)
             }
         }
@@ -257,7 +281,7 @@ struct HomeView: View {
                             foodCategoryRepository.isLoading = true
                             
                             Task {
-                                await getAroundStoreInfo()
+                                await getAroundStoreInfo(currentCheckbox)
                             }
                             
                             foodCategoryRepository.isLoading = false
@@ -312,13 +336,13 @@ extension HomeView {
     }
     
     // 내 근처스쿱
-    private func getAroundStoreInfo() async {
+    private func getAroundStoreInfo(_ round: AroundType) async {
         do {
-            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round, aroundScoopFilter)
             self.aroundStores.append(contentsOf: aroundStores)
         } catch {
             await checkTokenValidation(error) {
-                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .distance)
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round, aroundScoopFilter)
                 self.aroundStores.append(contentsOf: aroundStores)
             }
         }
