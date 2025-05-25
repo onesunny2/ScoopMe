@@ -24,7 +24,6 @@ struct HomeView: View {
     @State private var searchKeyword: String = ""
     @State private var popularStores: [RealtimePopularScoopEntity] = []
     
-//    @State private var aroundScoopFilter: AroundFilterType = .distance
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
     @State private var aroundStores: [AroundStoreInfoEntity] = []
@@ -51,72 +50,63 @@ struct HomeView: View {
                 Color.scmBrightSprout
                     .ignoresSafeArea()
                 
-                ScrollViewReader { proxy in
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            searchField
-                            popularKeywords
-                            categoryButtons
-                            realtimePopularScoop()
-                            adBanners()
-                            aroundScoop()
-                                .id(StringLiterals.aroundScoop_ID.text)
-                        }
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        searchField
+                        popularKeywords
+                        categoryButtons
+                        realtimePopularScoop()
+                        adBanners()
+                        aroundScoop()
                     }
                 }
-                .task {
-                    await locationManager.checkDeviceCondition()
-                    
-                    if self.popularStores.isEmpty || self.aroundStores.isEmpty {
-                        await getPopularStoreInfo()
-                        await getAroundStoreInfo(currentCheckbox)
-                    }
+            }
+            .task {
+                await locationManager.checkDeviceCondition()
+                
+                if self.popularStores.isEmpty || self.aroundStores.isEmpty {
+                    await getPopularStoreInfo()
+                    await getAroundStoreFirstInfo(currentCheckbox)
                 }
-                .showAlert(
-                    isPresented: $locationManager.showAlert,
-                    title: "안내",
-                    message: locationManager.alertMessage, action: {
-                        locationManager.openSettings()
-                    })
-                .showAlert(
-                    isPresented: $showAlert,
-                    title: loginTokenManager.alertTitle,
-                    message: loginTokenManager.alertMessage,
-                    action: {
-                        switcher.switchTo(.login)
-                    }
-                )
-                .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
-                    Task {
-                        await getPopularStoreInfo()
-                        self.aroundStores = []
-                        foodCategoryRepository.lastStoreID = ""
-                        await getAroundStoreInfo(currentCheckbox)
-                    }
-                }
-                .onChange(of: currentCheckbox) { newValue in
-                    Task {
-                        Log.debug("✅ \(newValue) 선택")
-                        self.aroundStores = []
-                        foodCategoryRepository.lastStoreID = ""
-                        await getAroundStoreInfo(newValue)
-                    }
-                }
-                .onChange(of: foodCategoryRepository.selectedFiltering) { newValue in
-                    Task {
-                        Log.debug("✅ \(newValue) 선택")
-                        self.aroundStores = []
-                        foodCategoryRepository.lastStoreID = ""
-                        await getAroundStoreInfo(currentCheckbox)
-                    }
-                }
-                .toolbarItem (leading: {
-                    addressButton
+            }
+            .showAlert(
+                isPresented: $locationManager.showAlert,
+                title: "안내",
+                message: locationManager.alertMessage, action: {
+                    locationManager.openSettings()
                 })
-                .navigationDestination(for: HomePath.self) { router in
-                    switch router {
-                    case .detail: HomeDetailView()
-                    }
+            .showAlert(
+                isPresented: $showAlert,
+                title: loginTokenManager.alertTitle,
+                message: loginTokenManager.alertMessage,
+                action: {
+                    switcher.switchTo(.login)
+                }
+            )
+            .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
+                Task {
+                    await getPopularStoreInfo()
+                    await getAroundStoreFirstInfo(currentCheckbox)
+                }
+            }
+            .onChange(of: currentCheckbox) { newValue in
+                Task {
+                    Log.debug("✅ \(newValue) 선택")
+                    await getAroundStoreFirstInfo(newValue)
+                }
+            }
+            .onChange(of: foodCategoryRepository.selectedFiltering) { newValue in
+                Task {
+                    Log.debug("✅ \(newValue) 선택")
+                    await getAroundStoreFirstInfo(currentCheckbox)
+                }
+            }
+            .toolbarItem (leading: {
+                addressButton
+            })
+            .navigationDestination(for: HomePath.self) { router in
+                switch router {
+                case .detail: HomeDetailView()
                 }
             }
         }
@@ -162,9 +152,9 @@ struct HomeView: View {
     
     private var categoryButtons: some View {
         HomeCategoryCell(repository: DIContainer.shared.foodCategoryRepository)
-        .defaultHorizontalPadding()
-        .padding(.vertical, 20)
-        .background(.scmGray15)
+            .defaultHorizontalPadding()
+            .padding(.vertical, 20)
+            .background(.scmGray15)
     }
     
     private func realtimePopularScoop() -> some View {
@@ -301,7 +291,7 @@ struct HomeView: View {
                             // 페이지네이션 추가
                             foodCategoryRepository.isLoading = true
                             Task {
-                                await getAroundStoreInfo(currentCheckbox)
+                                await getAroundStoreNextInfo(currentCheckbox)
                             }
                             foodCategoryRepository.isLoading = false
                         }
@@ -354,8 +344,25 @@ extension HomeView {
         }
     }
     
-    // 내 근처스쿱
-    private func getAroundStoreInfo(_ round: AroundType) async {
+    // 내 근처스쿱 - 가장 첫 데이터로 갈아끼울 때
+    private func getAroundStoreFirstInfo(_ round: AroundType) async {
+        do {
+            foodCategoryRepository.lastStoreID = ""  // query id 초기화
+            
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+            self.aroundStores = aroundStores
+        } catch {
+            await checkTokenValidation(error) {
+                foodCategoryRepository.lastStoreID = ""
+                
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+                self.aroundStores = aroundStores
+            }
+        }
+    }
+    
+    // 내 근처스쿱 - 페이지네이션을 위한 append
+    private func getAroundStoreNextInfo(_ round: AroundType) async {
         do {
             let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
             self.aroundStores.append(contentsOf: aroundStores)

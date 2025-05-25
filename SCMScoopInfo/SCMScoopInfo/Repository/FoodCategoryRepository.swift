@@ -89,15 +89,6 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         case .픽슐랭:
             let data = result.filter { $0.isPicchelin }
             
-//            switch selectedFiltering {
-//            case .distance:
-//                data.sort { $0.distance < $1.distance }
-//            case .reviews:
-//                data.sort { $0.totalReviewCount > $1.totalReviewCount }
-//            case .orders:
-//                data.sort { $0.totalOrderCount > $1.totalOrderCount }
-//            }
-            
             data.forEach {
                 
                 let result = AroundStoreInfoEntity(
@@ -126,15 +117,6 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             
         case .마이스쿱:
             let data = result.filter { $0.isPick }
-            
-//            switch selectedFiltering {
-//            case .distance:
-//                data.sort { $0.distance < $1.distance }
-//            case .reviews:
-//                data.sort { $0.totalReviewCount > $1.totalReviewCount }
-//            case .orders:
-//                data.sort { $0.totalOrderCount > $1.totalOrderCount }
-//            }
             
             data.forEach {
                 
@@ -201,7 +183,7 @@ extension FoodCategoryRepository {
             longitude: Float(location.coordinate.longitude),
             latitude: Float(location.coordinate.latitude),
             next: id,
-            limit: 10,
+            limit: 5,
             orderBy: selectedFiltering
         )
         let result = try await callRequest(value, type: AllStoreListResponseDTO.self)
