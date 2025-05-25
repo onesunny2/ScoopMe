@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import SCMScoopInfo
 
 struct HomeDetailView: View {
+    
+    let storeID: String
+    
     var body: some View {
-        Text("HomeDetailView")
+        Text(storeID)
     }
 }
 
 #Preview {
-    HomeDetailView()
+    HomeDetailView(storeID: "storeID 예시")
 }

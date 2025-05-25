@@ -106,7 +106,7 @@ struct HomeView: View {
             })
             .navigationDestination(for: HomePath.self) { router in
                 switch router {
-                case .detail: HomeDetailView()
+                case let .detail(id): HomeDetailView(storeID: id)
                 }
             }
         }
@@ -295,6 +295,10 @@ struct HomeView: View {
                             }
                             foodCategoryRepository.isLoading = false
                         }
+                    }
+                    .asButton {
+                        Log.debug("⏭️ 내 근처스쿱 Cell 클릭")
+                        router.send(.push(.detail(id: aroundStores[index].storeID)))
                     }
                 }
             }
