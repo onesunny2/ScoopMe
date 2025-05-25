@@ -51,61 +51,72 @@ struct HomeView: View {
                 Color.scmBrightSprout
                     .ignoresSafeArea()
                 
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        searchField
-                        popularKeywords
-                        categoryButtons
-                        realtimePopularScoop()
-                        adBanners()
-                        aroundScoop()
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            searchField
+                            popularKeywords
+                            categoryButtons
+                            realtimePopularScoop()
+                            adBanners()
+                            aroundScoop()
+                                .id(StringLiterals.aroundScoop_ID.text)
+                        }
                     }
                 }
-            }
-            .task {
-                await locationManager.checkDeviceCondition()
-
-                if self.popularStores.isEmpty || self.aroundStores.isEmpty {
-                    await getPopularStoreInfo()
-                    await getAroundStoreInfo(currentCheckbox)
+                .task {
+                    await locationManager.checkDeviceCondition()
+                    
+                    if self.popularStores.isEmpty || self.aroundStores.isEmpty {
+                        await getPopularStoreInfo()
+                        await getAroundStoreInfo(currentCheckbox)
+                    }
                 }
-            }
-            .showAlert(
-                isPresented: $locationManager.showAlert,
-                title: "안내",
-                message: locationManager.alertMessage, action: {
-                    locationManager.openSettings()
+                .showAlert(
+                    isPresented: $locationManager.showAlert,
+                    title: "안내",
+                    message: locationManager.alertMessage, action: {
+                        locationManager.openSettings()
+                    })
+                .showAlert(
+                    isPresented: $showAlert,
+                    title: loginTokenManager.alertTitle,
+                    message: loginTokenManager.alertMessage,
+                    action: {
+                        switcher.switchTo(.login)
+                    }
+                )
+                .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
+                    Task {
+                        await getPopularStoreInfo()
+                        self.aroundStores = []
+                        foodCategoryRepository.lastStoreID = ""
+                        await getAroundStoreInfo(currentCheckbox)
+                    }
+                }
+                .onChange(of: currentCheckbox) { newValue in
+                    Task {
+                        Log.debug("✅ \(newValue) 선택")
+                        self.aroundStores = []
+                        foodCategoryRepository.lastStoreID = ""
+                        await getAroundStoreInfo(newValue)
+                    }
+                }
+                .onChange(of: foodCategoryRepository.selectedFiltering) { newValue in
+                    Task {
+                        Log.debug("✅ \(newValue) 선택")
+                        self.aroundStores = []
+                        foodCategoryRepository.lastStoreID = ""
+                        await getAroundStoreInfo(currentCheckbox)
+                    }
+                }
+                .toolbarItem (leading: {
+                    addressButton
                 })
-            .showAlert(
-                isPresented: $showAlert,
-                title: loginTokenManager.alertTitle,
-                message: loginTokenManager.alertMessage,
-                action: {
-                    switcher.switchTo(.login)
-                }
-            )
-            .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
-                Task {
-                    await getPopularStoreInfo()
-                    self.aroundStores = []
-                    foodCategoryRepository.lastStoreID = ""
-                    await getAroundStoreInfo(currentCheckbox)
-                }
-            }
-            .onChange(of: currentCheckbox) { newValue in
-                Task {
-                    Log.debug("✅ \(newValue) 선택")
-                    self.aroundStores = []
-                    foodCategoryRepository.lastStoreID = ""
-                    await getAroundStoreInfo(newValue)
-                }
-            }
-            .toolbarItem (leading: {
-                addressButton
-            })
-            .navigationDestination(for: HomePath.self) { router in
-                switch router {
-                case .detail: HomeDetailView()
+                .navigationDestination(for: HomePath.self) { router in
+                    switch router {
+                    case .detail: HomeDetailView()
+                    }
                 }
             }
         }
@@ -239,16 +250,10 @@ struct HomeView: View {
                 switch foodCategoryRepository.selectedFiltering {
                 case .distance:
                     foodCategoryRepository.selectedFiltering = .reviews
-                    
-                    
                 case .reviews:
                     foodCategoryRepository.selectedFiltering = .orders
-                    
-                    
                 case .orders:
                     foodCategoryRepository.selectedFiltering = .distance
-                    
-                    
                 @unknown default:
                     foodCategoryRepository.selectedFiltering = .distance
                 }
@@ -393,11 +398,13 @@ extension HomeView {
     }
 }
 
+// MARK: StringLiterals
 private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case realtime_popular_scoop = "실시간 인기 스쿱"
     case aiAlgoritym = "스쿱미 AI 알고리즘 기반으로 추천된 맛집입니다."
     case around_scoop = "내 근처 스쿱"
+    case aroundScoop_ID = "내 근처 스쿱 SectionID"
     
     var text: String {
         return self.rawValue

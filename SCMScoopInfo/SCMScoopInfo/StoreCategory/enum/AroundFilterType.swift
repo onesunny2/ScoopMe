@@ -9,8 +9,8 @@ import Foundation
 
 public enum AroundFilterType: String {
     case distance
-    case reviews = "별점 높은 순"
-    case orders = "주문 많은 순"
+    case reviews
+    case orders
     
     public var query: String {
         return self.rawValue
