@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 import SCMLogger
-internal import SCMNetwork
+import SCMNetwork
 
 protocol NetworkServiceProtocol: ObservableObject, AnyObject {
     var network: SCMNetworkImpl { get }

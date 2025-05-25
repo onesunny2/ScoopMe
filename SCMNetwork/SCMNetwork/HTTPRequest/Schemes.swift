@@ -13,5 +13,5 @@ public enum Schemes: String {
     case ws
     case wss
     
-    var string: String { return self.rawValue }
+    public var string: String { return self.rawValue }
 }

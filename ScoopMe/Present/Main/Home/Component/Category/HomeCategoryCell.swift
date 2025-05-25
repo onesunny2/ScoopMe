@@ -46,9 +46,7 @@ struct HomeCategoryCell: View {
                     if index == 4 && foodCategoryRepository.categoryNames[index] == "더보기" {
                         changeCategory(show: true, switch: 9)
                     } else {
-                        selectedCategory = index
-                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
-                        Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
+                        handleCategorySelection(index: index)
                     }
                     Log.debug("버튼 클릭")
                 }
@@ -68,9 +66,7 @@ struct HomeCategoryCell: View {
                     if index == 9 && foodCategoryRepository.categoryNames[index] == "접기" {
                         changeCategory(show: false, switch: 4)
                     } else {
-                        selectedCategory = index
-                        foodCategoryRepository.selectedCategory = foodCategoryRepository.categoryNames[index]
-                        Log.debug("현재 선택한 카테고리: \(foodCategoryRepository.categoryNames[index])")
+                        handleCategorySelection(index: index)
                     }
                     Log.debug("버튼 클릭")
                 }
@@ -89,6 +85,18 @@ extension HomeCategoryCell {
             showMoreCategory = show
         }
     }
+    
+    private func handleCategorySelection(index: Int) {
+        
+         selectedCategory = index
+        
+         let categoryName = foodCategoryRepository.categoryNames[index]
+         let category = Category.from(categoryName)
+         
+         Log.debug("현재 선택한 카테고리: \(categoryName)")
+
+        foodCategoryRepository.selectedCategory = category
+     }
 }
 
 #Preview {

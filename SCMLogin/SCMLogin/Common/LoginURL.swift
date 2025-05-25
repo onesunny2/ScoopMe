@@ -6,7 +6,7 @@
 //
 
 import Foundation
-internal import SCMNetwork
+import SCMNetwork
 
 public enum LoginURL {
     case checkEmail(email: String)
@@ -44,7 +44,7 @@ public enum LoginURL {
         }
     }
     
-    var parameters: [String: String?]? {
+    var jsonBody: [String: Any?]? {
         switch self {
         case let .checkEmail(email):
             return ["email": email]

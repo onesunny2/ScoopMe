@@ -19,6 +19,7 @@ struct UnevenRectangleClipModifier: ViewModifier {
             .clipShape(
                 unevenRectangle
             )
+            .contentShape(unevenRectangle)
     }
     
     private var unevenRectangle: UnevenRoundedRectangle {

@@ -8,25 +8,40 @@
 import SwiftUI
 import CoreLocation
 import SCMLocation
+import SCMLogin
 import SCMLogger
+import SCMNetwork
 import SCMScoopInfo
 
 struct HomeView: View {
     
     @StateObject private var foodCategoryRepository: AnyFoodCategoryDisplayable
+    @StateObject private var switcher = SCMSwitcher.shared
     @StateObject private var router = SCMRouter<HomePath>.shared
-    @StateObject private var locationManager = DIContainer.shared.locationManager
+    @StateObject private var locationManager: LocationManager
+    @StateObject private var loginTokenManager: LoginTokenManager
     
     @State private var searchKeyword: String = ""
-    @State private var populerStores: [RealtimePopularScoopEntity] = []
+    @State private var popularStores: [RealtimePopularScoopEntity] = []
     
-    @State private var aroundScoopFilter: AroundFilterType = .거리순
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
     @State private var aroundStores: [AroundStoreInfoEntity] = []
     
-    init(repository: AnyFoodCategoryDisplayable) {
+    @State private var showAlert: Bool = false
+    
+    private var currentCheckbox: AroundType {
+        return (isPicchelined == true && isMyPicked == false) ? .픽슐랭 : .마이스쿱
+    }
+    
+    init(
+        repository: AnyFoodCategoryDisplayable,
+        locationManager: LocationManager,
+        loginTokenManager: LoginTokenManager
+    ) {
         self._foodCategoryRepository = StateObject(wrappedValue: repository)
+        self._locationManager = StateObject(wrappedValue: locationManager)
+        self._loginTokenManager = StateObject(wrappedValue: loginTokenManager)
     }
     
     var body: some View {
@@ -40,7 +55,7 @@ struct HomeView: View {
                         searchField
                         popularKeywords
                         categoryButtons
-                        realtimePopularScoop(populerStores)
+                        realtimePopularScoop()
                         adBanners()
                         aroundScoop()
                     }
@@ -49,12 +64,9 @@ struct HomeView: View {
             .task {
                 await locationManager.checkDeviceCondition()
                 
-                if self.populerStores.isEmpty || self.aroundStores.isEmpty {
-                    let popularStores = await foodCategoryRepository.getPopularStoresInfo()
-                    self.populerStores = popularStores
-                    
-                    let aroundStores = await foodCategoryRepository.getAroundStoreInfo(.픽슐랭, .거리순)
-                    self.aroundStores = aroundStores
+                if self.popularStores.isEmpty || self.aroundStores.isEmpty {
+                    await getPopularStoreInfo()
+                    await getAroundStoreFirstInfo(currentCheckbox)
                 }
             }
             .showAlert(
@@ -63,6 +75,32 @@ struct HomeView: View {
                 message: locationManager.alertMessage, action: {
                     locationManager.openSettings()
                 })
+            .showAlert(
+                isPresented: $showAlert,
+                title: loginTokenManager.alertTitle,
+                message: loginTokenManager.alertMessage,
+                action: {
+                    switcher.switchTo(.login)
+                }
+            )
+            .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
+                Task {
+                    await getPopularStoreInfo()
+                    await getAroundStoreFirstInfo(currentCheckbox)
+                }
+            }
+            .onChange(of: currentCheckbox) { newValue in
+                Task {
+                    Log.debug("✅ \(newValue) 선택")
+                    await getAroundStoreFirstInfo(newValue)
+                }
+            }
+            .onChange(of: foodCategoryRepository.selectedFiltering) { newValue in
+                Task {
+                    Log.debug("✅ \(newValue) 선택")
+                    await getAroundStoreFirstInfo(currentCheckbox)
+                }
+            }
             .toolbarItem (leading: {
                 addressButton
             })
@@ -103,37 +141,30 @@ struct HomeView: View {
     }
     
     private var popularKeywords: some View {
-        PopularKeywordCell()
+        PopularKeywordCell(
+            foodCategoryRepository: foodCategoryRepository,
+            loginTokenManager: loginTokenManager,
+            showAlert: $showAlert
+        )
         .padding(.vertical, 12)
         .defaultHorizontalPadding()
     }
     
     private var categoryButtons: some View {
         HomeCategoryCell(repository: DIContainer.shared.foodCategoryRepository)
-        .defaultHorizontalPadding()
-        .padding(.vertical, 20)
-        .background(.scmGray15)
+            .defaultHorizontalPadding()
+            .padding(.vertical, 20)
+            .background(.scmGray15)
     }
     
-    private func realtimePopularScoop(_ scoops: [RealtimePopularScoopEntity]) -> some View {
+    private func realtimePopularScoop() -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(StringLiterals.realtime_popular_scoop.text)
                 .basicText(.PTTitle4, .scmGray90)
                 .defaultHorizontalPadding()
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(scoops, id: \.storeID) { scoop in
-                        RealtimePopularScoopCell(
-                            imageHelper: DIContainer.shared.imageHelper,
-                            store: scoop,
-                            likeButtonOpacity: 1
-                        ) {
-                            Log.debug("좋아요 버튼 클릭 - 나중에 서버연결 해야함")
-                        }
-                    }
-                }
-                .defaultHorizontalPadding()
+                realtimeScrollCell
             }
             
             aiAlgorithm
@@ -141,6 +172,30 @@ struct HomeView: View {
                 .padding(.bottom, 14)
         }
         .background(.scmGray15)
+    }
+    
+    private var realtimeScrollCell: some View {
+        HStack {
+            ForEach(popularStores.indices, id: \.self) { index in
+                RealtimePopularScoopCell(
+                    imageHelper: DIContainer.shared.imageHelper,
+                    store: popularStores[index],
+                    likeButtonOpacity: 1
+                ) {
+                    Log.debug("좋아요 버튼 클릭")
+                    Task {
+                        await postLikeStatus(
+                            index: index,
+                            id: popularStores[index].storeID,
+                            status: !popularStores[index].likeStatus
+                        ) {
+                            popularStores[index].likeStatus.toggle()
+                        }
+                    }
+                }
+            }
+        }
+        .defaultHorizontalPadding()
     }
     
     private var aiAlgorithm: some View {
@@ -175,19 +230,22 @@ struct HomeView: View {
             Spacer()
             
             HStack(alignment: .center, spacing: 4) {
-                Text(aroundScoopFilter.text)
+                Text(foodCategoryRepository.selectedFiltering.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
                 Image(.list)
                     .basicImage(width: 16, color: .scmBlackSprout)
             }
             .asButton {
                 // 내 근처스쿱 필터링 버튼
-                switch aroundScoopFilter {
-                case .거리순: return aroundScoopFilter = .별점순
-                case .별점순: return aroundScoopFilter = .주문_많은순
-                case .주문_많은순: return aroundScoopFilter = .즐겨찾기순
-                case .즐겨찾기순: return aroundScoopFilter = .거리순
-                @unknown default: return aroundScoopFilter = .거리순
+                switch foodCategoryRepository.selectedFiltering {
+                case .distance:
+                    foodCategoryRepository.selectedFiltering = .reviews
+                case .reviews:
+                    foodCategoryRepository.selectedFiltering = .orders
+                case .orders:
+                    foodCategoryRepository.selectedFiltering = .distance
+                @unknown default:
+                    foodCategoryRepository.selectedFiltering = .distance
                 }
             }
         }
@@ -196,10 +254,12 @@ struct HomeView: View {
     private var pickButton: some View {
         HStack(alignment: .center, spacing: 12) {
             AroundPickTypeButtonCell(isPicked: $isPicchelined, title: AroundType.픽슐랭.text) {
+                Log.debug("픽슐랭 버튼 클릭")
                 setAroundPickStatus(&isPicchelined, &isMyPicked)
             }
             
             AroundPickTypeButtonCell(isPicked: $isMyPicked, title: AroundType.마이스쿱.text) {
+                Log.debug("마이픽 버튼 클릭")
                 setAroundPickStatus(&isMyPicked, &isPicchelined)
             }
         }
@@ -207,33 +267,151 @@ struct HomeView: View {
     }
     
     private var aroundScoopsCell: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            ForEach(aroundStores.indices, id: \.self) { index in
-                AroundScoopCell(
-                    imageHelper: DIContainer.shared.imageHelper,
-                    store: aroundStores[index],
-                    needDivider: index != (aroundStores.count - 1)
-                ) {
-                    Log.debug("하트버튼 클릭")
+        LazyVStack {
+            LazyVStack(alignment: .leading, spacing: 5) {
+                ForEach(aroundStores.indices, id: \.self) { index in
+                    AroundScoopCell(
+                        imageHelper: DIContainer.shared.imageHelper,
+                        store: aroundStores[index],
+                        needDivider: index != (aroundStores.count - 1)
+                    ) {
+                        Task {
+                            await postLikeStatus(
+                                index: index,
+                                id: aroundStores[index].storeID,
+                                status: !aroundStores[index].likeStatus
+                            ) {
+                                Log.debug("하트버튼 클릭")
+                                aroundStores[index].likeStatus.toggle()
+                            }
+                        }
+                    }
+                    .onAppear {
+                        if aroundStores[index].storeID == foodCategoryRepository.lastStoreID {
+                            // 페이지네이션 추가
+                            foodCategoryRepository.isLoading = true
+                            Task {
+                                await getAroundStoreNextInfo(currentCheckbox)
+                            }
+                            foodCategoryRepository.isLoading = false
+                        }
+                    }
                 }
+            }
+            
+            // 데이터 로드 전용 indicatorView
+            if foodCategoryRepository.isLoading {
+                ProgressView()
+                    .padding(5)
             }
         }
         .padding(.top, 16)
     }
 }
 
+// MARK: action
 extension HomeView {
     private func setAroundPickStatus(_ main: inout Bool, _ sub: inout Bool) {
         main = (main == true) ? false : true
         sub = !main
     }
+    
+    // 리프레시 토큰 갱신 로직 포함
+    private func postLikeStatus(index: Int, id: String, status: Bool, action: (() -> ())?) async {
+        do {
+            try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
+            
+            action?()  // 상태값 toggle 위함
+        } catch {
+            await checkTokenValidation(error) {
+                try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
+                
+                action?()
+            }
+        }
+    }
+    
+    // 리프레시 토큰 갱신 로직 포함
+    private func getPopularStoreInfo() async {
+        do {
+            let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+            self.popularStores = popularStores
+        } catch {
+            await checkTokenValidation(error) {
+                let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+                self.popularStores = popularStores
+            }
+        }
+    }
+    
+    // 내 근처스쿱 - 가장 첫 데이터로 갈아끼울 때
+    private func getAroundStoreFirstInfo(_ round: AroundType) async {
+        do {
+            foodCategoryRepository.lastStoreID = ""  // query id 초기화
+            
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+            self.aroundStores = aroundStores
+        } catch {
+            await checkTokenValidation(error) {
+                foodCategoryRepository.lastStoreID = ""
+                
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+                self.aroundStores = aroundStores
+            }
+        }
+    }
+    
+    // 내 근처스쿱 - 페이지네이션을 위한 append
+    private func getAroundStoreNextInfo(_ round: AroundType) async {
+        do {
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+            self.aroundStores.append(contentsOf: aroundStores)
+        } catch {
+            await checkTokenValidation(error) {
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+                self.aroundStores.append(contentsOf: aroundStores)
+            }
+        }
+    }
+    
+    private func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
+        if let scmError = error as? SCMError {
+            switch scmError {
+            case .serverError(let statusCode, _):
+                switch statusCode {
+                case 419: // access 만료 -> refresh 통신 진행
+                    Log.debug("✅ accessToken만료")
+                    await checkRefreshToken(complete: complete)
+                case 401, 418: // refresh 토큰 오류 및 만료 -> 로그인 화면으로 보내기
+                    loginTokenManager.alertTitle = "안내"
+                    loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+                    showAlert = true
+                default: break
+                }
+            default: break
+            }
+        }
+    }
+    
+    private func checkRefreshToken(complete: @escaping () async throws -> ()) async {
+        do {
+            try await loginTokenManager.requestRefreshToken()
+            try await complete()
+        } catch {
+            loginTokenManager.alertTitle = "안내"
+            loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
+            showAlert = true
+        }
+    }
 }
 
+// MARK: StringLiterals
 private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case realtime_popular_scoop = "실시간 인기 스쿱"
     case aiAlgoritym = "스쿱미 AI 알고리즘 기반으로 추천된 맛집입니다."
     case around_scoop = "내 근처 스쿱"
+    case aroundScoop_ID = "내 근처 스쿱 SectionID"
     
     var text: String {
         return self.rawValue
@@ -241,5 +419,9 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    HomeView(repository: DIContainer.shared.foodCategoryRepository)
+    HomeView(
+        repository: DIContainer.shared.foodCategoryRepository,
+        locationManager: DIContainer.shared.locationManager,
+        loginTokenManager: DIContainer.shared.loginTokenManager
+    )
 }

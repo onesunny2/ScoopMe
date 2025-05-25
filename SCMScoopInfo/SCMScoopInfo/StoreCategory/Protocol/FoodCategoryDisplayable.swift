@@ -13,12 +13,14 @@ public protocol FoodCategoryDisplayable: AnyObject, ObservableObject {
     var categoryNames: [String] { get set }
     var categoryImages: [Image] { get set }
     
-    var selectedCategory: String { get set }
+    var selectedCategory: Category { get set }
+    var selectedFiltering: AroundFilterType { get set }
     
-    func getPopularKeywords() async -> PopularSearchKeywordEntity
-    func getPopularStoresInfo() async -> [RealtimePopularScoopEntity]
-    func getAroundStoreInfo(
-        _ round: AroundType,
-        _ filter: AroundFilterType
-    ) async -> [AroundStoreInfoEntity]
+    var isLoading: Bool { get set }
+    var lastStoreID: String { get set }
+    
+    func getPopularKeywords() async throws -> [String]
+    func getPopularStoresInfo() async throws -> [RealtimePopularScoopEntity]
+    func getAroundStoreInfo(_ round: AroundType) async throws -> [AroundStoreInfoEntity]
+    func postStoreLikeStatus(store id: String, like status: Bool) async throws
 }

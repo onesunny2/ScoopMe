@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 import SCMLogger
-internal import SCMNetwork
+import SCMNetwork
 
 public final class LoginManager: NSObject, UserServiceProtocol {
     

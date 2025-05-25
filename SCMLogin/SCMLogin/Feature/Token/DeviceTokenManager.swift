@@ -7,7 +7,7 @@
 
 import Foundation
 import SCMLogger
-internal import SCMNetwork
+import SCMNetwork
 
 public final class DeviceTokenManager: NetworkEmptyProtocol {
     

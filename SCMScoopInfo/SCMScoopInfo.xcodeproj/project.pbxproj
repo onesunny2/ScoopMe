@@ -7,10 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4326B4D32DDF10CA00BB250D /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D22DDF10CA00BB250D /* SCMLogger.framework */; };
+		4326B4D42DDF10CA00BB250D /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D22DDF10CA00BB250D /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4326B4D72DDF10CD00BB250D /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D62DDF10CD00BB250D /* SCMLogin.framework */; };
+		4326B4D82DDF10CD00BB250D /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D62DDF10CD00BB250D /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4326B4DA2DDF10D000BB250D /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D92DDF10D000BB250D /* SCMNetwork.framework */; };
+		4326B4DB2DDF10D000BB250D /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4326B4D92DDF10D000BB250D /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		436532B42DDCB13200313379 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 436532B32DDCB13200313379 /* Secret.xcconfig */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4326B4D52DDF10CA00BB250D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4326B4D82DDF10CD00BB250D /* SCMLogin.framework in Embed Frameworks */,
+				4326B4DB2DDF10D000BB250D /* SCMNetwork.framework in Embed Frameworks */,
+				4326B4D42DDF10CA00BB250D /* SCMLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		4326B4D22DDF10CA00BB250D /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4326B4D62DDF10CD00BB250D /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4326B4D92DDF10D000BB250D /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4365327B2DDC788A00313379 /* SCMScoopInfo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMScoopInfo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		436532B32DDCB13200313379 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -44,17 +69,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4326B4D72DDF10CD00BB250D /* SCMLogin.framework in Frameworks */,
+				4326B4DA2DDF10D000BB250D /* SCMNetwork.framework in Frameworks */,
+				4326B4D32DDF10CA00BB250D /* SCMLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4326B4D12DDF10CA00BB250D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4326B4D92DDF10D000BB250D /* SCMNetwork.framework */,
+				4326B4D62DDF10CD00BB250D /* SCMLogin.framework */,
+				4326B4D22DDF10CA00BB250D /* SCMLogger.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		436532712DDC788A00313379 = {
 			isa = PBXGroup;
 			children = (
 				436532B32DDCB13200313379 /* Secret.xcconfig */,
 				4365327D2DDC788A00313379 /* SCMScoopInfo */,
+				4326B4D12DDF10CA00BB250D /* Frameworks */,
 				4365327C2DDC788A00313379 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +127,7 @@
 				436532772DDC788A00313379 /* Sources */,
 				436532782DDC788A00313379 /* Frameworks */,
 				436532792DDC788A00313379 /* Resources */,
+				4326B4D52DDF10CA00BB250D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

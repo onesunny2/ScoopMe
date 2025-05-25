@@ -13,4 +13,10 @@ public struct HTTPResponse<T: Decodable>: Responsable {
     public var statusCode: Int
     public var response: ResponseType
     public var headers: [String : String]?
+    
+    public init(statusCode: Int, response: ResponseType, headers: [String : String]? = nil) {
+        self.statusCode = statusCode
+        self.response = response
+        self.headers = headers
+    }
 }
