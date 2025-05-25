@@ -11,7 +11,7 @@ public struct AroundStoreInfoEntity: Hashable {
     public let storeID: String
     public let storeName: String
     public let storeImage: [String]
-    public let likeStatus: Bool
+    public var likeStatus: Bool
     public let picchelinStatus: Bool
     public let likeCount: String
     public let totalRating: String

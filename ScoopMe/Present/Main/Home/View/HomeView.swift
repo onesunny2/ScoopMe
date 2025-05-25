@@ -183,7 +183,13 @@ struct HomeView: View {
                 ) {
                     Log.debug("좋아요 버튼 클릭")
                     Task {
-                        await postLikeStatus(index)
+                        await postLikeStatus(
+                            index: index,
+                            id: popularStores[index].storeID,
+                            status: !popularStores[index].likeStatus
+                        ) {
+                            popularStores[index].likeStatus.toggle()
+                        }
                     }
                 }
             }
@@ -274,7 +280,16 @@ struct HomeView: View {
                         store: aroundStores[index],
                         needDivider: index != (aroundStores.count - 1)
                     ) {
-                        Log.debug("하트버튼 클릭")
+                        Task {
+                            await postLikeStatus(
+                                index: index,
+                                id: aroundStores[index].storeID,
+                                status: !aroundStores[index].likeStatus
+                            ) {
+                                Log.debug("하트버튼 클릭")
+                                aroundStores[index].likeStatus.toggle()
+                            }
+                        }
                     }
                     .onAppear {
                         if aroundStores[index].storeID == foodCategoryRepository.lastStoreID {
@@ -307,16 +322,16 @@ extension HomeView {
     }
     
     // 리프레시 토큰 갱신 로직 포함
-    private func postLikeStatus(_ index: Int) async {
+    private func postLikeStatus(index: Int, id: String, status: Bool, action: (() -> ())?) async {
         do {
-            try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
+            try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
             
-            popularStores[index].likeStatus.toggle()
+            action?()  // 상태값 toggle 위함
         } catch {
             await checkTokenValidation(error) {
-                try await foodCategoryRepository.postStoreLikeStatus(store: popularStores[index].storeID, like: !popularStores[index].likeStatus)
+                try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
                 
-                popularStores[index].likeStatus.toggle()
+                action?()
             }
         }
     }
