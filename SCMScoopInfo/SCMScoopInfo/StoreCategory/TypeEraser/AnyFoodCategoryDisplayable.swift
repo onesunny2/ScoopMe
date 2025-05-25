@@ -29,6 +29,12 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         }
     }
     
+    @Published public var selectedFiltering: AroundFilterType {
+        didSet {
+            _base.selectedFiltering = selectedFiltering
+        }
+    }
+    
     @Published public var isLoading: Bool {
         didSet {
             _base.isLoading = isLoading
@@ -46,6 +52,7 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         self.categoryNames = base.categoryNames
         self.categoryImages = base.categoryImages
         self.selectedCategory = base.selectedCategory
+        self.selectedFiltering = base.selectedFiltering
         self.isLoading = base.isLoading
         self.lastStoreID = base.lastStoreID
     }
@@ -58,8 +65,8 @@ public final class AnyFoodCategoryDisplayable: FoodCategoryDisplayable, Observab
         try await _base.getPopularStoresInfo()
     }
     
-    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async throws -> [AroundStoreInfoEntity] {
-        try await _base.getAroundStoreInfo(round, filter)
+    public func getAroundStoreInfo(_ round: AroundType) async throws -> [AroundStoreInfoEntity] {
+        try await _base.getAroundStoreInfo(round)
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {

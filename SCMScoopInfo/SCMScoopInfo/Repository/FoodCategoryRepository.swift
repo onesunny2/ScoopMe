@@ -78,7 +78,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         return entity
     }
     
-    public func getAroundStoreInfo(_ round: AroundType, _ filter: AroundFilterType) async throws -> [AroundStoreInfoEntity] {
+    public func getAroundStoreInfo(_ round: AroundType) async throws -> [AroundStoreInfoEntity] {
         
         let result = try await getAllStores(store: lastStoreID)
         var entity: [AroundStoreInfoEntity] = []
@@ -87,16 +87,16 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         
         switch round {
         case .픽슐랭:
-            var data = result.filter { $0.isPicchelin }
+            let data = result.filter { $0.isPicchelin }
             
-            switch filter {
-            case .distance:
-                data.sort { $0.distance < $1.distance }
-            case .reviews:
-                data.sort { $0.totalReviewCount > $1.totalReviewCount }
-            case .orders:
-                data.sort { $0.totalOrderCount > $1.totalOrderCount }
-            }
+//            switch selectedFiltering {
+//            case .distance:
+//                data.sort { $0.distance < $1.distance }
+//            case .reviews:
+//                data.sort { $0.totalReviewCount > $1.totalReviewCount }
+//            case .orders:
+//                data.sort { $0.totalOrderCount > $1.totalOrderCount }
+//            }
             
             data.forEach {
                 
@@ -125,16 +125,16 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             return entity
             
         case .마이스쿱:
-            var data = result.filter { $0.isPick }
+            let data = result.filter { $0.isPick }
             
-            switch filter {
-            case .distance:
-                data.sort { $0.distance < $1.distance }
-            case .reviews:
-                data.sort { $0.totalReviewCount > $1.totalReviewCount }
-            case .orders:
-                data.sort { $0.totalOrderCount > $1.totalOrderCount }
-            }
+//            switch selectedFiltering {
+//            case .distance:
+//                data.sort { $0.distance < $1.distance }
+//            case .reviews:
+//                data.sort { $0.totalReviewCount > $1.totalReviewCount }
+//            case .orders:
+//                data.sort { $0.totalOrderCount > $1.totalOrderCount }
+//            }
             
             data.forEach {
                 
@@ -201,7 +201,7 @@ extension FoodCategoryRepository {
             longitude: Float(location.coordinate.longitude),
             latitude: Float(location.coordinate.latitude),
             next: id,
-            limit: 3,
+            limit: 10,
             orderBy: selectedFiltering
         )
         let result = try await callRequest(value, type: AllStoreListResponseDTO.self)

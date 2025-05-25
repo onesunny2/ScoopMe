@@ -24,7 +24,7 @@ struct HomeView: View {
     @State private var searchKeyword: String = ""
     @State private var popularStores: [RealtimePopularScoopEntity] = []
     
-    @State private var aroundScoopFilter: AroundFilterType = .distance
+//    @State private var aroundScoopFilter: AroundFilterType = .distance
     @State private var isPicchelined: Bool = true
     @State private var isMyPicked: Bool = false
     @State private var aroundStores: [AroundStoreInfoEntity] = []
@@ -32,7 +32,7 @@ struct HomeView: View {
     @State private var showAlert: Bool = false
     
     private var currentCheckbox: AroundType {
-        return (isPicchelined == true) ? .픽슐랭 : .마이스쿱
+        return (isPicchelined == true && isMyPicked == false) ? .픽슐랭 : .마이스쿱
     }
     
     init(
@@ -91,22 +91,22 @@ struct HomeView: View {
                     await getAroundStoreInfo(currentCheckbox)
                 }
             }
-            .onChange(of: isPicchelined) { newValue in
-                if newValue {
-                    Log.debug("✅ isPicchelined 상태: \(newValue)")
+            .onChange(of: currentCheckbox) { newValue in
+                switch newValue {
+                case .픽슐랭:
+                    Log.debug("✅ 픽슐랭 선택")
                     Task {
                         self.aroundStores = []
-                        await getAroundStoreInfo(currentCheckbox)
+                        await getAroundStoreInfo(newValue)
                     }
-                }
-            }
-            .onChange(of: isMyPicked) { newValue in
-                if newValue {
-                    Log.debug("✅ isPicked 상태: \(newValue)")
+                case .마이스쿱:
+                    Log.debug("✅ 마이스쿱 선택")
                     Task {
                         self.aroundStores = []
-                        await getAroundStoreInfo(currentCheckbox)
+                        await getAroundStoreInfo(newValue)
                     }
+                @unknown default:
+                    break
                 }
             }
             .toolbarItem (leading: {
@@ -232,18 +232,28 @@ struct HomeView: View {
             Spacer()
             
             HStack(alignment: .center, spacing: 4) {
-                Text(aroundScoopFilter.text)
+                Text(foodCategoryRepository.selectedFiltering.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
                 Image(.list)
                     .basicImage(width: 16, color: .scmBlackSprout)
             }
             .asButton {
                 // 내 근처스쿱 필터링 버튼
-                switch aroundScoopFilter {
-                case .distance: return aroundScoopFilter = .reviews
-                case .reviews: return aroundScoopFilter = .orders
-                case .orders: return aroundScoopFilter = .distance
-                @unknown default: return aroundScoopFilter = .distance
+                switch foodCategoryRepository.selectedFiltering {
+                case .distance:
+                    foodCategoryRepository.selectedFiltering = .reviews
+                    
+                    
+                case .reviews:
+                    foodCategoryRepository.selectedFiltering = .orders
+                    
+                    
+                case .orders:
+                    foodCategoryRepository.selectedFiltering = .distance
+                    
+                    
+                @unknown default:
+                    foodCategoryRepository.selectedFiltering = .distance
                 }
             }
         }
@@ -338,11 +348,11 @@ extension HomeView {
     // 내 근처스쿱
     private func getAroundStoreInfo(_ round: AroundType) async {
         do {
-            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round, aroundScoopFilter)
+            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
             self.aroundStores.append(contentsOf: aroundStores)
         } catch {
             await checkTokenValidation(error) {
-                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round, aroundScoopFilter)
+                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
                 self.aroundStores.append(contentsOf: aroundStores)
             }
         }
