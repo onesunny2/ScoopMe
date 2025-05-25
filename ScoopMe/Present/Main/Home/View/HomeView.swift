@@ -88,25 +88,16 @@ struct HomeView: View {
                 Task {
                     await getPopularStoreInfo()
                     self.aroundStores = []
+                    foodCategoryRepository.lastStoreID = ""
                     await getAroundStoreInfo(currentCheckbox)
                 }
             }
             .onChange(of: currentCheckbox) { newValue in
-                switch newValue {
-                case .픽슐랭:
-                    Log.debug("✅ 픽슐랭 선택")
-                    Task {
-                        self.aroundStores = []
-                        await getAroundStoreInfo(newValue)
-                    }
-                case .마이스쿱:
-                    Log.debug("✅ 마이스쿱 선택")
-                    Task {
-                        self.aroundStores = []
-                        await getAroundStoreInfo(newValue)
-                    }
-                @unknown default:
-                    break
+                Task {
+                    Log.debug("✅ \(newValue) 선택")
+                    self.aroundStores = []
+                    foodCategoryRepository.lastStoreID = ""
+                    await getAroundStoreInfo(newValue)
                 }
             }
             .toolbarItem (leading: {
@@ -289,11 +280,9 @@ struct HomeView: View {
                         if aroundStores[index].storeID == foodCategoryRepository.lastStoreID {
                             // 페이지네이션 추가
                             foodCategoryRepository.isLoading = true
-                            
                             Task {
                                 await getAroundStoreInfo(currentCheckbox)
                             }
-                            
                             foodCategoryRepository.isLoading = false
                         }
                     }
