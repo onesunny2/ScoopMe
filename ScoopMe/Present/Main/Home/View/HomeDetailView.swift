@@ -24,11 +24,16 @@ struct HomeDetailView: View {
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                imageTabview
-                storeManageInfo
-                divider
+        GeometryReader { geometry in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    imageTabview
+                        .offset(y: -geometry.safeAreaInsets.top)
+                        .padding(.bottom, -geometry.safeAreaInsets.top)
+                    storeManageInfo
+                    divider
+                    menuButtons
+                }
             }
         }
         .ignoresSafeArea()
@@ -162,6 +167,59 @@ extension HomeDetailView {
             .fill(.scmBrightSprout)
             .frame(maxWidth: .infinity, maxHeight: 1)
     }
+    
+    // 검색버튼
+    private var menuButtons: some View {
+        LazyVStack(pinnedViews: [.sectionHeaders]) {
+            Section(header: menuHeaderSection) {
+                ForEach(0..<10) { _ in
+                    Rectangle()
+                        .fill(.scmKakaoBG)
+                        .frame(height: 200)
+                }
+            }
+        }
+    }
+    
+    private var menuHeaderSection: some View {
+        HStack(alignment: .center, spacing: 4) {
+            Image(.search)
+                .basicImage(width: 20, color: showTextfield ? .scmGray0 : .scmDeepSprout)
+                .padding(.horizontal, 3)
+                .padding(.vertical, 1.5)
+                .strokeRoundBackground(
+                    showTextfield ? .scmDeepSprout : .scmGray0,
+                    .scmDeepSprout, 1, 50
+                )
+                .asButton {
+                    withAnimation(.bouncy(duration: 0.3)) {
+                        showTextfield.toggle()
+                    }
+                }
+            
+            Spacer(minLength: 2)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .center, spacing: 4) {
+                    ForEach(repository.menuSections, id: \.self) { menu in
+                        Text(menu)
+                            .basicText(.PTBody2, .scmGray60)
+                            .strokeRoundBackground(.scmGray0, .scmGray60, 1, 50)
+                            .padding(.horizontal, 3)
+                            .padding(.vertical, 1.5)
+                    }
+                }
+            }
+        }
+        .defaultHorizontalPadding()
+        .padding(.vertical, 8)
+        .background(.scmGray0)
+    }
+    
+    // textfield
+//    private var searchTextfield: some View {
+//
+//    }
 }
 
 // MARK: Action
