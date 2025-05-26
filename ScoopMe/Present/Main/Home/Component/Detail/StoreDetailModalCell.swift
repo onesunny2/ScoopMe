@@ -22,7 +22,7 @@ struct StoreDetailModalCell: View {
         .defaultHorizontalPadding()
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(.scmGray0)
+                .fill(.scmGray0.opacity(0.6))
         }
     }
 }
@@ -32,13 +32,13 @@ extension StoreDetailModalCell {
     private var address: some View {
         HStack(alignment: .center, spacing: 12) {
             Text(StringLiterals.가게주소.text)
-                .basicText(.PTBody2, .scmGray60)
+                .basicText(.PTBody2, .scmGray75)
             
             HStack(alignment: .center, spacing: 4) {
                 Image(.distance)
                     .basicImage(width: 20, color: .scmDeepSprout)
                 Text(info.address)
-                    .basicText(.PTBody2, .scmGray60)
+                    .basicText(.PTBody2, .scmGray75)
             }
         }
     }
@@ -46,13 +46,13 @@ extension StoreDetailModalCell {
     private var parking: some View {
         HStack(alignment: .center, spacing: 12) {
             Text(StringLiterals.주차여부.text)
-                .basicText(.PTBody2, .scmGray60)
+                .basicText(.PTBody2, .scmGray75)
             
             HStack(alignment: .center, spacing: 4) {
                 Image(.parking)
                     .basicImage(width: 20, color: .scmDeepSprout)
                 Text(info.parkingInfo)
-                    .basicText(.PTBody2, .scmGray60)
+                    .basicText(.PTBody2, .scmGray75)
             }
         }
     }
@@ -60,13 +60,13 @@ extension StoreDetailModalCell {
     private var manageTime: some View {
         HStack(alignment: .center, spacing: 12) {
             Text(StringLiterals.영업시간.text)
-                .basicText(.PTBody2, .scmGray60)
+                .basicText(.PTBody2, .scmGray75)
             
             HStack(alignment: .center, spacing: 4) {
                 Image(.time)
                     .basicImage(width: 20, color: .scmDeepSprout)
                 Text(info.time)
-                    .basicText(.PTBody2, .scmGray60)
+                    .basicText(.PTBody2, .scmGray75)
             }
         }
     }
