@@ -9,7 +9,9 @@ import Foundation
 
 public class MockStoreDetailRepository: StoreDetailDisplayable {
     
-    func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
+    public init() { }
+    
+    public func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
         return StoreDetailInfoEntity(
             storeID: "Test",
             storeName: "원선 스쿱 가게",

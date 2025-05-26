@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-protocol StoreDetailDisplayable: AnyObject, ObservableObject {
+public protocol StoreDetailDisplayable: AnyObject, ObservableObject {
     
     func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity
 }
