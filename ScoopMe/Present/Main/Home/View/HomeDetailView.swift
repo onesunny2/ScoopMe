@@ -28,6 +28,7 @@ struct HomeDetailView: View {
             VStack(spacing: 0) {
                 imageTabview
                 storeManageInfo
+                divider
             }
         }
         .ignoresSafeArea()
@@ -153,6 +154,13 @@ extension HomeDetailView {
                     Log.debug("⏭️ 메신저 클릭")
                 }
         }
+    }
+    
+    // 상세정보와 메뉴 사이의 구분선
+    private var divider: some View {
+        Rectangle()
+            .fill(.scmBrightSprout)
+            .frame(maxWidth: .infinity, maxHeight: 1)
     }
 }
 
