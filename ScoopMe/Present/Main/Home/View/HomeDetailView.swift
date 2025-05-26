@@ -17,6 +17,9 @@ struct HomeDetailView: View {
     
     @State private var storeInfos: StoreDetailInfoEntity = empty
     @State private var isShowDetail: Bool = false
+    @State private var showTextfield: Bool = false
+    
+    @State private var currentVisibleSection: String = ""
     
     init(repository: AnyStoreDetailDisplayable, storeID: String) {
         self._repository = StateObject(wrappedValue: repository)
@@ -36,7 +39,6 @@ struct HomeDetailView: View {
                 }
             }
         }
-        .ignoresSafeArea()
         .task {
             await getStoreDetailInfo()
         }
@@ -184,9 +186,9 @@ extension HomeDetailView {
     private var menuHeaderSection: some View {
         HStack(alignment: .center, spacing: 4) {
             Image(.search)
-                .basicImage(width: 20, color: showTextfield ? .scmGray0 : .scmDeepSprout)
+                .basicImage(width: 16, color: showTextfield ? .scmGray0 : .scmDeepSprout)
                 .padding(.horizontal, 3)
-                .padding(.vertical, 1.5)
+                .padding(.vertical, 1)
                 .strokeRoundBackground(
                     showTextfield ? .scmDeepSprout : .scmGray0,
                     .scmDeepSprout, 1, 50
