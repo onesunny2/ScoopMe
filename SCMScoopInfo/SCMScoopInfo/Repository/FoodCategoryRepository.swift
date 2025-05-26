@@ -183,7 +183,7 @@ extension FoodCategoryRepository {
             longitude: Float(location.coordinate.longitude),
             latitude: Float(location.coordinate.latitude),
             next: id,
-            limit: 5,
+            limit: 20,
             orderBy: selectedFiltering
         )
         let result = try await callRequest(value, type: AllStoreListResponseDTO.self)

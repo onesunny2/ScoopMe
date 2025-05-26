@@ -11,4 +11,5 @@ import Combine
 public protocol StoreDetailDisplayable: AnyObject, ObservableObject {
     
     func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity
+    func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async
 }
