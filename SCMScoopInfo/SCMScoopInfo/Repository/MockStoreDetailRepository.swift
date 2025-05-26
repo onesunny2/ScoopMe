@@ -54,7 +54,9 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                     loginTokenManager.alertTitle = "안내"
                     loginTokenManager.alertMessage = "세션이 만료되었습니다. 다시 로그인해주세요."
                     showAlert = true
-                default: break
+                default:
+                    Log.error("❎ 서버통신 오류: \(error)")
+                    break
                 }
             default: break
             }
