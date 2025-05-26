@@ -18,4 +18,8 @@ public final class AnyStoreDetailDisplayable: StoreDetailDisplayable, Observable
     public func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
         try await _base.getStoreDetailInfo(id: id)
     }
+    
+    public func  checkTokenValidation(_ error: any Error, complete: @escaping () async throws -> ()) async {
+        await _base.checkTokenValidation(error, complete: complete)
+    }
 }

@@ -106,7 +106,7 @@ struct HomeView: View {
             })
             .navigationDestination(for: HomePath.self) { router in
                 switch router {
-                case let .detail(id): HomeDetailView(storeID: id)
+                case let .detail(id): HomeDetailView(repository: DIContainer.shared.storeDetailRepository, storeID: id)
                 }
             }
         }
