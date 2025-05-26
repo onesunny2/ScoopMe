@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "dessert.png",
+      "filename" : "italian.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "dessert@2x.png",
+      "filename" : "italian@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "dessert@3x.png",
+      "filename" : "italian@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
