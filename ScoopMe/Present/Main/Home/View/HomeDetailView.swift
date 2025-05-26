@@ -16,6 +16,7 @@ struct HomeDetailView: View {
     let storeID: String
     
     @State private var storeInfos: StoreDetailInfoEntity = empty
+    @State private var isShowDetail: Bool = false
     
     init(repository: AnyStoreDetailDisplayable, storeID: String) {
         self._repository = StateObject(wrappedValue: repository)
@@ -38,6 +39,20 @@ struct HomeDetailView: View {
             Image(storeInfos.likeStatus ? .likeFill : .likeEmpty)
                 .basicImage(width: 32, color: .scmGray0)
         })
+        .overlay(alignment: .center) {
+            if isShowDetail {
+                Color.scmGray90.opacity(0.4)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            isShowDetail = false
+                        }
+                    }
+                
+                StoreDetailModalCell(info: storeInfos)
+                    .transition(.scale)
+            }
+        }
     }
 }
 
@@ -96,6 +111,9 @@ extension HomeDetailView {
             .strokeRoundBackground(.scmGray0, .scmGray30, 1, 100)
             .asButton {
                 Log.debug("⏭️ 가게 상세정보 클릭")
+                withAnimation(.spring()) {
+                    isShowDetail = true
+                }
             }
             
             Spacer()
