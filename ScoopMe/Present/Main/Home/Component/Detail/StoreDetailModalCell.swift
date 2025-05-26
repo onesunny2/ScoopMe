@@ -22,7 +22,7 @@ struct StoreDetailModalCell: View {
         .defaultHorizontalPadding()
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(.scmGray0.opacity(0.6))
+                .fill(.scmGray0.opacity(0.9))
         }
     }
 }

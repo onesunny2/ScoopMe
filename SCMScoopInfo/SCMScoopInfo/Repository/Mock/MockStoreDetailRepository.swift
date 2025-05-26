@@ -12,9 +12,10 @@ internal import SCMNetwork
 
 public class MockStoreDetailRepository: StoreDetailDisplayable {
     
-    @Published var showAlert: Bool = false
-    @Published var alertTitle: String = ""
-    @Published var alertMessage: String = ""
+    @Published public var showAlert: Bool = false
+    @Published public var alertTitle: String = ""
+    @Published public var alertMessage: String = ""
+    @Published public var menuSections: [String] = ["카테고리 1", "카테고리 2", "카테고리 3"]
     
     private let loginTokenManager: LoginTokenManager
     
