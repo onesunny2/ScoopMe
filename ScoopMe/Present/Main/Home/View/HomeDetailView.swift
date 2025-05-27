@@ -38,15 +38,19 @@ struct HomeDetailView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    imageTabview
-                        .offset(y: -geometry.safeAreaInsets.top)
-                        .padding(.bottom, -geometry.safeAreaInsets.top)
-                    storeManageInfo
-                    divider
-                    menuSections(parentGeometry: geometry)
+            ZStack(alignment: .bottom) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                        imageTabview
+                            .offset(y: -geometry.safeAreaInsets.top)
+                            .padding(.bottom, -geometry.safeAreaInsets.top)
+                        storeManageInfo
+                        divider
+                        menuSections(parentGeometry: geometry)
+                    }
                 }
+                
+                needToPayCell
             }
         }
         .task {
@@ -326,6 +330,22 @@ extension HomeDetailView {
                         .padding(.vertical, 8)
                 }
             }
+        }
+    }
+    
+    // 총 결제금액 view
+    @ViewBuilder
+    private var needToPayCell: some View {
+        if selectedCount > 0 {
+            BottomPriceCell(count: selectedCount, price: selectedPrice)
+                .transition(.asymmetric(
+                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                    removal: .move(edge: .bottom).combined(with: .opacity)
+                ))
+                .ignoresSafeArea(.container, edges: .bottom)
+                .onTapGesture {
+                    Log.debug("⏭️ 결제하기 버튼 클릭")
+                } 
         }
     }
 }
