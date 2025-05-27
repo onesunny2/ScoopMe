@@ -29,13 +29,13 @@ struct HomeDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                     imageTabview
                         .offset(y: -geometry.safeAreaInsets.top)
                         .padding(.bottom, -geometry.safeAreaInsets.top)
                     storeManageInfo
                     divider
-                    menuButtons
+                    menuSections(parentGeometry: geometry)
                 }
             }
         }
@@ -170,18 +170,52 @@ extension HomeDetailView {
             .frame(maxWidth: .infinity, maxHeight: 1)
     }
     
-    // 검색버튼
-    private var menuButtons: some View {
-        LazyVStack(pinnedViews: [.sectionHeaders]) {
-            Section(header: menuHeaderSection) {
-                ForEach(0..<10) { _ in
-                    Rectangle()
-                        .fill(.scmKakaoBG)
-                        .frame(height: 200)
-                }
-            }
-        }
-    }
+    // 메뉴 섹션들
+       private func menuSections(parentGeometry: GeometryProxy) -> some View {
+           let safeAreaTop = parentGeometry.safeAreaInsets.top
+           let headerHeight: CGFloat = 60
+           let targetY = safeAreaTop + headerHeight + 200
+           
+           return LazyVStack(pinnedViews: [.sectionHeaders]) {
+               Section(header: menuHeaderSection) {
+                   ForEach(repository.menuSections, id: \.self) { sectionTitle in
+                       VStack(spacing: 0) {
+                           // 각 섹션의 타이틀 뷰
+                           sectionTitleView(sectionTitle)
+                               .background(
+                                   // 섹션 위치 추적용 GeometryReader
+                                   GeometryReader { sectionGeometry in
+                                       let globalFrame = sectionGeometry.frame(in: .global)
+                                       
+                                       Color.clear
+                                           .onAppear {
+                                               checkVisibleSection(
+                                                   sectionTitle: sectionTitle,
+                                                   globalFrame: globalFrame,
+                                                   targetY: targetY
+                                               )
+                                           }
+                                           .onChange(of: globalFrame.minY) { _ in
+                                               checkVisibleSection(
+                                                   sectionTitle: sectionTitle,
+                                                   globalFrame: globalFrame,
+                                                   targetY: targetY
+                                               )
+                                           }
+                                   }
+                               )
+                           
+                           // 각 섹션의 메뉴 아이템들
+                           ForEach(0..<5, id: \.self) { _ in
+                               Rectangle()
+                                   .fill(.gray)
+                                   .frame(height: 100)
+                           }
+                       }
+                   }
+               }
+           }
+       }
     
     private var menuHeaderSection: some View {
         HStack(alignment: .center, spacing: 4) {
@@ -204,11 +238,7 @@ extension HomeDetailView {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .center, spacing: 4) {
                     ForEach(repository.menuSections, id: \.self) { menu in
-                        Text(menu)
-                            .basicText(.PTBody2, .scmGray60)
-                            .strokeRoundBackground(.scmGray0, .scmGray60, 1, 50)
-                            .padding(.horizontal, 3)
-                            .padding(.vertical, 1.5)
+                        headerMenuButton(menu)
                     }
                 }
             }
@@ -218,14 +248,75 @@ extension HomeDetailView {
         .background(.scmGray0)
     }
     
+    // section Title
+    private func sectionTitleView(_ title: String) -> some View {
+        HStack {
+            Text(title)
+                .basicText(.PTTitle3, .scmGray90)
+            Spacer()
+        }
+        .id(title)
+    }
+    
+    // 헤더 메뉴 버튼 (현재 보이는 섹션에 따라 색상 변경)
+    private func headerMenuButton(_ menu: String) -> some View {
+        let isActive = currentVisibleSection == menu
+        
+        return Text(menu)
+            .basicText(.PTBody2, isActive ? .scmBlackSprout : .scmGray60)
+            .strokeRoundBackground(
+                .scmGray0,
+                isActive ? .scmBlackSprout : .scmGray60,
+                isActive ? 2 : 1, 50
+            )
+            .padding(.horizontal, 3)
+            .padding(.vertical, 1.5)
+            .animation(.easeInOut(duration: 0.2), value: isActive)
+            .asButton {
+                // 해당 섹션으로 스크롤
+                // ScrollViewReader의 scrollTo 메서드 사용 가능
+            }
+    }
+    
     // textfield
-//    private var searchTextfield: some View {
-//
-//    }
+    //    private var searchTextfield: some View {
+    //
+    //    }
 }
 
 // MARK: Action
 extension HomeDetailView {
+    
+    // 글로벌 좌표계를 사용한 섹션 감지
+       private func checkVisibleSection(sectionTitle: String, globalFrame: CGRect, targetY: CGFloat) {
+           let sectionTop = globalFrame.minY
+           let sectionBottom = globalFrame.maxY
+           
+           // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
+           let detectionStart = targetY - 150  // 헤더보다 조금 위부터
+           let detectionEnd = targetY + 400   // 헤더 아래 넓은 영역까지
+           
+           // 섹션이 감지 영역에 들어오면 활성화
+           if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
+               if currentVisibleSection != sectionTitle {
+                   withAnimation(.easeInOut(duration: 0.2)) {
+                       currentVisibleSection = sectionTitle
+                   }
+               }
+           }
+           // 섹션이 감지 영역을 완전히 벗어나면 체크
+           else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
+               // 다른 섹션이 활성화되지 않은 경우 잠시 대기
+               DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                   if currentVisibleSection == sectionTitle {
+                       // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
+                       // currentVisibleSection = ""
+                   }
+               }
+           }
+       }
+    
+    
     private func getStoreDetailInfo() async {
         do {
             let info = try await repository.getStoreDetailInfo(id: storeID)
