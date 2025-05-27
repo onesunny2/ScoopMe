@@ -8,5 +8,5 @@
 import Foundation
 
 enum HomePath: Hashable {
-    case detail
+    case detail(id: String)
 }

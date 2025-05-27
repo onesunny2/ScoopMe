@@ -24,8 +24,10 @@ final class DIContainer {
         
         self.locationManager = LocationManager()
         
-        let repo = FoodCategoryRepository()
-        self.foodCategoryRepository = AnyFoodCategoryDisplayable(repo)
+        let foodCategoryRepo = FoodCategoryRepository()
+        self.foodCategoryRepository = AnyFoodCategoryDisplayable(foodCategoryRepo)
+        let storeDetailRepo = MockStoreDetailRepository()
+        self.storeDetailRepository = AnyStoreDetailDisplayable(storeDetailRepo)
         
         self.imageHelper = ImageHelper.shared
     }
@@ -41,6 +43,7 @@ final class DIContainer {
     
     /// SCMScoopInfo
     private(set) var foodCategoryRepository: AnyFoodCategoryDisplayable
+    private(set) var storeDetailRepository: AnyStoreDetailDisplayable
     
     /// SCMImageRequest
     private(set) var imageHelper: ImageHelper
