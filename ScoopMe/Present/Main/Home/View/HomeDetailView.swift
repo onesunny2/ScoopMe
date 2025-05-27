@@ -171,51 +171,27 @@ extension HomeDetailView {
     }
     
     // 메뉴 섹션들
-       private func menuSections(parentGeometry: GeometryProxy) -> some View {
-           let safeAreaTop = parentGeometry.safeAreaInsets.top
-           let headerHeight: CGFloat = 60
-           let targetY = safeAreaTop + headerHeight + 200
-           
-           return LazyVStack(pinnedViews: [.sectionHeaders]) {
-               Section(header: menuHeaderSection) {
-                   ForEach(repository.menuSections, id: \.self) { sectionTitle in
-                       VStack(spacing: 0) {
-                           // 각 섹션의 타이틀 뷰
-                           sectionTitleView(sectionTitle)
-                               .background(
-                                   // 섹션 위치 추적용 GeometryReader
-                                   GeometryReader { sectionGeometry in
-                                       let globalFrame = sectionGeometry.frame(in: .global)
-                                       
-                                       Color.clear
-                                           .onAppear {
-                                               checkVisibleSection(
-                                                   sectionTitle: sectionTitle,
-                                                   globalFrame: globalFrame,
-                                                   targetY: targetY
-                                               )
-                                           }
-                                           .onChange(of: globalFrame.minY) { _ in
-                                               checkVisibleSection(
-                                                   sectionTitle: sectionTitle,
-                                                   globalFrame: globalFrame,
-                                                   targetY: targetY
-                                               )
-                                           }
-                                   }
-                               )
-                           
-                           // 각 섹션의 메뉴 아이템들
-                           ForEach(0..<5, id: \.self) { _ in
-                               Rectangle()
-                                   .fill(.gray)
-                                   .frame(height: 100)
-                           }
-                       }
-                   }
-               }
-           }
-       }
+    private func menuSections(parentGeometry: GeometryProxy) -> some View {
+        let safeAreaTop = parentGeometry.safeAreaInsets.top
+        let headerHeight: CGFloat = 60
+        let targetY = safeAreaTop + headerHeight + 200
+        
+        return Section(header: menuHeaderSection) {
+            ForEach(repository.menuSections, id: \.self) { sectionTitle in
+                VStack(spacing: 0) {
+                    // 각 섹션의 타이틀 뷰
+                    sectionTitleView(sectionTitle, targetY: targetY)
+                    
+                    // 각 섹션의 메뉴 아이템들
+                    ForEach(0..<5, id: \.self) { _ in
+                        Rectangle()
+                            .fill(.gray)
+                            .frame(height: 100)
+                    }
+                }
+            }
+        } .defaultHorizontalPadding()
+    }
     
     private var menuHeaderSection: some View {
         HStack(alignment: .center, spacing: 4) {
@@ -243,19 +219,40 @@ extension HomeDetailView {
                 }
             }
         }
-        .defaultHorizontalPadding()
         .padding(.vertical, 8)
         .background(.scmGray0)
     }
     
     // section Title
-    private func sectionTitleView(_ title: String) -> some View {
+    private func sectionTitleView(_ title: String, targetY: CGFloat) -> some View {
         HStack {
             Text(title)
                 .basicText(.PTTitle3, .scmGray90)
             Spacer()
         }
         .id(title)
+        .background(
+            // 섹션 위치 추적용 GeometryReader
+            GeometryReader { sectionGeometry in
+                let globalFrame = sectionGeometry.frame(in: .global)
+                
+                Color.clear
+                    .onAppear {
+                        checkVisibleSection(
+                            sectionTitle: title,
+                            globalFrame: globalFrame,
+                            targetY: targetY
+                        )
+                    }
+                    .onChange(of: globalFrame.minY) { _ in
+                        checkVisibleSection(
+                            sectionTitle: title,
+                            globalFrame: globalFrame,
+                            targetY: targetY
+                        )
+                    }
+            }
+        )
     }
     
     // 헤더 메뉴 버튼 (현재 보이는 섹션에 따라 색상 변경)
