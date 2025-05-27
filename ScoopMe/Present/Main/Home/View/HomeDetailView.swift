@@ -185,7 +185,7 @@ extension HomeDetailView {
         let targetY = safeAreaTop + headerHeight + 200
         
         return Section(header: menuHeaderSection) {
-            ForEach(repository.menuSections, id: \.self) { sectionTitle in
+            ForEach(Array(repository.menuSections.enumerated()), id: \.element) { index, sectionTitle in
                 VStack(spacing: 0) {
                     // 각 섹션의 타이틀 뷰
                     sectionTitleView(sectionTitle, targetY: targetY)
@@ -195,9 +195,12 @@ extension HomeDetailView {
                     sectionContents(section: sectionTitle)
                         .defaultHorizontalPadding()
                     
-                    Rectangle()
-                        .fill(.scmGray15)
-                        .frame(maxWidth: .infinity, minHeight: 12)
+                    // 마지막 섹션이 아닌 경우에만 Rectangle 추가
+                    if index < repository.menuSections.count - 1 {
+                        Rectangle()
+                            .fill(.scmGray15)
+                            .frame(maxWidth: .infinity, minHeight: 12)
+                    }
                 }
             }
         }
