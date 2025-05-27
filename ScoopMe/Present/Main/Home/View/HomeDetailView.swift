@@ -61,6 +61,7 @@ struct HomeDetailView: View {
             Image(storeInfos.likeStatus ? .likeFill : .likeEmpty)
                 .basicImage(width: 32, color: .scmGray0)
         })
+        .toolbar(.hidden, for: .tabBar)
         .overlay(alignment: .center) {
             if isShowDetail {
                 Color.scmGray90.opacity(0.4)
