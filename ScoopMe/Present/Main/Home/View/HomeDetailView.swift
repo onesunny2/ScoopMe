@@ -345,7 +345,7 @@ extension HomeDetailView {
                 .ignoresSafeArea(.container, edges: .bottom)
                 .onTapGesture {
                     Log.debug("⏭️ 결제하기 버튼 클릭")
-                } 
+                }
         }
     }
 }
