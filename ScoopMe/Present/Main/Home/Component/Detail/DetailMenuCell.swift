@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMLogger
 import SCMScoopInfo
 
 struct DetailMenuCell: View {
@@ -53,7 +54,7 @@ struct DetailMenuCell: View {
                 .basicText(.PTTitle3, .scmGray90)
             Text(menu.description)
                 .basicText(.PTBody6, .scmGray60)
-            Text(menu.price)
+            Text(menu.priceString)
                 .basicText(.PTTitle3, .scmGray90)
         }
     }
@@ -81,7 +82,7 @@ struct DetailMenuCell: View {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            if currentCount == 0 {
+            if currentCount == 0 && !menu.soldoutStatus {
                 Image(.plus)
                     .basicImage(width: 15, color: .scmGray90)
                     .padding(6)
@@ -94,10 +95,16 @@ struct DetailMenuCell: View {
                     .asButton {
                         withAnimation(.spring) {
                             currentCount += 1
+                            selectedCount += 1
+                            selectedPrice += menu.price
+                            
+                            Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
+                            Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
                         }
                     }
-            } else {
+            } else if currentCount != 0 && !menu.soldoutStatus {
                 menuCountButton
+                    .padding([.horizontal, .bottom], 4)
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: 8))
@@ -107,9 +114,15 @@ struct DetailMenuCell: View {
         HStack(alignment: .center) {
             Image(.minus)
                 .basicImage(width: 15, color: .scmGray90)
+                .padding([.vertical, .leading], 6)
                 .asButton {
                     withAnimation(.spring) {
                         currentCount -= 1
+                        selectedCount -= 1
+                        selectedPrice -= menu.price
+                        
+                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
+                        Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
                     }
                 }
             
@@ -122,31 +135,22 @@ struct DetailMenuCell: View {
             
             Image(.plus)
                 .basicImage(width: 15, color: .scmGray90)
+                .padding([.vertical, .trailing], 6)
                 .asButton {
                     withAnimation(.spring) {
                         currentCount += 1
+                        selectedCount += 1
+                        selectedPrice += menu.price
+                        
+                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
+                        Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
                     }
                 }
         }
-        .padding(6)
         .background(
             RoundedRectangle(cornerRadius: 5)
                 .fill(.scmGray15)
                 .matchedGeometryEffect(id: "countButton", in: countButtonID)
         )
-        .padding([.horizontal, .bottom], 4)
     }
 }
-
-//#Preview {
-//    DetailMenuCell(menu: StoreDetailMenuEntity(
-//        menuID: "68231f4cca81ef0db5a46161",
-//        category: "카테고리 3", // 변경됨
-//        menuName: "새싹 커피 6",
-//        description: "맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵",
-//        image: "/data/menus/1747131234960.jpg",
-//        price: "10,500원",
-//        hashTag: "인기 1위",
-//        soldoutStatus: true
-//    ))
-//}

@@ -52,7 +52,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 6",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: "인기 1위",
                 soldoutStatus: false
             ),
@@ -62,7 +63,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 5",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: nil,
                 soldoutStatus: true
             ),
@@ -72,7 +74,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 4",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: nil,
                 soldoutStatus: true
             ),
@@ -82,7 +85,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 3",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: nil,
                 soldoutStatus: false
             ),
@@ -92,7 +96,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 2",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: nil,
                 soldoutStatus: false
             ),
@@ -102,7 +107,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 menuName: "새싹 커피 1",
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131249732.jpg",
-                price: "10500",
+                price: 10500,
+                priceString: "10500",
                 hashTag: nil,
                 soldoutStatus: false
             )
