@@ -42,6 +42,9 @@ struct HomeDetailView: View {
         .task {
             await getStoreDetailInfo()
         }
+        .onAppear {
+            self.currentVisibleSection = repository.menuSections.first ?? ""
+        }
         .backButton(.scmGray0)
         .toolbarItem (trailing: {
             Image(storeInfos.likeStatus ? .likeFill : .likeEmpty)
@@ -196,12 +199,12 @@ extension HomeDetailView {
     private var menuHeaderSection: some View {
         HStack(alignment: .center, spacing: 4) {
             Image(.search)
-                .basicImage(width: 16, color: showTextfield ? .scmGray0 : .scmDeepSprout)
-                .padding(.horizontal, 3)
-                .padding(.vertical, 1)
-                .strokeRoundBackground(
-                    showTextfield ? .scmDeepSprout : .scmGray0,
-                    .scmDeepSprout, 1, 50
+                .basicImage(width: 16, color: .scmGray90)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 50)
+                        .fill(.scmGray30)
                 )
                 .asButton {
                     withAnimation(.bouncy(duration: 0.3)) {
@@ -290,7 +293,7 @@ extension HomeDetailView {
            let sectionBottom = globalFrame.maxY
            
            // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
-           let detectionStart = targetY - 150  // 헤더보다 조금 위부터
+           let detectionStart = targetY - 100  // 헤더보다 조금 위부터
            let detectionEnd = targetY + 400   // 헤더 아래 넓은 영역까지
            
            // 섹션이 감지 영역에 들어오면 활성화
