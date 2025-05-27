@@ -17,6 +17,8 @@ struct HomeDetailView: View {
     
     @State private var storeInfos: StoreDetailInfoEntity = empty
     @State private var isShowDetail: Bool = false
+    
+    @State private var searchKeyword: String = ""
     @State private var showTextfield: Bool = false
     
     @State private var currentVisibleSection: String = ""
@@ -198,31 +200,43 @@ extension HomeDetailView {
     
     private var menuHeaderSection: some View {
         HStack(alignment: .center, spacing: 4) {
-            Image(.search)
-                .basicImage(width: 16, color: .scmGray90)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 50)
-                        .fill(.scmGray30)
-                )
-                .asButton {
-                    withAnimation(.bouncy(duration: 0.3)) {
-                        showTextfield.toggle()
+            if !showTextfield {
+                Image(.search)
+                    .basicImage(width: 16, color: .scmGray90)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 50)
+                            .fill(.scmGray30)
+                    )
+                    .asButton {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showTextfield.toggle()
+                        }
                     }
-                }
+            } else {
+                DetailSearchFieldCell(
+                    text: $searchKeyword,
+                    showTextfield: $showTextfield,
+                    placeholder: ""
+                )
+                .transition(.opacity)
+            }
             
             Spacer(minLength: 2)
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center, spacing: 4) {
-                    ForEach(repository.menuSections, id: \.self) { menu in
-                        headerMenuButton(menu)
+            if !showTextfield {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 4) {
+                        ForEach(repository.menuSections, id: \.self) { menu in
+                            headerMenuButton(menu)
+                        }
                     }
                 }
+                .transition(.opacity)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
         .background(.scmGray0)
     }
     
@@ -270,7 +284,7 @@ extension HomeDetailView {
                 isActive ? 2 : 1, 50
             )
             .padding(.horizontal, 3)
-            .padding(.vertical, 1.5)
+            .padding(.vertical, 1)
             .animation(.easeInOut(duration: 0.2), value: isActive)
             .asButton {
                 // 해당 섹션으로 스크롤
@@ -354,6 +368,7 @@ extension HomeDetailView {
 // MARK: StringLiterals
 private enum StringLiterals: String {
     case 가게_상세정보 = "가게 상세정보"
+    case placeholder
     
     var text: String {
         return self.rawValue
