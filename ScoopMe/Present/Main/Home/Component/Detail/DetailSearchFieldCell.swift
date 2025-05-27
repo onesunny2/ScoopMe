@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct DetailSearchFieldCell: View {
+    
     @Binding var text: String
     @Binding var showTextfield: Bool
+    
     let placeholder: String
-    let namespaceId: Namespace.ID
+    let textfieldID: Namespace.ID
     
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
@@ -31,7 +33,7 @@ struct DetailSearchFieldCell: View {
             .background(
                 RoundedRectangle(cornerRadius: 50)
                     .fill(.scmGray30)
-                    .matchedGeometryEffect(id: "search", in: namespaceId)
+                    .matchedGeometryEffect(id: "search", in: textfieldID)
             )
             
             
@@ -46,7 +48,3 @@ struct DetailSearchFieldCell: View {
         }
     }
 }
-
-//#Preview {
-//    DetailSearchFieldCell(text: .constant(""), showTextfield: .constant(true), placeholder: "")
-//}

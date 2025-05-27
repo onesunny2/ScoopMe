@@ -10,20 +10,26 @@ import SCMLogger
 import SCMScoopInfo
 
 struct HomeDetailView: View {
-    @Namespace private var namespaceId
+    @Namespace private var textfieldID
     
     @StateObject private var repository: AnyStoreDetailDisplayable
     
     let storeID: String
     
+    // 상단 가게 정보
     @State private var storeInfos: StoreDetailInfoEntity = empty
     @State private var isShowDetail: Bool = false
     
+    // 메뉴 정보
     @State private var searchKeyword: String = ""
     @State private var showTextfield: Bool = false
     @State private var menuInfos: [StoreDetailMenuEntity] = []
     
     @State private var currentVisibleSection: String = ""
+    
+    // 메뉴 가격
+    @State private var selectedCount: Int = 0
+    @State private var selectedPrice: Int = 0
     
     init(repository: AnyStoreDetailDisplayable, storeID: String) {
         self._repository = StateObject(wrappedValue: repository)
@@ -216,7 +222,7 @@ extension HomeDetailView {
                     .background(
                         RoundedRectangle(cornerRadius: 50)
                             .fill(.scmGray30)
-                            .matchedGeometryEffect(id: "search", in: namespaceId)
+                            .matchedGeometryEffect(id: "search", in: textfieldID)
                     )
                     .asButton {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -228,7 +234,7 @@ extension HomeDetailView {
                     text: $searchKeyword,
                     showTextfield: $showTextfield,
                     placeholder: "",
-                    namespaceId: namespaceId
+                    textfieldID: textfieldID
                 )
                 .transition(.opacity)
             }
@@ -310,7 +316,7 @@ extension HomeDetailView {
         
         return ForEach(Array(sectionMenus.enumerated()), id: \.element.menuID) { index, menu in
             VStack(spacing: 0) {
-                DetailMenuCell(menu: menu)
+                DetailMenuCell(selectedCount: $selectedCount, selectedPrice: $selectedPrice, menu: menu)
                 
                 if index < sectionMenus.count - 1 {
                     Rectangle()
