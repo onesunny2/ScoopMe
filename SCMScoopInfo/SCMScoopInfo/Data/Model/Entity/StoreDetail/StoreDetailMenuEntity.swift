@@ -14,6 +14,7 @@ public struct StoreDetailMenuEntity: Hashable {
     public let description: String
     public let image: String
     public let price: String
+    public let hashTag: String?
     
     public init(
         menuID: String,
@@ -21,7 +22,8 @@ public struct StoreDetailMenuEntity: Hashable {
         menuName: String,
         description: String,
         image: String,
-        price: String
+        price: String,
+        hashTag: String?
     ) {
         self.menuID = menuID
         self.category = category
@@ -29,5 +31,6 @@ public struct StoreDetailMenuEntity: Hashable {
         self.description = description
         self.image = image
         self.price = price
+        self.hashTag = hashTag
     }
 }

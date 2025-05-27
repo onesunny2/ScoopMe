@@ -51,48 +51,54 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 category: "카테고리 3", // 변경됨
                 menuName: "새싹 커피 6",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131234960.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
+                price: "10500",
+                hashTag: "인기 1위"
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f48ca81ef0db5a4615b",
                 category: "카테고리 2",
                 menuName: "새싹 커피 5",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131234960.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
+                price: "10500",
+                hashTag: nil
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f3eca81ef0db5a46155",
                 category: "카테고리 2",
                 menuName: "새싹 커피 4",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131234960.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
+                price: "10500",
+                hashTag: nil
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f36ca81ef0db5a4614f",
                 category: "카테고리 3", // 변경됨
                 menuName: "새싹 커피 3",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131234960.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
+                price: "10500",
+                hashTag: nil
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f28ca81ef0db5a46149",
                 category: "카테고리 1",
                 menuName: "새싹 커피 2",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131234960.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
+                price: "10500",
+                hashTag: nil
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f1dca81ef0db5a46143",
                 category: "카테고리 1",
                 menuName: "새싹 커피 1",
                 description: "맛있는 빵",
-                image: "/data/menus/1747131249732.jpg",
-                price: "10500"
+                image: Secret.baseURL + "/v1/data/menus/1747131249732.jpg",
+                price: "10500",
+                hashTag: nil
             )
         ]
     }

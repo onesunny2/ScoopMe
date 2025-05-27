@@ -21,6 +21,7 @@ struct HomeDetailView: View {
     
     @State private var searchKeyword: String = ""
     @State private var showTextfield: Bool = false
+    @State private var menuInfos: [StoreDetailMenuEntity] = []
     
     @State private var currentVisibleSection: String = ""
     
@@ -44,6 +45,7 @@ struct HomeDetailView: View {
         }
         .task {
             await getStoreDetailInfo()
+            await getMenuInfo()
         }
         .onAppear {
             self.currentVisibleSection = repository.menuSections.first ?? ""
@@ -187,16 +189,18 @@ extension HomeDetailView {
                 VStack(spacing: 0) {
                     // 각 섹션의 타이틀 뷰
                     sectionTitleView(sectionTitle, targetY: targetY)
+                        .defaultHorizontalPadding()
                     
                     // 각 섹션의 메뉴 아이템들
-                    ForEach(0..<5, id: \.self) { _ in
-                        Rectangle()
-                            .fill(.gray)
-                            .frame(height: 100)
-                    }
+                    sectionContents(section: sectionTitle)
+                        .defaultHorizontalPadding()
+                    
+                    Rectangle()
+                        .fill(.scmGray15)
+                        .frame(maxWidth: .infinity, minHeight: 12)
                 }
             }
-        } .defaultHorizontalPadding()
+        }
     }
     
     private var menuHeaderSection: some View {
@@ -240,6 +244,7 @@ extension HomeDetailView {
             }
         }
         .padding(.vertical, 12)
+        .defaultHorizontalPadding()
         .background(.scmGray0)
     }
     
@@ -273,6 +278,7 @@ extension HomeDetailView {
                     }
             }
         )
+        .padding(.top, 18)
     }
     
     // 헤더 메뉴 버튼 (현재 보이는 섹션에 따라 색상 변경)
@@ -295,8 +301,22 @@ extension HomeDetailView {
             }
     }
     
-    private func sectionContents(section title: String) {
+
+    private func sectionContents(section title: String) -> some View {
+        let sectionMenus = menuInfos.filter { $0.category == title }
         
+        return ForEach(Array(sectionMenus.enumerated()), id: \.element.menuID) { index, menu in
+            VStack(spacing: 0) {
+                DetailMenuCell(menu: menu)
+                
+                if index < sectionMenus.count - 1 {
+                    Rectangle()
+                        .fill(.scmGray30)
+                        .frame(maxWidth: .infinity, maxHeight: 1)
+                        .padding(.vertical, 8)
+                }
+            }
+        }
     }
 }
 
@@ -341,6 +361,18 @@ extension HomeDetailView {
             await repository.checkTokenValidation(error) {
                 let info = try await repository.getStoreDetailInfo(id: storeID)
                 self.storeInfos = info
+            }
+        }
+    }
+    
+    private func getMenuInfo() async {
+        do {
+            let info = try await repository.getStoreDetailMenu(id: storeID)
+            self.menuInfos = info
+        } catch {
+            await repository.checkTokenValidation(error) {
+                let info = try await repository.getStoreDetailMenu(id: storeID)
+                self.menuInfos = info
             }
         }
     }
