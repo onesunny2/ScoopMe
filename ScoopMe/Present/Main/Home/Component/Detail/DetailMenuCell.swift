@@ -61,6 +61,17 @@ struct DetailMenuCell: View {
         )
         .frame(width: 90, height: 90)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay {
+            if menu.soldoutStatus {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.scmGray90.opacity(0.6))
+                    .frame(width: 90, height: 90)
+                    .overlay(alignment: .center) {
+                        Text("품절")
+                            .basicText(.PTTitle3, .scmGray0)
+                    }
+            }
+        }
         .contentShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -73,6 +84,7 @@ struct DetailMenuCell: View {
         description: "맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵맛있는 빵",
         image: "/data/menus/1747131234960.jpg",
         price: "10,500원",
-        hashTag: "인기 1위"
+        hashTag: "인기 1위",
+        soldoutStatus: true
     ))
 }

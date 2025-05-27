@@ -53,7 +53,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
                 price: "10500",
-                hashTag: "인기 1위"
+                hashTag: "인기 1위",
+                soldoutStatus: false
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f48ca81ef0db5a4615b",
@@ -62,7 +63,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
                 price: "10500",
-                hashTag: nil
+                hashTag: nil,
+                soldoutStatus: true
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f3eca81ef0db5a46155",
@@ -71,7 +73,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
                 price: "10500",
-                hashTag: nil
+                hashTag: nil,
+                soldoutStatus: true
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f36ca81ef0db5a4614f",
@@ -80,7 +83,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
                 price: "10500",
-                hashTag: nil
+                hashTag: nil,
+                soldoutStatus: false
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f28ca81ef0db5a46149",
@@ -89,7 +93,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
                 price: "10500",
-                hashTag: nil
+                hashTag: nil,
+                soldoutStatus: false
             ),
             StoreDetailMenuEntity(
                 menuID: "68231f1dca81ef0db5a46143",
@@ -98,7 +103,8 @@ public class MockStoreDetailRepository: StoreDetailDisplayable {
                 description: "맛있는 빵",
                 image: Secret.baseURL + "/v1/data/menus/1747131249732.jpg",
                 price: "10500",
-                hashTag: nil
+                hashTag: nil,
+                soldoutStatus: false
             )
         ]
     }
