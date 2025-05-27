@@ -10,6 +10,7 @@ import SCMLogger
 import SCMScoopInfo
 
 struct HomeDetailView: View {
+    @Namespace private var namespaceId
     
     @StateObject private var repository: AnyStoreDetailDisplayable
     
@@ -208,6 +209,7 @@ extension HomeDetailView {
                     .background(
                         RoundedRectangle(cornerRadius: 50)
                             .fill(.scmGray30)
+                            .matchedGeometryEffect(id: "search", in: namespaceId)
                     )
                     .asButton {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -218,7 +220,8 @@ extension HomeDetailView {
                 DetailSearchFieldCell(
                     text: $searchKeyword,
                     showTextfield: $showTextfield,
-                    placeholder: ""
+                    placeholder: "",
+                    namespaceId: namespaceId
                 )
                 .transition(.opacity)
             }
@@ -292,10 +295,9 @@ extension HomeDetailView {
             }
     }
     
-    // textfield
-    //    private var searchTextfield: some View {
-    //
-    //    }
+    private func sectionContents(section title: String) {
+        
+    }
 }
 
 // MARK: Action

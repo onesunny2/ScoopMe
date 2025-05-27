@@ -8,32 +8,32 @@
 import SwiftUI
 
 struct DetailSearchFieldCell: View {
-    
     @Binding var text: String
     @Binding var showTextfield: Bool
     let placeholder: String
+    let namespaceId: Namespace.ID
     
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            Image(.search)
-                .basicImage(width: 16, color: .scmGray90)
-                .padding(.leading, 18)
-                .padding(.vertical, 8)
-                .background(
-                    UnevenRoundedRectangle(topLeadingRadius: 50, bottomLeadingRadius: 50)
-                        .fill(.scmGray30)
-                )
+            HStack(spacing: 0) {
+                Image(.search)
+                    .basicImage(width: 16, color: .scmGray90)
+                    .padding(.leading, 18)
+                    .padding(.vertical, 8)
+                
+                TextField("", text: $text)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .placeholder(placeholder, $text)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 50)
+                    .fill(.scmGray30)
+                    .matchedGeometryEffect(id: "search", in: namespaceId)
+            )
             
-            TextField("", text: $text)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled(true)
-                .placeholder(placeholder, $text)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(alignment: .center) {
-                    UnevenRoundedRectangle(bottomTrailingRadius: 50, topTrailingRadius: 50)
-                        .fill(.scmGray30)
-                }
             
             Text("닫기")
                 .basicText(.PTBody1, .scmGray90)
@@ -47,6 +47,6 @@ struct DetailSearchFieldCell: View {
     }
 }
 
-#Preview {
-    DetailSearchFieldCell(text: .constant(""), showTextfield: .constant(true), placeholder: "")
-}
+//#Preview {
+//    DetailSearchFieldCell(text: .constant(""), showTextfield: .constant(true), placeholder: "")
+//}
