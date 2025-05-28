@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Coder {
-    static let encoder = JSONEncoder()
-    static let decoder = JSONDecoder()
+public enum Coder {
+    public static let encoder = JSONEncoder()
+    public static let decoder = JSONDecoder()
 }

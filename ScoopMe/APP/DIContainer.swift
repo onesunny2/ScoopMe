@@ -26,7 +26,7 @@ final class DIContainer {
         
         let foodCategoryRepo = FoodCategoryRepository()
         self.foodCategoryRepository = AnyFoodCategoryDisplayable(foodCategoryRepo)
-        let storeDetailRepo = MockStoreDetailRepository()
+        let storeDetailRepo = StoreDetailRepository()
         self.storeDetailRepository = AnyStoreDetailDisplayable(storeDetailRepo)
         
         self.imageHelper = ImageHelper.shared

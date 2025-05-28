@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
     
     func saveStructArray<T: Codable>(_ value: T, for key: String) {
         

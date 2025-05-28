@@ -70,6 +70,10 @@ struct DetailMenuCell: View {
         )
         .frame(width: 90, height: 90)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.scmGray45, lineWidth: 0.5)
+        )
         .overlay {
             if menu.soldoutStatus {
                 RoundedRectangle(cornerRadius: 8)

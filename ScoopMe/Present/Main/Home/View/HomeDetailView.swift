@@ -25,7 +25,9 @@ struct HomeDetailView: View {
     @State private var showTextfield: Bool = false
     @State private var menuInfos: [StoreDetailMenuEntity] = []
     
+    @State private var menuSections: [String] = []
     @State private var currentVisibleSection: String = ""
+    @State private var isButtonTriggered: Bool = false  // 스크롤 위치감지 막기위한 트리거
     
     // 메뉴 가격
     @State private var selectedCount: Int = 0
@@ -39,17 +41,18 @@ struct HomeDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                        imageTabview
-                            .offset(y: -geometry.safeAreaInsets.top)
-                            .padding(.bottom, -geometry.safeAreaInsets.top)
-                        storeManageInfo
-                        divider
-                        menuSections(parentGeometry: geometry)
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                            imageTabview
+                                .offset(y: -geometry.safeAreaInsets.top)
+                                .padding(.bottom, -geometry.safeAreaInsets.top)
+                            storeManageInfo
+                            divider
+                            menuSections(parentGeometry: geometry, scrollProxy: proxy)
+                        }
                     }
                 }
-                
                 needToPayCell
             }
         }
@@ -57,13 +60,17 @@ struct HomeDetailView: View {
             await getStoreDetailInfo()
             await getMenuInfo()
         }
-        .onAppear {
-            self.currentVisibleSection = repository.menuSections.first ?? ""
-        }
         .backButton(.scmGray0)
         .toolbarItem (trailing: {
             Image(storeInfos.likeStatus ? .likeFill : .likeEmpty)
                 .basicImage(width: 32, color: .scmGray0)
+                .asButton {
+                    Task {
+                        await postLikeStatus(id: storeID, status: !storeInfos.likeStatus) {
+                            storeInfos.likeStatus.toggle()
+                        }
+                    }
+                }
         })
         .toolbar(.hidden, for: .tabBar)
         .overlay(alignment: .center) {
@@ -122,7 +129,8 @@ extension HomeDetailView {
             Text(storeInfos.storeName)
                 .basicText(.PTTitle1, .scmGray90)
             
-            PickBadgeCell()
+            if storeInfos.picchelinStatus { PickBadgeCell() }
+            
             Spacer()
         }
     }
@@ -189,35 +197,38 @@ extension HomeDetailView {
             .frame(maxWidth: .infinity, maxHeight: 1)
     }
     
-    // 메뉴 섹션들
-    private func menuSections(parentGeometry: GeometryProxy) -> some View {
+    @ViewBuilder
+    private func menuSections(parentGeometry: GeometryProxy, scrollProxy: ScrollViewProxy) -> some View {
         let safeAreaTop = parentGeometry.safeAreaInsets.top
         let headerHeight: CGFloat = 60
         let targetY = safeAreaTop + headerHeight + 200
-        
-        return Section(header: menuHeaderSection) {
-            ForEach(Array(repository.menuSections.enumerated()), id: \.element) { index, sectionTitle in
-                VStack(spacing: 0) {
-                    // 각 섹션의 타이틀 뷰
-                    sectionTitleView(sectionTitle, targetY: targetY)
-                        .defaultHorizontalPadding()
-                    
-                    // 각 섹션의 메뉴 아이템들
-                    sectionContents(section: sectionTitle)
-                        .defaultHorizontalPadding()
-                    
-                    // 마지막 섹션이 아닌 경우에만 Rectangle 추가
-                    if index < repository.menuSections.count - 1 {
-                        Rectangle()
-                            .fill(.scmGray15)
-                            .frame(maxWidth: .infinity, minHeight: 12)
-                    }
-                }
+
+        Section(header: menuHeaderSection(scrollProxy: scrollProxy)) {
+            ForEach(Array(menuSections.enumerated()), id: \.element) { index, sectionTitle in
+                sectionContentView(sectionTitle: sectionTitle, index: index, targetY: targetY)
             }
         }
     }
     
-    private var menuHeaderSection: some View {
+    @ViewBuilder
+    private func sectionContentView(sectionTitle: String, index: Int, targetY: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            sectionTitleView(sectionTitle, targetY: targetY)
+                .defaultHorizontalPadding()
+                .padding(.bottom, 8)
+            
+            sectionContents(section: sectionTitle)
+                .defaultHorizontalPadding()
+            
+            if index < menuSections.count - 1 {
+                Rectangle()
+                    .fill(.scmGray15)
+                    .frame(maxWidth: .infinity, minHeight: 12)
+            }
+        }
+    }
+    
+    private func menuHeaderSection(scrollProxy: ScrollViewProxy) -> some View {
         HStack(alignment: .center, spacing: 4) {
             if !showTextfield {
                 Image(.search)
@@ -247,10 +258,18 @@ extension HomeDetailView {
             Spacer(minLength: 2)
             
             if !showTextfield {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 4) {
-                        ForEach(repository.menuSections, id: \.self) { menu in
-                            headerMenuButton(menu)
+                ScrollViewReader { horizontalProxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .center, spacing: 4) {
+                            ForEach(menuSections, id: \.self) { menu in
+                                headerMenuButton(menu, scrollProxy: scrollProxy)
+                                    .id(menu)
+                            }
+                        }
+                    }
+                    .onChange(of: currentVisibleSection){ newSection in
+                        withAnimation(.easeInOut) {
+                            horizontalProxy.scrollTo(newSection, anchor: .center)
                         }
                     }
                 }
@@ -296,7 +315,7 @@ extension HomeDetailView {
     }
     
     // 헤더 메뉴 버튼 (현재 보이는 섹션에 따라 색상 변경)
-    private func headerMenuButton(_ menu: String) -> some View {
+    private func headerMenuButton(_ menu: String, scrollProxy: ScrollViewProxy) -> some View {
         let isActive = currentVisibleSection == menu
         
         return Text(menu)
@@ -311,7 +330,15 @@ extension HomeDetailView {
             .animation(.easeInOut(duration: 0.2), value: isActive)
             .asButton {
                 // 해당 섹션으로 스크롤
-                // ScrollViewReader의 scrollTo 메서드 사용 가능
+                withAnimation(.easeInOut) {
+                    isButtonTriggered = true
+                    currentVisibleSection = menu
+                    scrollProxy.scrollTo(menu, anchor: .center)
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    isButtonTriggered = false
+                }
             }
     }
     
@@ -353,36 +380,36 @@ extension HomeDetailView {
 // MARK: Action
 extension HomeDetailView {
     
-    // 글로벌 좌표계를 사용한 섹션 감지
-       private func checkVisibleSection(sectionTitle: String, globalFrame: CGRect, targetY: CGFloat) {
-           let sectionTop = globalFrame.minY
-           let sectionBottom = globalFrame.maxY
-           
-           // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
-           let detectionStart = targetY - 100  // 헤더보다 조금 위부터
-           let detectionEnd = targetY + 400   // 헤더 아래 넓은 영역까지
-           
-           // 섹션이 감지 영역에 들어오면 활성화
-           if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
-               if currentVisibleSection != sectionTitle {
-                   withAnimation(.easeInOut(duration: 0.2)) {
-                       currentVisibleSection = sectionTitle
-                   }
-               }
-           }
-           // 섹션이 감지 영역을 완전히 벗어나면 체크
-           else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
-               // 다른 섹션이 활성화되지 않은 경우 잠시 대기
-               DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                   if currentVisibleSection == sectionTitle {
-                       // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
-                       // currentVisibleSection = ""
-                   }
-               }
-           }
-       }
+    private func checkVisibleSection(sectionTitle: String, globalFrame: CGRect, targetY: CGFloat) {
+        let sectionTop = globalFrame.minY
+        let sectionBottom = globalFrame.maxY
+        
+        // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
+        let detectionStart = targetY - 100
+        let detectionEnd = targetY + 400
+        
+        // 버튼 클릭으로 스크롤 중이면 감지하지 않음
+        guard !isButtonTriggered else { return }
+        
+        // 섹션이 감지 영역에 들어오면 활성화
+        if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
+            if currentVisibleSection != sectionTitle {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentVisibleSection = sectionTitle
+                }
+            }
+        }
+        // 섹션이 감지 영역을 완전히 벗어나면 체크
+        else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                if currentVisibleSection == sectionTitle && !isButtonTriggered {
+                    // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
+                }
+            }
+        }
+    }
     
-    
+    // 가게 운영 정보
     private func getStoreDetailInfo() async {
         do {
             let info = try await repository.getStoreDetailInfo(id: storeID)
@@ -395,14 +422,46 @@ extension HomeDetailView {
         }
     }
     
+    // 가게 메뉴 정보
     private func getMenuInfo() async {
         do {
             let info = try await repository.getStoreDetailMenu(id: storeID)
-            self.menuInfos = info
+            
+            self.menuInfos = info.menu
+            self.menuSections = info.section
+            
+            // 첫 번째 섹션 설정
+            if let firstSection = info.section.first {
+                self.currentVisibleSection = firstSection
+            }
+            
+            Log.debug("✅ menuSections 업데이트: \(info.section)")
         } catch {
             await repository.checkTokenValidation(error) {
                 let info = try await repository.getStoreDetailMenu(id: storeID)
-                self.menuInfos = info
+                
+                self.menuInfos = info.menu
+                self.menuSections = info.section
+                
+                // 첫 번째 섹션 설정
+                if let firstSection = info.section.first {
+                    self.currentVisibleSection = firstSection
+                }
+                
+                Log.debug("✅ menuSections 업데이트: \(info.section)")
+            }
+        }
+    }
+    
+    // 가게 좋아요 post
+    private func postLikeStatus(id: String, status: Bool, action: (() -> ())?) async {
+        do {
+            try await repository.postStoreLikeStatus(store: id, like: status)
+            action?()
+        } catch {
+            await repository.checkTokenValidation(error) {
+                try await repository.postStoreLikeStatus(store: id, like: status)
+                action?()
             }
         }
     }
