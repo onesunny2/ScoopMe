@@ -122,7 +122,8 @@ extension HomeDetailView {
             Text(storeInfos.storeName)
                 .basicText(.PTTitle1, .scmGray90)
             
-            PickBadgeCell()
+            if storeInfos.picchelinStatus { PickBadgeCell() }
+            
             Spacer()
         }
     }

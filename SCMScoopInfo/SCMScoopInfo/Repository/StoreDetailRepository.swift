@@ -7,6 +7,8 @@
 
 import Foundation
 import Combine
+import CoreLocation
+import SCMLocation
 internal import SCMLogin
 import SCMLogger
 internal import SCMNetwork
@@ -20,6 +22,17 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
     private let loginTokenManager: LoginTokenManager
     private let network: SCMNetworkImpl
     
+    // 현재 위치 관련
+    private let selectedAddressKey: String = "selectedAddress"
+    private var currentLocation: CLLocation {
+        let selectedAddress = UserDefaults.standard.fetchStruct(SavedLocation.self, for: selectedAddressKey)
+        let location = CLLocation(
+            latitude: selectedAddress?.latitude ?? 37.266710,
+            longitude: selectedAddress?.longitude ?? 127.001148
+        )
+        return location
+    }
+    
     public init() {
         self.loginTokenManager = LoginTokenManager()
         self.network = SCMNetworkImpl()
@@ -27,28 +40,23 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
     
     public func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
         
-        do {
-            let result = try await getStoreDetailRequest(store: id)
-        } catch {
-            Log.error("❎ 가게 상세조회 실패: \(error)")
-        }
+        let result = try await getStoreDetailRequest(store: id)
+        
+        let place = CLLocation(latitude: result.geolocation.latitude, longitude: result.geolocation.longitude)
+        let distance = currentLocation.distanceInKm(from: place)
         
         return StoreDetailInfoEntity(
-            storeID: "Test",
-            storeName: "원선 스쿱 베이커리",
-            imageUrls: [
-                Secret.baseURL + "/v1/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
-                Secret.baseURL + "/v1/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",
-                Secret.baseURL + "/v1/data/stores/shourav-sheikh-a66sGfOnnqQ-unsplash_1747128644500.jpg"
-            ],
-            picchelinStatus: true,
-            likeStatus: false,
-            address: "서울시 스쿱구 원선20길 96, 730동",
-            parkingInfo: "매장 건물 지하주차장",
-            time: "매주 월~토 10:00 ~ 19:00",
-            rating: "4.9",
-            review: "(333)",
-            distance: "2.2km"
+            storeID: result.storeID,
+            storeName: result.name,
+            imageUrls: result.storeImageUrls.map { Secret.baseURL + "/v1" + $0 },
+            picchelinStatus: result.isPicchelin,
+            likeStatus: result.isPick,
+            address: result.address,
+            parkingInfo: result.parkingGuide,
+            time: "\(result.open) ~ \(result.close)",
+            rating: "\(result.totalRating)",
+            review: "(\(result.totalReviewCount))",
+            distance: distance
         )
     }
     
