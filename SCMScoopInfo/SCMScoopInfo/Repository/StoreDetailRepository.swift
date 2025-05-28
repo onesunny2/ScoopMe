@@ -2,7 +2,7 @@
 //  StoreDetailRepository.swift
 //  SCMScoopInfo
 //
-//  Created by Lee Wonsun on 5/26/25.
+//  Created by Lee Wonsun on 5/28/25.
 //
 
 import Foundation
@@ -11,20 +11,28 @@ internal import SCMLogin
 import SCMLogger
 internal import SCMNetwork
 
-public final class MockStoreDetailRepository: StoreDetailDisplayable {
-    
+public final class StoreDetailRepository: StoreDetailDisplayable {
     @Published public var showAlert: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
     @Published public var menuSections: [String] = ["카테고리 1", "카테고리 2", "카테고리 3"]
     
     private let loginTokenManager: LoginTokenManager
+    private let network: SCMNetworkImpl
     
     public init() {
         self.loginTokenManager = LoginTokenManager()
+        self.network = SCMNetworkImpl()
     }
     
     public func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
+        
+        do {
+            let result = try await getStoreDetailRequest(store: id)
+        } catch {
+            Log.error("❎ 가게 상세조회 실패: \(error)")
+        }
+        
         return StoreDetailInfoEntity(
             storeID: "Test",
             storeName: "원선 스쿱 베이커리",
@@ -138,7 +146,34 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
 }
 
 // MARK: private action
-extension MockStoreDetailRepository {
+extension StoreDetailRepository {
+    
+    private func getStoreDetailRequest(store id: String) async throws -> StoreDetailResponseDTO {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let value = ScoopInfoURL.storeDetail(access: accessToken, storeID: id)
+        let result = try await callRequest(value, type: StoreDetailResponseDTO.self)
+        
+        Log.debug("✅ 가게 상세정보 통신성공: \(result.response)")
+        
+        return result.response
+    }
+    
+    private func callRequest<T: Decodable>(_ value: ScoopInfoURL, type: T.Type) async throws -> HTTPResponse<T> {
+        let request = HTTPRequest(
+            scheme: .http,
+            method: value.method,
+            successCodes: [200]
+        )
+            .addBaseURL(value.baseURL)
+            .addPath(value.path)
+            .addParameters(value.parameters)
+            .addJSONBody(value.jsonBody)
+            .addHeaders(value.headers)
+        
+        return try await network.fetchData(request, T.self)
+    }
+    
     private func checkRefreshToken(complete: @escaping () async throws -> ()) async {
         do {
             try await loginTokenManager.requestRefreshToken()

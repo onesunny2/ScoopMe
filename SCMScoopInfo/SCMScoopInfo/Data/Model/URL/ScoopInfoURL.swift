@@ -13,6 +13,7 @@ public enum ScoopInfoURL {
     case popularKeyword(access: String)
     case realtimePopularStores(access: String, category: Category)
     case postStoreLike(access: String, storeID: String, status: Bool)
+    case storeDetail(access: String, storeID: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -33,6 +34,7 @@ public enum ScoopInfoURL {
         case .popularKeyword: "/v1/stores/searches-popular"
         case .realtimePopularStores: "/v1/stores/popular-stores"
         case let .postStoreLike(_, storeID, _): "/v1/stores/\(storeID)/like"
+        case let .storeDetail(_, storeID): "/v1/stores/\(storeID)"
         }
     }
     
@@ -82,6 +84,12 @@ public enum ScoopInfoURL {
                 "Authorization": access
             ]
         case let .postStoreLike(access, _, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .storeDetail(access, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
