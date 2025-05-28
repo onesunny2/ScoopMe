@@ -97,11 +97,6 @@ struct UserInfoResponseDTO: Codable {
     }
 }
 
-struct Geolocation: Codable {
-    let longitude: Double
-    let latitude: Double
-}
-
 struct MenuResponseDTO: Codable {
     let menuID: String
     let storeID: String

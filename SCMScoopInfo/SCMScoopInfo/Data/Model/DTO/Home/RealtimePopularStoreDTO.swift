@@ -24,7 +24,7 @@ struct RealtimePopularStoreResponse: Codable {
     let totalRating: Float
     let totalOrderCount: Int
     let totalReviewCount: Int
-    let geolocation: RealtimePopularGeolocation
+    let geolocation: Geolocation
     let createdAt: String
     let updatedAt: String
     
@@ -45,9 +45,4 @@ struct RealtimePopularStoreResponse: Codable {
         case createdAt
         case updatedAt
     }
-}
-
-struct RealtimePopularGeolocation: Codable {
-    let longitude: Float
-    let latitude: Float
 }
