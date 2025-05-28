@@ -27,6 +27,7 @@ struct HomeDetailView: View {
     
     @State private var menuSections: [String] = []
     @State private var currentVisibleSection: String = ""
+    @State private var isButtonTriggered: Bool = false  // 스크롤 위치감지 막기위한 트리거
     
     // 메뉴 가격
     @State private var selectedCount: Int = 0
@@ -40,17 +41,18 @@ struct HomeDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                        imageTabview
-                            .offset(y: -geometry.safeAreaInsets.top)
-                            .padding(.bottom, -geometry.safeAreaInsets.top)
-                        storeManageInfo
-                        divider
-                        menuSections(parentGeometry: geometry)
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                            imageTabview
+                                .offset(y: -geometry.safeAreaInsets.top)
+                                .padding(.bottom, -geometry.safeAreaInsets.top)
+                            storeManageInfo
+                            divider
+                            menuSections(parentGeometry: geometry, scrollProxy: proxy)
+                        }
                     }
                 }
-                
                 needToPayCell
             }
         }
@@ -189,12 +191,12 @@ extension HomeDetailView {
     }
     
     @ViewBuilder
-    private func menuSections(parentGeometry: GeometryProxy) -> some View {
+    private func menuSections(parentGeometry: GeometryProxy, scrollProxy: ScrollViewProxy) -> some View {
         let safeAreaTop = parentGeometry.safeAreaInsets.top
         let headerHeight: CGFloat = 60
         let targetY = safeAreaTop + headerHeight + 200
 
-        Section(header: menuHeaderSection) {
+        Section(header: menuHeaderSection(scrollProxy: scrollProxy)) {
             ForEach(Array(menuSections.enumerated()), id: \.element) { index, sectionTitle in
                 sectionContentView(sectionTitle: sectionTitle, index: index, targetY: targetY)
             }
@@ -206,6 +208,7 @@ extension HomeDetailView {
         VStack(spacing: 0) {
             sectionTitleView(sectionTitle, targetY: targetY)
                 .defaultHorizontalPadding()
+                .padding(.bottom, 8)
             
             sectionContents(section: sectionTitle)
                 .defaultHorizontalPadding()
@@ -218,7 +221,7 @@ extension HomeDetailView {
         }
     }
     
-    private var menuHeaderSection: some View {
+    private func menuHeaderSection(scrollProxy: ScrollViewProxy) -> some View {
         HStack(alignment: .center, spacing: 4) {
             if !showTextfield {
                 Image(.search)
@@ -251,7 +254,7 @@ extension HomeDetailView {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 4) {
                         ForEach(menuSections, id: \.self) { menu in
-                            headerMenuButton(menu)
+                            headerMenuButton(menu, scrollProxy: scrollProxy)
                         }
                     }
                 }
@@ -297,7 +300,7 @@ extension HomeDetailView {
     }
     
     // 헤더 메뉴 버튼 (현재 보이는 섹션에 따라 색상 변경)
-    private func headerMenuButton(_ menu: String) -> some View {
+    private func headerMenuButton(_ menu: String, scrollProxy: ScrollViewProxy) -> some View {
         let isActive = currentVisibleSection == menu
         
         return Text(menu)
@@ -312,7 +315,15 @@ extension HomeDetailView {
             .animation(.easeInOut(duration: 0.2), value: isActive)
             .asButton {
                 // 해당 섹션으로 스크롤
-                // ScrollViewReader의 scrollTo 메서드 사용 가능
+                withAnimation(.easeInOut) {
+                    isButtonTriggered = true
+                    currentVisibleSection = menu
+                    scrollProxy.scrollTo(menu, anchor: .center)
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    isButtonTriggered = false
+                }
             }
     }
     
@@ -354,34 +365,34 @@ extension HomeDetailView {
 // MARK: Action
 extension HomeDetailView {
     
-    // 글로벌 좌표계를 사용한 섹션 감지
-       private func checkVisibleSection(sectionTitle: String, globalFrame: CGRect, targetY: CGFloat) {
-           let sectionTop = globalFrame.minY
-           let sectionBottom = globalFrame.maxY
-           
-           // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
-           let detectionStart = targetY - 100  // 헤더보다 조금 위부터
-           let detectionEnd = targetY + 400   // 헤더 아래 넓은 영역까지
-           
-           // 섹션이 감지 영역에 들어오면 활성화
-           if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
-               if currentVisibleSection != sectionTitle {
-                   withAnimation(.easeInOut(duration: 0.2)) {
-                       currentVisibleSection = sectionTitle
-                   }
-               }
-           }
-           // 섹션이 감지 영역을 완전히 벗어나면 체크
-           else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
-               // 다른 섹션이 활성화되지 않은 경우 잠시 대기
-               DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                   if currentVisibleSection == sectionTitle {
-                       // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
-                       // currentVisibleSection = ""
-                   }
-               }
-           }
-       }
+    private func checkVisibleSection(sectionTitle: String, globalFrame: CGRect, targetY: CGFloat) {
+        let sectionTop = globalFrame.minY
+        let sectionBottom = globalFrame.maxY
+        
+        // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
+        let detectionStart = targetY - 100
+        let detectionEnd = targetY + 400
+        
+        // 버튼 클릭으로 스크롤 중이면 감지하지 않음
+        guard !isButtonTriggered else { return }
+        
+        // 섹션이 감지 영역에 들어오면 활성화
+        if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
+            if currentVisibleSection != sectionTitle {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    currentVisibleSection = sectionTitle
+                }
+            }
+        }
+        // 섹션이 감지 영역을 완전히 벗어나면 체크
+        else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                if currentVisibleSection == sectionTitle && !isButtonTriggered {
+                    // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
+                }
+            }
+        }
+    }
     
     
     private func getStoreDetailInfo() async {
