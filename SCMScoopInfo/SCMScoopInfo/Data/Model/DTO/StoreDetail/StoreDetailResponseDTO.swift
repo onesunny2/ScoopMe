@@ -9,15 +9,15 @@ import Foundation
 
 struct StoreDetailResponseDTO: Codable {
     let storeID: String
-    let category: String?
-    let name: String?
-    let description: String?
+    let category: String
+    let name: String
+    let description: String
     let hashTags: [String]
-    let open: String?
-    let close: String?
-    let address: String?
+    let open: String
+    let close: String
+    let address: String
     let estimatedPickupTime: Int
-    let parkingGuide: String?
+    let parkingGuide: String
     let storeImageUrls: [String]
     let isPicchelin: Bool
     let isPick: Bool
@@ -81,7 +81,7 @@ struct StoreDetailResponseDTO: Codable {
 struct UserInfoResponseDTO: Codable {
     let userID: String
     let nick: String
-    let profileImage: String?
+    let profileImage: String
     
     enum CodingKeys: String, CodingKey {
         case userID = "user_id"
@@ -100,14 +100,14 @@ struct UserInfoResponseDTO: Codable {
 struct MenuResponseDTO: Codable {
     let menuID: String
     let storeID: String
-    let category: String?
+    let category: String
     let name: String
-    let description: String?
-    let originInformation: String?
+    let description: String
+    let originInformation: String
     let price: Int
     let isSoldOut: Bool
     let tags: [String]
-    let menuImageUrl: String?
+    let menuImageUrl: String
     let createdAt: String
     let updatedAt: String
     
