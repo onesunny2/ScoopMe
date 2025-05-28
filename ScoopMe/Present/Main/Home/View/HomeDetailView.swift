@@ -251,10 +251,18 @@ extension HomeDetailView {
             Spacer(minLength: 2)
             
             if !showTextfield {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 4) {
-                        ForEach(menuSections, id: \.self) { menu in
-                            headerMenuButton(menu, scrollProxy: scrollProxy)
+                ScrollViewReader { horizontalProxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .center, spacing: 4) {
+                            ForEach(menuSections, id: \.self) { menu in
+                                headerMenuButton(menu, scrollProxy: scrollProxy)
+                                    .id(menu)
+                            }
+                        }
+                    }
+                    .onChange(of: currentVisibleSection){ newSection in
+                        withAnimation(.easeInOut) {
+                            horizontalProxy.scrollTo(newSection, anchor: .center)
                         }
                     }
                 }
