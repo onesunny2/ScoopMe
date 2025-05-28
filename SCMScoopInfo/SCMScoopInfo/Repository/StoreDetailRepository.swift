@@ -90,6 +90,15 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
         return (menuEntity, menuSections)
     }
     
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let value = ScoopInfoURL.postStoreLike(access: accessToken, storeID: id, status: status)
+        let result = try await callRequest(value, type: LikeStoreResponseDTO.self)
+        
+        Log.debug("✅ 가게 좋아요 post 완료: \(result.response)")
+    }
+    
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
         if let scmError = error as? SCMError {
             switch scmError {

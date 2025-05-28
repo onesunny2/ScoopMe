@@ -44,6 +44,10 @@ public final class AnyStoreDetailDisplayable: StoreDetailDisplayable, Observable
         try await _base.getStoreDetailMenu(id: id)
     }
     
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        try await _base.postStoreLikeStatus(store: id, like: status)
+    }
+    
     public func  checkTokenValidation(_ error: any Error, complete: @escaping () async throws -> ()) async {
         await _base.checkTokenValidation(error, complete: complete)
     }

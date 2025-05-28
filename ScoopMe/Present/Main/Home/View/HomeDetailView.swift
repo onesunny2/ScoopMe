@@ -64,6 +64,13 @@ struct HomeDetailView: View {
         .toolbarItem (trailing: {
             Image(storeInfos.likeStatus ? .likeFill : .likeEmpty)
                 .basicImage(width: 32, color: .scmGray0)
+                .asButton {
+                    Task {
+                        await postLikeStatus(id: storeID, status: !storeInfos.likeStatus) {
+                            storeInfos.likeStatus.toggle()
+                        }
+                    }
+                }
         })
         .toolbar(.hidden, for: .tabBar)
         .overlay(alignment: .center) {
@@ -402,7 +409,7 @@ extension HomeDetailView {
         }
     }
     
-    
+    // 가게 운영 정보
     private func getStoreDetailInfo() async {
         do {
             let info = try await repository.getStoreDetailInfo(id: storeID)
@@ -415,6 +422,7 @@ extension HomeDetailView {
         }
     }
     
+    // 가게 메뉴 정보
     private func getMenuInfo() async {
         do {
             let info = try await repository.getStoreDetailMenu(id: storeID)
@@ -441,6 +449,19 @@ extension HomeDetailView {
                 }
                 
                 Log.debug("✅ menuSections 업데이트: \(info.section)")
+            }
+        }
+    }
+    
+    // 가게 좋아요 post
+    private func postLikeStatus(id: String, status: Bool, action: (() -> ())?) async {
+        do {
+            try await repository.postStoreLikeStatus(store: id, like: status)
+            action?()
+        } catch {
+            await repository.checkTokenValidation(error) {
+                try await repository.postStoreLikeStatus(store: id, like: status)
+                action?()
             }
         }
     }

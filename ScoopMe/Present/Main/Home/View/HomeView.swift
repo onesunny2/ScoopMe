@@ -15,7 +15,7 @@ import SCMScoopInfo
 
 struct HomeView: View {
     
-    @StateObject private var foodCategoryRepository: AnyFoodCategoryDisplayable
+    @StateObject private var repository: AnyFoodCategoryDisplayable
     @StateObject private var switcher = SCMSwitcher.shared
     @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager: LocationManager
@@ -39,7 +39,7 @@ struct HomeView: View {
         locationManager: LocationManager,
         loginTokenManager: LoginTokenManager
     ) {
-        self._foodCategoryRepository = StateObject(wrappedValue: repository)
+        self._repository = StateObject(wrappedValue: repository)
         self._locationManager = StateObject(wrappedValue: locationManager)
         self._loginTokenManager = StateObject(wrappedValue: loginTokenManager)
     }
@@ -83,7 +83,7 @@ struct HomeView: View {
                     switcher.switchTo(.login)
                 }
             )
-            .onChange(of: foodCategoryRepository.selectedCategory) { newCategory in
+            .onChange(of: repository.selectedCategory) { newCategory in
                 Task {
                     await getPopularStoreInfo()
                     await getAroundStoreFirstInfo(currentCheckbox)
@@ -95,7 +95,7 @@ struct HomeView: View {
                     await getAroundStoreFirstInfo(newValue)
                 }
             }
-            .onChange(of: foodCategoryRepository.selectedFiltering) { newValue in
+            .onChange(of: repository.selectedFiltering) { newValue in
                 Task {
                     Log.debug("✅ \(newValue) 선택")
                     await getAroundStoreFirstInfo(currentCheckbox)
@@ -142,7 +142,7 @@ struct HomeView: View {
     
     private var popularKeywords: some View {
         PopularKeywordCell(
-            foodCategoryRepository: foodCategoryRepository,
+            foodCategoryRepository: repository,
             loginTokenManager: loginTokenManager,
             showAlert: $showAlert
         )
@@ -230,22 +230,22 @@ struct HomeView: View {
             Spacer()
             
             HStack(alignment: .center, spacing: 4) {
-                Text(foodCategoryRepository.selectedFiltering.text)
+                Text(repository.selectedFiltering.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
                 Image(.list)
                     .basicImage(width: 16, color: .scmBlackSprout)
             }
             .asButton {
                 // 내 근처스쿱 필터링 버튼
-                switch foodCategoryRepository.selectedFiltering {
+                switch repository.selectedFiltering {
                 case .distance:
-                    foodCategoryRepository.selectedFiltering = .reviews
+                    repository.selectedFiltering = .reviews
                 case .reviews:
-                    foodCategoryRepository.selectedFiltering = .orders
+                    repository.selectedFiltering = .orders
                 case .orders:
-                    foodCategoryRepository.selectedFiltering = .distance
+                    repository.selectedFiltering = .distance
                 @unknown default:
-                    foodCategoryRepository.selectedFiltering = .distance
+                    repository.selectedFiltering = .distance
                 }
             }
         }
@@ -287,13 +287,13 @@ struct HomeView: View {
                         }
                     }
                     .onAppear {
-                        if aroundStores[index].storeID == foodCategoryRepository.lastStoreID {
+                        if aroundStores[index].storeID == repository.lastStoreID {
                             // 페이지네이션 추가
-                            foodCategoryRepository.isLoading = true
+                            repository.isLoading = true
                             Task {
                                 await getAroundStoreNextInfo(currentCheckbox)
                             }
-                            foodCategoryRepository.isLoading = false
+                            repository.isLoading = false
                         }
                     }
                     .asButton {
@@ -304,7 +304,7 @@ struct HomeView: View {
             }
             
             // 데이터 로드 전용 indicatorView
-            if foodCategoryRepository.isLoading {
+            if repository.isLoading {
                 ProgressView()
                     .padding(5)
             }
@@ -323,12 +323,12 @@ extension HomeView {
     // 리프레시 토큰 갱신 로직 포함
     private func postLikeStatus(index: Int, id: String, status: Bool, action: (() -> ())?) async {
         do {
-            try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
+            try await repository.postStoreLikeStatus(store: id, like: status)
             
             action?()  // 상태값 toggle 위함
         } catch {
             await checkTokenValidation(error) {
-                try await foodCategoryRepository.postStoreLikeStatus(store: id, like: status)
+                try await repository.postStoreLikeStatus(store: id, like: status)
                 
                 action?()
             }
@@ -338,11 +338,11 @@ extension HomeView {
     // 리프레시 토큰 갱신 로직 포함
     private func getPopularStoreInfo() async {
         do {
-            let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+            let popularStores = try await repository.getPopularStoresInfo()
             self.popularStores = popularStores
         } catch {
             await checkTokenValidation(error) {
-                let popularStores = try await foodCategoryRepository.getPopularStoresInfo()
+                let popularStores = try await repository.getPopularStoresInfo()
                 self.popularStores = popularStores
             }
         }
@@ -351,15 +351,15 @@ extension HomeView {
     // 내 근처스쿱 - 가장 첫 데이터로 갈아끼울 때
     private func getAroundStoreFirstInfo(_ round: AroundType) async {
         do {
-            foodCategoryRepository.lastStoreID = ""  // query id 초기화
+            repository.lastStoreID = ""  // query id 초기화
             
-            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+            let aroundStores = try await repository.getAroundStoreInfo(round)
             self.aroundStores = aroundStores
         } catch {
             await checkTokenValidation(error) {
-                foodCategoryRepository.lastStoreID = ""
+                repository.lastStoreID = ""
                 
-                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+                let aroundStores = try await repository.getAroundStoreInfo(round)
                 self.aroundStores = aroundStores
             }
         }
@@ -368,11 +368,11 @@ extension HomeView {
     // 내 근처스쿱 - 페이지네이션을 위한 append
     private func getAroundStoreNextInfo(_ round: AroundType) async {
         do {
-            let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+            let aroundStores = try await repository.getAroundStoreInfo(round)
             self.aroundStores.append(contentsOf: aroundStores)
         } catch {
             await checkTokenValidation(error) {
-                let aroundStores = try await foodCategoryRepository.getAroundStoreInfo(round)
+                let aroundStores = try await repository.getAroundStoreInfo(round)
                 self.aroundStores.append(contentsOf: aroundStores)
             }
         }

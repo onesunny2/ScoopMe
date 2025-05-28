@@ -114,6 +114,10 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
         ], [])
     }
     
+    public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
+        
+    }
+    
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
         if let scmError = error as? SCMError {
             switch scmError {

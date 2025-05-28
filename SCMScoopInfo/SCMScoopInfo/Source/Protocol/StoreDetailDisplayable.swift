@@ -17,5 +17,6 @@ public protocol StoreDetailDisplayable: AnyObject, ObservableObject {
     
     func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity
     func getStoreDetailMenu(id: String) async throws -> DetailMenu
+    func postStoreLikeStatus(store id: String, like status: Bool) async throws
     func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async
 }
