@@ -16,7 +16,6 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
     @Published public var showAlert: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
-    @Published public var menuSections: [String] = ["카테고리 1", "카테고리 2", "카테고리 3"]
     
     private let loginTokenManager: LoginTokenManager
     
@@ -44,8 +43,8 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
         )
     }
     
-    public func getStoreDetailMenu(id: String) async throws -> [StoreDetailMenuEntity] {
-        return [
+    public func getStoreDetailMenu(id: String) async throws -> DetailMenu {
+        return ([
             StoreDetailMenuEntity(
                 menuID: "68231f4cca81ef0db5a46161",
                 category: "카테고리 3", // 변경됨
@@ -112,7 +111,7 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
                 hashTag: nil,
                 soldoutStatus: false
             )
-        ]
+        ], [])
     }
     
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {

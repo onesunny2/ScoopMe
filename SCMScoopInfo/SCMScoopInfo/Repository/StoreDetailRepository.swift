@@ -17,7 +17,6 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
     @Published public var showAlert: Bool = false
     @Published public var alertTitle: String = ""
     @Published public var alertMessage: String = ""
-    @Published public var menuSections: [String] = ["카테고리 1", "카테고리 2", "카테고리 3"]
     
     private let loginTokenManager: LoginTokenManager
     private let network: SCMNetworkImpl
@@ -60,75 +59,35 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
         )
     }
     
-    public func getStoreDetailMenu(id: String) async throws -> [StoreDetailMenuEntity] {
-        return [
-            StoreDetailMenuEntity(
-                menuID: "68231f4cca81ef0db5a46161",
-                category: "카테고리 3", // 변경됨
-                menuName: "새싹 커피 6",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: "인기 1위",
-                soldoutStatus: false
-            ),
-            StoreDetailMenuEntity(
-                menuID: "68231f48ca81ef0db5a4615b",
-                category: "카테고리 2",
-                menuName: "새싹 커피 5",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: nil,
-                soldoutStatus: true
-            ),
-            StoreDetailMenuEntity(
-                menuID: "68231f3eca81ef0db5a46155",
-                category: "카테고리 2",
-                menuName: "새싹 커피 4",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: nil,
-                soldoutStatus: true
-            ),
-            StoreDetailMenuEntity(
-                menuID: "68231f36ca81ef0db5a4614f",
-                category: "카테고리 3", // 변경됨
-                menuName: "새싹 커피 3",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: nil,
-                soldoutStatus: false
-            ),
-            StoreDetailMenuEntity(
-                menuID: "68231f28ca81ef0db5a46149",
-                category: "카테고리 1",
-                menuName: "새싹 커피 2",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131234960.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: nil,
-                soldoutStatus: false
-            ),
-            StoreDetailMenuEntity(
-                menuID: "68231f1dca81ef0db5a46143",
-                category: "카테고리 1",
-                menuName: "새싹 커피 1",
-                description: "맛있는 빵",
-                image: Secret.baseURL + "/v1/data/menus/1747131249732.jpg",
-                price: 10500,
-                priceString: "10500",
-                hashTag: nil,
-                soldoutStatus: false
+    public func getStoreDetailMenu(id: String) async throws -> DetailMenu {
+        let result = try await getStoreDetailRequest(store: id)
+        let menuList = result.menuList
+        Log.debug("메뉴리스트: \(menuList)")
+        var menuEntity: [StoreDetailMenuEntity] = []
+        var menuSections: [String] = []
+        
+        menuList.forEach {
+            
+            if !menuSections.contains($0.category) {
+                menuSections.append($0.category)
+            }
+            
+            let menu = StoreDetailMenuEntity(
+                menuID: $0.menuID,
+                category: $0.category,
+                menuName: $0.name,
+                description: $0.description,
+                image: Secret.baseURL + "/v1" + $0.menuImageUrl,
+                price: $0.price,
+                priceString: $0.price.formatted() + "원",
+                hashTag: $0.tags.first,
+                soldoutStatus: $0.isSoldOut
             )
-        ]
+            
+            menuEntity.append(menu)
+        }
+ 
+        return (menuEntity, menuSections)
     }
     
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
@@ -162,7 +121,7 @@ extension StoreDetailRepository {
         let value = ScoopInfoURL.storeDetail(access: accessToken, storeID: id)
         let result = try await callRequest(value, type: StoreDetailResponseDTO.self)
         
-        Log.debug("✅ 가게 상세정보 통신성공: \(result.response)")
+        Log.debug("✅ 가게 상세정보 통신성공")
         
         return result.response
     }

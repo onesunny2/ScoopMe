@@ -25,6 +25,7 @@ struct HomeDetailView: View {
     @State private var showTextfield: Bool = false
     @State private var menuInfos: [StoreDetailMenuEntity] = []
     
+    @State private var menuSections: [String] = []
     @State private var currentVisibleSection: String = ""
     
     // 메뉴 가격
@@ -56,9 +57,6 @@ struct HomeDetailView: View {
         .task {
             await getStoreDetailInfo()
             await getMenuInfo()
-        }
-        .onAppear {
-            self.currentVisibleSection = repository.menuSections.first ?? ""
         }
         .backButton(.scmGray0)
         .toolbarItem (trailing: {
@@ -190,30 +188,32 @@ extension HomeDetailView {
             .frame(maxWidth: .infinity, maxHeight: 1)
     }
     
-    // 메뉴 섹션들
+    @ViewBuilder
     private func menuSections(parentGeometry: GeometryProxy) -> some View {
         let safeAreaTop = parentGeometry.safeAreaInsets.top
         let headerHeight: CGFloat = 60
         let targetY = safeAreaTop + headerHeight + 200
-        
-        return Section(header: menuHeaderSection) {
-            ForEach(Array(repository.menuSections.enumerated()), id: \.element) { index, sectionTitle in
-                VStack(spacing: 0) {
-                    // 각 섹션의 타이틀 뷰
-                    sectionTitleView(sectionTitle, targetY: targetY)
-                        .defaultHorizontalPadding()
-                    
-                    // 각 섹션의 메뉴 아이템들
-                    sectionContents(section: sectionTitle)
-                        .defaultHorizontalPadding()
-                    
-                    // 마지막 섹션이 아닌 경우에만 Rectangle 추가
-                    if index < repository.menuSections.count - 1 {
-                        Rectangle()
-                            .fill(.scmGray15)
-                            .frame(maxWidth: .infinity, minHeight: 12)
-                    }
-                }
+
+        Section(header: menuHeaderSection) {
+            ForEach(Array(menuSections.enumerated()), id: \.element) { index, sectionTitle in
+                sectionContentView(sectionTitle: sectionTitle, index: index, targetY: targetY)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func sectionContentView(sectionTitle: String, index: Int, targetY: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            sectionTitleView(sectionTitle, targetY: targetY)
+                .defaultHorizontalPadding()
+            
+            sectionContents(section: sectionTitle)
+                .defaultHorizontalPadding()
+            
+            if index < menuSections.count - 1 {
+                Rectangle()
+                    .fill(.scmGray15)
+                    .frame(maxWidth: .infinity, minHeight: 12)
             }
         }
     }
@@ -250,7 +250,7 @@ extension HomeDetailView {
             if !showTextfield {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 4) {
-                        ForEach(repository.menuSections, id: \.self) { menu in
+                        ForEach(menuSections, id: \.self) { menu in
                             headerMenuButton(menu)
                         }
                     }
@@ -399,11 +399,29 @@ extension HomeDetailView {
     private func getMenuInfo() async {
         do {
             let info = try await repository.getStoreDetailMenu(id: storeID)
-            self.menuInfos = info
+            
+            self.menuInfos = info.menu
+            self.menuSections = info.section
+            
+            // 첫 번째 섹션 설정
+            if let firstSection = info.section.first {
+                self.currentVisibleSection = firstSection
+            }
+            
+            Log.debug("✅ menuSections 업데이트: \(info.section)")
         } catch {
             await repository.checkTokenValidation(error) {
                 let info = try await repository.getStoreDetailMenu(id: storeID)
-                self.menuInfos = info
+                
+                self.menuInfos = info.menu
+                self.menuSections = info.section
+                
+                // 첫 번째 섹션 설정
+                if let firstSection = info.section.first {
+                    self.currentVisibleSection = firstSection
+                }
+                
+                Log.debug("✅ menuSections 업데이트: \(info.section)")
             }
         }
     }

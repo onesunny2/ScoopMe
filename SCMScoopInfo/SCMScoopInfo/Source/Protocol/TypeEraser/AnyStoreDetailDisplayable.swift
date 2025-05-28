@@ -29,25 +29,18 @@ public final class AnyStoreDetailDisplayable: StoreDetailDisplayable, Observable
         }
     }
     
-    @Published public var menuSections: [String] {
-        didSet {
-            _base.menuSections = menuSections
-        }
-    }
-    
     public init(_ base: any StoreDetailDisplayable) {
         self._base = base
         self.showAlert = base.showAlert
         self.alertTitle = base.alertTitle
         self.alertMessage = base.alertMessage
-        self.menuSections = base.menuSections
     }
     
     public func getStoreDetailInfo(id: String) async throws -> StoreDetailInfoEntity {
         try await _base.getStoreDetailInfo(id: id)
     }
     
-    public func getStoreDetailMenu(id: String) async throws -> [StoreDetailMenuEntity] {
+    public func getStoreDetailMenu(id: String) async throws -> DetailMenu {
         try await _base.getStoreDetailMenu(id: id)
     }
     
