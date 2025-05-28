@@ -193,6 +193,10 @@ struct HomeView: View {
                         }
                     }
                 }
+                .asButton {
+                    Log.debug("⏭️ 실시간 인기스쿱 Cell 클릭")
+                    router.send(.push(.detail(id: popularStores[index].storeID)))
+                }
             }
         }
         .defaultHorizontalPadding()
