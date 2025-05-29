@@ -19,6 +19,7 @@
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
 		43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03A622DE873430057AD45 /* SCMCommunity.framework */; };
 		43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03A622DE873430057AD45 /* SCMCommunity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */; };
 		43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E014B52DD21A2B0016391C /* OSLog.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; };
 		43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -85,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
@@ -155,6 +157,7 @@
 			name = ScoopMe;
 			packageProductDependencies = (
 				436532AD2DDCA67200313379 /* NukeUI */,
+				43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -186,6 +189,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */,
+				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -445,6 +449,14 @@
 				minimumVersion = 12.8.0;
 			};
 		};
+		43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -452,6 +464,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
+		};
+		43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
