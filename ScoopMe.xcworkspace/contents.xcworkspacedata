@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "absolute:/Users/leewonsun/Desktop/&#x1100;&#x1169;&#x11bc;&#x1107;&#x116e;&#x110c;&#x1161;&#x1105;&#x116d;/&#x1109;&#x1162;&#x110a;&#x1161;&#x11a8;/&#x1100;&#x116a;&#x110c;&#x1166;&#x110b;&#x116d;&#x11bc; project/SwiftUI/SCMCommunity/SCMCommunity.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SCMImageRequest/SCMImageRequest.xcodeproj">
    </FileRef>
    <FileRef
