@@ -20,6 +20,8 @@ struct ScoopMeApp: App {
         KakaoLoginConfiguration.initKakaoSDK(Secret.kakaoKey)
         // alert system color set
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.scmBlackSprout)
+        
+        SDWebImageCacheManager.configure()
     }
     
     var body: some Scene {
