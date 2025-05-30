@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMCommunity
 import SCMImageRequest
 import SCMLogger
 import SCMLogin
@@ -30,6 +31,9 @@ final class DIContainer {
         self.storeDetailRepository = AnyStoreDetailDisplayable(storeDetailRepo)
         
         self.imageHelper = ImageHelper.shared
+        
+        let communityRepo = MockCommunityPostRepository()
+        self.communityPostRepository = AnyCommunityPostDisplayable(communityRepo)
     }
     
     /// SCMLogin
@@ -47,4 +51,7 @@ final class DIContainer {
     
     /// SCMImageRequest
     private(set) var imageHelper: ImageHelper
+    
+    /// SCMCommunity
+    private(set) var communityPostRepository: AnyCommunityPostDisplayable
 }

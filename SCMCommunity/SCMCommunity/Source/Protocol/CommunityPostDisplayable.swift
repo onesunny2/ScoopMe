@@ -1,0 +1,20 @@
+//
+//  CommunityPostDisplayable.swift
+//  SCMCommunity
+//
+//  Created by Lee Wonsun on 5/30/25.
+//
+
+import Foundation
+import Combine
+
+public protocol CommunityPostDisplayable: AnyObject, ObservableObject {
+    
+    var selectedFiltering: TimelineFilter { get set }
+    
+    var isLoading: Bool { get set }
+    var lastStoreID: String { get set }
+    
+    func getCommunityPost(id: String) async throws -> [CommunityPostEntity]
+    func postStoreLikeStatus(store id: String, like status: Bool) async throws
+}

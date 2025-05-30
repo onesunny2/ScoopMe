@@ -28,7 +28,9 @@ struct CommunityView: View {
                 timelineTitleAndFilter
                 
                 ScrollView(.vertical, showsIndicators: false) {
-                    
+                    ForEach(0..<10) { _ in
+                        distanceSliderCell
+                    }
                 }
             }
             .defaultHorizontalPadding()
