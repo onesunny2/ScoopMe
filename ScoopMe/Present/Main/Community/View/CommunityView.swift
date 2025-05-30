@@ -17,6 +17,7 @@ struct CommunityView: View {
     @State private var volume: CGFloat = 0.3
     
     @State private var selectedFilter: TimelineFilter = .최신순
+    @State private var posts: [CommunityPostEntity] = []
     
     init(repository: AnyCommunityPostDisplayable) {
         self._repository = StateObject(wrappedValue: repository)
@@ -24,7 +25,7 @@ struct CommunityView: View {
     
     var body: some View {
         NavigationStack {
-            LazyVStack(spacing: 20) {
+            VStack(spacing: 20) {
                 SearchTextFieldCell(
                     placeholder: StringLiterals.placeholder.text,
                     keyword: $searchKeyword
@@ -34,9 +35,7 @@ struct CommunityView: View {
                 timelineTitleAndFilter
                 
                 ScrollView(.vertical, showsIndicators: false) {
-                    ForEach(0..<10) { _ in
-                        distanceSliderCell
-                    }
+                    postContentsView
                 }
             }
             .defaultHorizontalPadding()
@@ -49,6 +48,9 @@ struct CommunityView: View {
                         Log.debug("⏭️ 글쓰기 버튼 클릭")
                     }
             })
+            .task {
+                await getCommunityPost()
+            }
         }
     }
 }
@@ -111,6 +113,30 @@ extension CommunityView {
                 }
             }
         }
+        .padding(.bottom, -14)
+    }
+    
+    private var postContentsView: some View {
+        ForEach(posts, id: \.postID) { post in
+            Rectangle()
+                .fill(.scmBrightSprout)
+                .frame(height: 1)
+            CommunityPostCell(post: post)
+                .padding(.vertical, 12)
+        }
+        .padding(.top, 6)
+    }
+}
+
+// MARK: Action
+extension CommunityView {
+    private func getCommunityPost() async {
+        do {
+            let posts = try await repository.getCommunityPost()
+            self.posts = posts
+        } catch {
+            Log.error("데이터 로드 실패")
+        }
     }
 }
 
@@ -118,7 +144,7 @@ extension CommunityView {
 private enum StringLiterals: String {
     case navigationTitle = "스쿱미 소식통"
     case placeholder = "검색어를 입력해주세요."
-    case timelineTitle = "타임라인"
+    case timelineTitle = "포스트"
     case distance = "범위"
     
     var text: String {
