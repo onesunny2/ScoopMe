@@ -36,8 +36,8 @@ public final class AnyCommunityPostDisplayable: CommunityPostDisplayable, Observ
         self.lastStoreID = base.lastStoreID
     }
     
-    public func getCommunityPost(id: String) async throws -> [CommunityPostEntity] {
-        try await _base.getCommunityPost(id: id)
+    public func getCommunityPost() async throws -> [CommunityPostEntity] {
+        try await _base.getCommunityPost()
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {

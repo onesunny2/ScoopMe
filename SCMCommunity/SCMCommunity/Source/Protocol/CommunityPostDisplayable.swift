@@ -15,6 +15,6 @@ public protocol CommunityPostDisplayable: AnyObject, ObservableObject {
     var isLoading: Bool { get set }
     var lastStoreID: String { get set }
     
-    func getCommunityPost(id: String) async throws -> [CommunityPostEntity]
+    func getCommunityPost() async throws -> [CommunityPostEntity]
     func postStoreLikeStatus(store id: String, like status: Bool) async throws
 }
