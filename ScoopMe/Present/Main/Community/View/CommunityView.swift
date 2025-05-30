@@ -11,10 +11,16 @@ import SCMLogger
 
 struct CommunityView: View {
     
+    @StateObject private var repository: AnyCommunityPostDisplayable
+    
     @State private var searchKeyword: String = ""
     @State private var volume: CGFloat = 0.3
     
     @State private var selectedFilter: TimelineFilter = .최신순
+    
+    init(repository: AnyCommunityPostDisplayable) {
+        self._repository = StateObject(wrappedValue: repository)
+    }
     
     var body: some View {
         NavigationStack {
@@ -121,6 +127,6 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    CommunityView()
+    CommunityView(repository: DIContainer.shared.communityPostRepository)
 }
  
