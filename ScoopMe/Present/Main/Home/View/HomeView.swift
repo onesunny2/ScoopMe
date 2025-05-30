@@ -132,7 +132,7 @@ struct HomeView: View {
     }
     
     private var searchField: some View {
-        HomeSearchFieldCell(
+        SearchTextFieldCell(
             placeholder: StringLiterals.placeholder.text,
             keyword: $searchKeyword
         )

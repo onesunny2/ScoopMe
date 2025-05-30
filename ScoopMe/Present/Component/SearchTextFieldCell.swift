@@ -1,5 +1,5 @@
 //
-//  HomeSearchField.swift
+//  SearchTextFieldCell.swift
 //  ScoopMe
 //
 //  Created by Lee Wonsun on 5/20/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeSearchFieldCell: View {
+struct SearchTextFieldCell: View {
     
     let placeholder: String
     @Binding var keyword: String

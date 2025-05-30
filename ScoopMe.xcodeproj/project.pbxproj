@@ -17,6 +17,11 @@
 		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
+		43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03A622DE873430057AD45 /* SCMCommunity.framework */; };
+		43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03A622DE873430057AD45 /* SCMCommunity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */; };
+		43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */; };
+		43B03AB02DE980AC0057AD45 /* SCMCommunity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E014B52DD21A2B0016391C /* OSLog.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; };
 		43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -33,8 +38,10 @@
 			files = (
 				436532A62DDC991500313379 /* SCMScoopInfo.framework in Embed Frameworks */,
 				43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */,
+				43B03AB02DE980AC0057AD45 /* SCMCommunity.framework in Embed Frameworks */,
 				436532F02DDD569600313379 /* SCMImageRequest.framework in Embed Frameworks */,
 				43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */,
+				43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */,
 				435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */,
 				43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */,
 			);
@@ -50,6 +57,8 @@
 		43AC47EB2DCF19040010D965 /* ScoopMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScoopMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4B392DD118120010D965 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4C2A2DD11A200010D965 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		43B03A622DE873430057AD45 /* SCMCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E014B52DD21A2B0016391C /* OSLog.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSLog.framework; path = System/Library/Frameworks/OSLog.framework; sourceTree = SDKROOT; };
 		43E019A52DD6E0AC0016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E01BDC2DDAF4530016391C /* SCMLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,7 +90,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
+				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
+				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
 				43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */,
@@ -116,6 +128,8 @@
 		43AC4B382DD118120010D965 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */,
+				43B03A622DE873430057AD45 /* SCMCommunity.framework */,
 				436532EE2DDD569600313379 /* SCMImageRequest.framework */,
 				436532A42DDC991400313379 /* SCMScoopInfo.framework */,
 				43E01BDC2DDAF4530016391C /* SCMLocation.framework */,
@@ -149,6 +163,7 @@
 			name = ScoopMe;
 			packageProductDependencies = (
 				436532AD2DDCA67200313379 /* NukeUI */,
+				43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -180,6 +195,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */,
+				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -439,6 +455,14 @@
 				minimumVersion = 12.8.0;
 			};
 		};
+		43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -446,6 +470,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
+		};
+		43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
