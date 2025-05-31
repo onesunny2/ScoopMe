@@ -179,6 +179,15 @@ extension HomeDetailView {
                     Log.debug("⏭️ 길찾기 클릭")
                 }
             
+            Image(.write)
+                .basicImage(width: 28, color: .scmGray15)
+                .frame(height: 28)
+                .padding(.horizontal, 7)
+                .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
+                .asButton {
+                    Log.debug("⏭️ 커뮤니티 글쓰기 클릭")
+                }
+            
             Image(.messageFill)
                 .basicImage(width: 24, color: .scmGray15)
                 .frame(height: 28)

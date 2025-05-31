@@ -41,13 +41,6 @@ struct CommunityView: View {
             .defaultHorizontalPadding()
             .navigationTitle(StringLiterals.navigationTitle.text)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarItem(trailing: {
-                Image(.write)
-                    .basicImage(width: 28, color: .scmBlackSprout)
-                    .asButton {
-                        Log.debug("⏭️ 글쓰기 버튼 클릭")
-                    }
-            })
             .task {
                 await getCommunityPost()
             }
