@@ -33,6 +33,9 @@ struct HomeDetailView: View {
     @State private var selectedCount: Int = 0
     @State private var selectedPrice: Int = 0
     
+    // 커뮤니티 글쓰기
+    @State private var selectedPostButton: Bool = false
+    
     init(repository: AnyStoreDetailDisplayable, storeID: String) {
         self._repository = StateObject(wrappedValue: repository)
         self.storeID = storeID
@@ -86,6 +89,9 @@ struct HomeDetailView: View {
                 StoreDetailModalCell(info: storeInfos)
                     .transition(.scale)
             }
+        }
+        .fullScreenCover(isPresented: $selectedPostButton) {
+            CreatePostView()
         }
     }
 }
@@ -186,6 +192,7 @@ extension HomeDetailView {
                 .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
                 .asButton {
                     Log.debug("⏭️ 커뮤니티 글쓰기 클릭")
+                    selectedPostButton = true
                 }
             
             Image(.messageFill)
