@@ -90,7 +90,7 @@ struct HomeDetailView: View {
                     .transition(.scale)
             }
         }
-        .fullScreenCover(isPresented: $selectedPostButton) {
+        .fullScreenCover(isPresented: $selectedPostButton) {  // 커뮤니티 작성 View 화면 전환
             CreatePostView()
         }
     }
