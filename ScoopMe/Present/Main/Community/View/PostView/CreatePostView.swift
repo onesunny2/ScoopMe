@@ -16,6 +16,8 @@ struct CreatePostView: View {
     @State private var titleText: String = ""
     @State private var contentText: String = ""
     
+    @State private var isComplete: Bool = false
+    
     private let store: StoreBanner
     
     init(store: StoreBanner) {
@@ -28,10 +30,12 @@ struct CreatePostView: View {
                 Color.scmGray15
                     .ignoresSafeArea()
                 
-                VStack(alignment: .center, spacing: 28) {
+                VStack(alignment: .leading, spacing: 28) {
                     scoopInfoView
                     titleView
                     contentView
+                    uploadContentView
+                    completeButton
                 }
                 .padding(20)
                 .navigationTitle(StringLiterals.navigationTitle.text)
@@ -136,6 +140,40 @@ extension CreatePostView {
                     contentText = String(newText.prefix(300))
                 }
             }
+    }
+    
+    // 사진, 영상 업로드
+    private var uploadContentView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(StringLiterals.mediaUpload.text)
+                .basicText(.PTTitle6, .scmGray90)
+            uploadButton
+        }
+    }
+    
+    private var uploadButton: some View {
+        RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.scmGray60, lineWidth: 0.5)
+            .overlay(alignment: .center) {
+                VStack(alignment: .center, spacing: 4) {
+                    Image(.cameraFill)
+                        .basicImage(width: 26, color: .scmGray60)
+                    Text("0 / 3")
+                        .basicText(.PTBody2, .scmGray60)
+                }
+            }
+            .frame(width: 68, height: 68)
+            .asButton {
+                Log.debug("⏭️ 미디어 업로드 버튼 클릭")
+            }
+    }
+    
+    // 작성완료 버튼
+    private var completeButton: some View {
+        NextButtonCell(title: StringLiterals.completeWrite.text, buttonColor: isComplete ? .scmBlackSprout : .scmGray45)
+            .asButton({
+                Log.debug("⏭️ 작성완료 버튼 클릭")
+            }, disabled: !isComplete)
     }
 }
 
