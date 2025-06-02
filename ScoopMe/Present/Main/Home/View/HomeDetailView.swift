@@ -415,17 +415,13 @@ extension HomeDetailView {
         
         // 섹션이 감지 영역에 들어오면 활성화
         if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
+            // 현재 섹션과 다를 경우에만 업데이트
             if currentVisibleSection != sectionTitle {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    currentVisibleSection = sectionTitle
-                }
-            }
-        }
-        // 섹션이 감지 영역을 완전히 벗어나면 체크
-        else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                if currentVisibleSection == sectionTitle && !isButtonTriggered {
-                    // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
+                DispatchQueue.main.async {
+                    // 비동기적으로 업데이트하여 중복 호출 방지
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        self.currentVisibleSection = sectionTitle
+                    }
                 }
             }
         }
