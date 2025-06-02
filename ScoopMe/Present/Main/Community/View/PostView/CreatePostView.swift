@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
-import Nuke
+import NukeUI
 import PhotosUI
 import SCMLogger
+import _AVKit_SwiftUI
 
 struct CreatePostView: View {
     
@@ -22,8 +23,8 @@ struct CreatePostView: View {
     
     // photosUI
     @State private var selectedItems = [PhotosPickerItem]()
-    @State private var selectedImages: [UIImage] = []
-    @State private var isLoading: Bool = false
+    @State private var images: [Image] = []
+    @State private var videoURLs: [URL] = []
     
     private let store: StoreBanner
     
@@ -157,7 +158,7 @@ extension CreatePostView {
                 .basicText(.PTTitle6, .scmGray90)
             HStack(alignment: .center, spacing: 20) {
                 uploadButton
-                if !isLoading { selectedAssets }
+                selectedAssets
             }
         }
     }
@@ -173,27 +174,38 @@ extension CreatePostView {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.scmGray60, lineWidth: 0.5)
                 .overlay(alignment: .center) {
-                    VStack(alignment: .center, spacing: 4) {
+                    VStack(alignment: .center, spacing: 2) {
                         Image(.cameraFill)
-                            .basicImage(width: 26, color: .scmGray60)
-                        Text("0 / 3")
-                            .basicText(.PTBody2, .scmGray60)
+                            .basicImage(width: 26, color: (images.count + videoURLs.count == 3) ? .scmBlackSprout : .scmGray60)
+                        Text("\(images.count + videoURLs.count) / 3")
+                            .basicText(.PTBody2, (images.count + videoURLs.count == 3) ? .scmBlackSprout : .scmGray60)
                     }
                 }
                 .frame(width: 68, height: 68)
         }
         .onChange(of: selectedItems) { newItem in
             Task {
-                await loadSelectedItems(newItem)
+                await loadMedias(newItem)
             }
         }
     }
     
     private var selectedAssets: some View {
         HStack(alignment: .center, spacing: 8) {
-            ForEach(selectedImages, id: \.self) { image in
-                Image(uiImage: image)
-                    .basicImage(.fill, width: 68, height: 68)
+            ForEach(0..<images.count, id: \.self) { index in
+                images[index]
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 68, height: 68)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(alignment: .topTrailing) {
+                        
+                    }
+            }
+            
+            ForEach(0..<videoURLs.count, id: \.self) { index in
+                VideoPlayer(player: AVPlayer(url: videoURLs[index]))
+                    .frame(width: 68, height: 68)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }
@@ -211,20 +223,87 @@ extension CreatePostView {
 // MARK: Action
 extension CreatePostView {
     
-    @MainActor
-    private func loadSelectedItems(_ items: [PhotosPickerItem]) async {
-        isLoading = true
-        selectedImages = []
+    // 선택한 이미지 로드
+    private func loadMedias(_ items: [PhotosPickerItem]) async {
+        images.removeAll()
+        videoURLs.removeAll()
         
         for item in items {
-            if let data = try? await item.loadTransferable(type: Data.self) {
-                if let uiImage = UIImage(data: data) {
-                    selectedImages.append(uiImage)
-                }
+            guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+            
+            if let uiImage = UIImage(data: data) {
+                let image = Image(uiImage: uiImage)
+                images.append(image)
+            }
+            
+//            if let uiImage = UIImage(data: data) {
+//                if data.count <= 512_000 {
+//                    let image = Image(uiImage: uiImage)
+//                    Log.debug("이미지 압축: \(data.count)")
+//                    images.append(image)
+//                } else {
+//                    if let compressedImage = compressImage(uiImage, targetSizeKB: 512) {
+//                        images.append(compressedImage)
+//                    }
+//                }
+//            }
+            
+            if let movie = try? await item.loadTransferable(type: Movie.self) {
+                videoURLs.append(movie.url)
             }
         }
-        
-        isLoading = false
+    }
+}
+
+func compressImage(_ image: UIImage, targetSizeKB: Int) -> Image? {
+    let targetSizeBytes = targetSizeKB * 1000
+    var compressionQuality: CGFloat = 1.0
+    var imageData = image.jpegData(compressionQuality: compressionQuality)
+    
+    // 용량이 목표보다 클 경우 반복적으로 압축
+    while let data = imageData, data.count > targetSizeBytes, compressionQuality > 0.1 {
+        compressionQuality -= 0.1
+        imageData = image.jpegData(compressionQuality: compressionQuality)
+    }
+    
+    // 압축 후에도 용량 초과 시 크기 조정
+    if let data = imageData, data.count > targetSizeBytes {
+        let scaleFactor = sqrt(Double(targetSizeBytes) / Double(data.count))
+        let newSize = CGSize(width: image.size.width * scaleFactor, height: image.size.height * scaleFactor)
+        if let resizedImage = resizeImage(image, to: newSize) {
+            imageData = resizedImage.jpegData(compressionQuality: 0.8)
+        }
+    }
+    
+    // 최종 데이터 확인
+    if let finalData = imageData, finalData.count <= targetSizeBytes, let uiImage = UIImage(data: finalData) {
+        Log.debug("이미지 압축: \(finalData.count)")
+        return Image(uiImage: uiImage)
+    }
+    return nil
+}
+
+func resizeImage(_ image: UIImage, to targetSize: CGSize) -> UIImage? {
+    let renderer = UIGraphicsImageRenderer(size: targetSize)
+    return renderer.image { _ in
+        image.draw(in: CGRect(origin: .zero, size: targetSize))
+    }
+}
+
+struct Movie: Transferable {
+    let url: URL
+
+    static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(contentType: .movie) { movie in
+            SentTransferredFile(movie.url)
+        } importing: { received in
+            let copy = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension(received.file.pathExtension)
+            
+            try FileManager.default.copyItem(at: received.file, to: copy)
+            return Self.init(url: copy)
+        }
     }
 }
 
@@ -244,7 +323,3 @@ private enum StringLiterals: String {
         return self.rawValue
     }
 }
-
-//#Preview {
-//    CreatePostView()
-//}
