@@ -21,7 +21,7 @@ struct StoreInfoBannerCell: View {
                 bottomTrailing: 0,
                 topTrailing: 0
             )
-            .frame(width: 60, height: 60)
+            .frame(width: 65, height: 65)
             .clippedUnevenRectangle(8, 8, 0, 0)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -30,7 +30,7 @@ struct StoreInfoBannerCell: View {
                 Text(store.detail)
                     .basicText(.PTCaption1, .scmDeepSprout)
             }
-            .frame(maxWidth: .infinity, maxHeight: 60, alignment: .leading)
+            .frame(maxWidth: .infinity, maxHeight: 65, alignment: .leading)
             .padding(.leading, 10)
             .background(
                 UnevenRoundedRectangle(bottomTrailingRadius: 8, topTrailingRadius: 8)

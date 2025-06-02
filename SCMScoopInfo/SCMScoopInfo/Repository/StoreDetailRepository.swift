@@ -47,6 +47,7 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
         return StoreDetailInfoEntity(
             storeID: result.storeID,
             storeName: result.name,
+            category: result.category,
             imageUrls: result.storeImageUrls.map { Secret.baseURL + "/v1" + $0 },
             picchelinStatus: result.isPicchelin,
             likeStatus: result.isPick,

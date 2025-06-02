@@ -12,6 +12,10 @@ struct CreatePostView: View {
     
     @Environment(\.dismiss) private var dismiss
     
+    // 텍스트필드
+    @State private var titleText: String = ""
+    @State private var contentText: String = ""
+    
     private let store: StoreBanner
     
     init(store: StoreBanner) {
@@ -20,8 +24,9 @@ struct CreatePostView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(alignment: .center, spacing: 28) {
                 scoopInfoView
+                titleView
             }
             .padding(20)
             .navigationTitle(StringLiterals.navigationTitle.text)
@@ -64,6 +69,7 @@ private enum StringLiterals: String {
     case postContent = "포스트 내용"
     case mediaUpload = "사진/영상 업로드"
     case completeWrite = "작성 완료"
+    case titlePlaceholder = "포스트 제목을 작성해주세요."
     
     var text: String {
         return self.rawValue
