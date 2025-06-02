@@ -100,8 +100,8 @@ extension CommunityPostCell {
     private var storeInfoView: some View {
         StoreInfoBannerCell(
             store: StoreBanner(
-                name: post.storeInfo.name,
-                detail: post.storeInfo.category + " • " + post.storeInfo.address,
+                name: "[\(post.storeInfo.category)] " + post.storeInfo.name,
+                detail: post.storeInfo.address,
                 imageUrl: post.storeInfo.image
             )
         )

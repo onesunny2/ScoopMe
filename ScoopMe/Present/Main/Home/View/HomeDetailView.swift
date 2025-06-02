@@ -93,8 +93,8 @@ struct HomeDetailView: View {
         .fullScreenCover(isPresented: $selectedPostButton) {  // 커뮤니티 작성 View 화면 전환
             CreatePostView(
                 store: StoreBanner(
-                    name: storeInfos.storeName,
-                    detail: storeInfos.category + " • " + storeInfos.address,
+                    name: "[\(storeInfos.category)] " + storeInfos.storeName,
+                    detail: storeInfos.address,
                     imageUrl: storeInfos.imageUrls.first ?? ""
                 )
             )
