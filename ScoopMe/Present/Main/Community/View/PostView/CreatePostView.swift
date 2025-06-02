@@ -199,7 +199,12 @@ extension CreatePostView {
                     .frame(width: 68, height: 68)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(alignment: .topTrailing) {
-                        
+                        Image(.xmarkCircleFill)
+                            .basicImage(width:20, color: .scmGray90)
+                            .padding([.top, .trailing], 2)
+                            .asButton {
+                                Log.debug("⏭️ 지우기버튼 클릭")
+                            }
                     }
             }
             
