@@ -84,7 +84,7 @@ extension CreatePostView {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled(true)
             .placeholder(StringLiterals.titlePlaceholder.text, $titleText)
-            .padding(.bottom, 8)
+            .padding([.bottom, .leading], 8)
             .background(alignment: .bottom) {
                 Rectangle()
                     .fill(.scmGray45)
