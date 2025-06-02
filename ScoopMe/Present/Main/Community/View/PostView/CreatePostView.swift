@@ -80,6 +80,20 @@ extension CreatePostView {
                     .fill(.scmGray45)
                     .frame(height: 1)
             }
+            .onChange(of: titleText) { newText in
+                if newText.count > 15 {
+                    titleText = String(newText.prefix(15))
+                }
+            }
+    }
+}
+
+// MARK: Action
+extension CreatePostView {
+    
+    private func limitTitleTextCount(_ text: String) {
+        guard text.count > 15 else { return }
+        
     }
 }
 
@@ -92,7 +106,7 @@ private enum StringLiterals: String {
     case postContent = "포스트 내용"
     case mediaUpload = "사진/영상 업로드"
     case completeWrite = "작성 완료"
-    case titlePlaceholder = "포스트 제목을 작성해주세요."
+    case titlePlaceholder = "제목을 15자 이내로 작성해주세요."
     
     var text: String {
         return self.rawValue

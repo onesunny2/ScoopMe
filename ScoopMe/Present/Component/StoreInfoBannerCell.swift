@@ -31,7 +31,7 @@ struct StoreInfoBannerCell: View {
                     .basicText(.PTCaption1, .scmDeepSprout)
             }
             .frame(maxWidth: .infinity, maxHeight: 65, alignment: .leading)
-            .padding(.leading, 10)
+            .padding(.horizontal, 10)
             .background(
                 UnevenRoundedRectangle(bottomTrailingRadius: 8, topTrailingRadius: 8)
                     .fill(.scmBrightSprout)
