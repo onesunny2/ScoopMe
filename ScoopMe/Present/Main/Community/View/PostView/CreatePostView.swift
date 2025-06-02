@@ -57,7 +57,30 @@ extension CreatePostView {
     private var storeInfoBanner: some View {
         StoreInfoBannerCell(store: store)
     }
-
+    
+    // 제목
+    private var titleView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(StringLiterals.postTitle.text)
+                .basicText(.PTTitle6, .scmGray90)
+            titleTextField
+        }
+    }
+    
+    private var titleTextField: some View {
+        TextField("", text: $titleText)
+            .foregroundStyle(.scmGray90)
+            .font(.PTBody2)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
+            .placeholder(StringLiterals.titlePlaceholder.text, $titleText)
+            .padding(.bottom, 8)
+            .background(alignment: .bottom) {
+                Rectangle()
+                    .fill(.scmGray45)
+                    .frame(height: 1)
+            }
+    }
 }
 
 // MARK: String Literals
