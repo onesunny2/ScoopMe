@@ -115,6 +115,7 @@ extension CreatePostView {
         TextEditor(text: $contentText)
             .foregroundStyle(.scmGray90)
             .font(.PTBody2)
+            .lineSpacing(4)
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 8)
