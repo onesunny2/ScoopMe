@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>스쿱 소식통에 사진을 업로드 하기 위해서 앨범 접근이 필요합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>원하는 위치에서의 가게를 찾기 위해 사용자의 위치가 필요합니다.</string>
 	<key>CFBundleURLTypes</key>

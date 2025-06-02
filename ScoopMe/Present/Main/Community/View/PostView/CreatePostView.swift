@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 import SCMLogger
 
 struct CreatePostView: View {
@@ -17,6 +18,9 @@ struct CreatePostView: View {
     @State private var contentText: String = ""
     
     @State private var isComplete: Bool = false
+    
+    // photosUI
+    @State private var selectedItems = [PhotosPickerItem]()
     
     private let store: StoreBanner
     
@@ -153,20 +157,24 @@ extension CreatePostView {
     }
     
     private var uploadButton: some View {
-        RoundedRectangle(cornerRadius: 8)
-            .stroke(Color.scmGray60, lineWidth: 0.5)
-            .overlay(alignment: .center) {
-                VStack(alignment: .center, spacing: 4) {
-                    Image(.cameraFill)
-                        .basicImage(width: 26, color: .scmGray60)
-                    Text("0 / 3")
-                        .basicText(.PTBody2, .scmGray60)
+        PhotosPicker(
+            selection: $selectedItems,
+            maxSelectionCount: 3,
+            matching: .any(of: [.images, .videos]),
+            photoLibrary: .shared()
+        ) {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.scmGray60, lineWidth: 0.5)
+                .overlay(alignment: .center) {
+                    VStack(alignment: .center, spacing: 4) {
+                        Image(.cameraFill)
+                            .basicImage(width: 26, color: .scmGray60)
+                        Text("0 / 3")
+                            .basicText(.PTBody2, .scmGray60)
+                    }
                 }
-            }
-            .frame(width: 68, height: 68)
-            .asButton {
-                Log.debug("⏭️ 미디어 업로드 버튼 클릭")
-            }
+                .frame(width: 68, height: 68)
+        }
     }
     
     // 작성완료 버튼
