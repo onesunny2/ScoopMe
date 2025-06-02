@@ -86,6 +86,11 @@ extension CreatePostView {
                     .fill(.scmGray45)
                     .frame(height: 1)
             }
+            .overlay(alignment: .trailing) {
+                Text("\(titleText.count) / 15")
+                    .basicText(.PTBody2, (titleText.count <= 15) ? .scmGray60 : .red)
+                    .padding(.trailing, 8)
+            }
             .onChange(of: titleText) { newText in
                 if newText.count > 15 {
                     titleText = String(newText.prefix(15))
@@ -118,6 +123,11 @@ extension CreatePostView {
                         .padding(.top, 16)
                         .padding(.leading, 12)
                 }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Text("\(contentText.count) / 300")
+                    .basicText(.PTBody2, (contentText.count <= 300) ? .scmGray60 : .red)
+                    .padding([.trailing, .bottom], 12)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .scrollContentBackground(.hidden)
