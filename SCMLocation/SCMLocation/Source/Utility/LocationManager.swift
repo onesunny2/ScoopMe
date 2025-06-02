@@ -30,8 +30,8 @@ public final class LocationManager: NSObject, ObservableObject {
         
         let selectedAddress = UserDefaults.standard.fetchStruct(SavedLocation.self, for: selectedAddressKey)
         self.currentLocation = CLLocation(
-            latitude: selectedAddress?.latitude ?? 37.266710,
-            longitude: selectedAddress?.longitude ?? 127.001148
+            latitude: selectedAddress?.latitude ?? 37.6527579,
+            longitude: selectedAddress?.longitude ?? 127.0463256
         )
         
         super.init()

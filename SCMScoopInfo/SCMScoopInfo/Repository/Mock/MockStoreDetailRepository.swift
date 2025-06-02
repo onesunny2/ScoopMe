@@ -27,6 +27,7 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
         return StoreDetailInfoEntity(
             storeID: "Test",
             storeName: "원선 스쿱 베이커리",
+            category: "베이커리",
             imageUrls: [
                 Secret.baseURL + "/v1/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
                 Secret.baseURL + "/v1/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",

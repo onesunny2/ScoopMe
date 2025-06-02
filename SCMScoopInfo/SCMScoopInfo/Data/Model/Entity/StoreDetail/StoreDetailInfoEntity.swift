@@ -10,6 +10,7 @@ import Foundation
 public struct StoreDetailInfoEntity: Hashable {
     public let storeID: String
     public let storeName: String
+    public let category: String
     public let imageUrls: [String]
     public let picchelinStatus: Bool
     public var likeStatus: Bool
@@ -23,6 +24,7 @@ public struct StoreDetailInfoEntity: Hashable {
     public init(
         storeID: String,
         storeName: String,
+        category: String,
         imageUrls: [String],
         picchelinStatus: Bool,
         likeStatus: Bool,
@@ -35,6 +37,7 @@ public struct StoreDetailInfoEntity: Hashable {
     ) {
         self.storeID = storeID
         self.storeName = storeName
+        self.category = category
         self.imageUrls = imageUrls
         self.picchelinStatus = picchelinStatus
         self.likeStatus = likeStatus

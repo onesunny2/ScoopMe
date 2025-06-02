@@ -33,6 +33,9 @@ struct HomeDetailView: View {
     @State private var selectedCount: Int = 0
     @State private var selectedPrice: Int = 0
     
+    // 커뮤니티 글쓰기
+    @State private var selectedPostButton: Bool = false
+    
     init(repository: AnyStoreDetailDisplayable, storeID: String) {
         self._repository = StateObject(wrappedValue: repository)
         self.storeID = storeID
@@ -86,6 +89,15 @@ struct HomeDetailView: View {
                 StoreDetailModalCell(info: storeInfos)
                     .transition(.scale)
             }
+        }
+        .fullScreenCover(isPresented: $selectedPostButton) {  // 커뮤니티 작성 View 화면 전환
+            CreatePostView(
+                store: StoreBanner(
+                    name: "[\(storeInfos.category)] " + storeInfos.storeName,
+                    detail: storeInfos.address,
+                    imageUrl: storeInfos.imageUrls.first ?? ""
+                )
+            )
         }
     }
 }
@@ -177,6 +189,16 @@ extension HomeDetailView {
                 .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
                 .asButton {
                     Log.debug("⏭️ 길찾기 클릭")
+                }
+            
+            Image(.write)
+                .basicImage(width: 28, color: .scmGray15)
+                .frame(height: 28)
+                .padding(.horizontal, 7)
+                .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
+                .asButton {
+                    Log.debug("⏭️ 커뮤니티 글쓰기 클릭")
+                    selectedPostButton = true
                 }
             
             Image(.messageFill)
@@ -384,7 +406,7 @@ extension HomeDetailView {
         let sectionTop = globalFrame.minY
         let sectionBottom = globalFrame.maxY
         
-        // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
+        // 감지 영역: 헤더 도레미아래부터 화면 상단 1/3 지점까지
         let detectionStart = targetY - 100
         let detectionEnd = targetY + 400
         
@@ -393,17 +415,13 @@ extension HomeDetailView {
         
         // 섹션이 감지 영역에 들어오면 활성화
         if sectionTop <= detectionEnd && sectionBottom >= detectionStart {
+            // 현재 섹션과 다를 경우에만 업데이트
             if currentVisibleSection != sectionTitle {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    currentVisibleSection = sectionTitle
-                }
-            }
-        }
-        // 섹션이 감지 영역을 완전히 벗어나면 체크
-        else if currentVisibleSection == sectionTitle && sectionBottom < detectionStart {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                if currentVisibleSection == sectionTitle && !isButtonTriggered {
-                    // 필요에 따라 빈 값으로 설정하거나 현재 값 유지
+                DispatchQueue.main.async {
+                    // 비동기적으로 업데이트하여 중복 호출 방지
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        self.currentVisibleSection = sectionTitle
+                    }
                 }
             }
         }
@@ -470,21 +488,18 @@ extension HomeDetailView {
 // MARK: statie value
 extension HomeDetailView {
     static let empty = StoreDetailInfoEntity(
-        storeID: "Test",
-        storeName: "원선 스쿱 베이커리",
-        imageUrls: [
-            Secret.baseURL + "/v1/data/stores/alan-hardman-SU1LFoeEUkk-unsplash_1747128644203.jpg",
-            Secret.baseURL + "/v1/data/stores/chad-montano-MqT0asuoIcU-unsplash_1747128644346.jpg",
-            Secret.baseURL + "/v1/data/stores/shourav-sheikh-a66sGfOnnqQ-unsplash_1747128644500.jpg"
-        ],
-        picchelinStatus: true,
+        storeID: "",
+        storeName: "",
+        category: "",
+        imageUrls: [""],
+        picchelinStatus: false,
         likeStatus: false,
-        address: "서울시 스쿱구 원선20길 96, 730동",
-        parkingInfo: "매장 건물 지하주차장",
-        time: "매주 월~토 10:00 ~ 19:00",
-        rating: "4.9",
-        review: "(333)",
-        distance: "2.2km"
+        address: "",
+        parkingInfo: "",
+        time: "",
+        rating: "",
+        review: "",
+        distance: ""
     )
 }
 

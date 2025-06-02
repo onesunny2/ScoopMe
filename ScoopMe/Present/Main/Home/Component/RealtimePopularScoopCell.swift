@@ -67,6 +67,7 @@ struct RealtimePopularScoopCell: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(store.storeName)
                         .basicText(.PTBody3, .scmGray90)
+                        .lineLimit(1)
 
                     likeCount
                     .padding(.bottom, 6)
