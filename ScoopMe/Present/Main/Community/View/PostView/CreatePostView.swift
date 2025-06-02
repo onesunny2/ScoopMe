@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Nuke
 import PhotosUI
 import SCMLogger
 
@@ -21,6 +22,8 @@ struct CreatePostView: View {
     
     // photosUI
     @State private var selectedItems = [PhotosPickerItem]()
+    @State private var selectedImages: [UIImage] = []
+    @State private var isLoading: Bool = false
     
     private let store: StoreBanner
     
@@ -152,7 +155,10 @@ extension CreatePostView {
         VStack(alignment: .leading, spacing: 12) {
             Text(StringLiterals.mediaUpload.text)
                 .basicText(.PTTitle6, .scmGray90)
-            uploadButton
+            HStack(alignment: .center, spacing: 20) {
+                uploadButton
+                if !isLoading { selectedAssets }
+            }
         }
     }
     
@@ -160,6 +166,7 @@ extension CreatePostView {
         PhotosPicker(
             selection: $selectedItems,
             maxSelectionCount: 3,
+            selectionBehavior: .ordered,
             matching: .any(of: [.images, .videos]),
             photoLibrary: .shared()
         ) {
@@ -175,6 +182,21 @@ extension CreatePostView {
                 }
                 .frame(width: 68, height: 68)
         }
+        .onChange(of: selectedItems) { newItem in
+            Task {
+                await loadSelectedItems(newItem)
+            }
+        }
+    }
+    
+    private var selectedAssets: some View {
+        HStack(alignment: .center, spacing: 8) {
+            ForEach(selectedImages, id: \.self) { image in
+                Image(uiImage: image)
+                    .basicImage(.fill, width: 68, height: 68)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+        }
     }
     
     // 작성완료 버튼
@@ -189,9 +211,20 @@ extension CreatePostView {
 // MARK: Action
 extension CreatePostView {
     
-    private func limitTitleTextCount(_ text: String) {
-        guard text.count > 15 else { return }
+    @MainActor
+    private func loadSelectedItems(_ items: [PhotosPickerItem]) async {
+        isLoading = true
+        selectedImages = []
         
+        for item in items {
+            if let data = try? await item.loadTransferable(type: Data.self) {
+                if let uiImage = UIImage(data: data) {
+                    selectedImages.append(uiImage)
+                }
+            }
+        }
+        
+        isLoading = false
     }
 }
 
