@@ -406,7 +406,7 @@ extension HomeDetailView {
         let sectionTop = globalFrame.minY
         let sectionBottom = globalFrame.maxY
         
-        // 감지 영역: 헤더 아래부터 화면 상단 1/3 지점까지
+        // 감지 영역: 헤더 도레미아래부터 화면 상단 1/3 지점까지
         let detectionStart = targetY - 100
         let detectionEnd = targetY + 400
         

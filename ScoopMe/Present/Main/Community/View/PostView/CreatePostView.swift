@@ -24,20 +24,26 @@ struct CreatePostView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .center, spacing: 28) {
-                scoopInfoView
-                titleView
+            ZStack {
+                Color.scmGray15
+                    .ignoresSafeArea()
+                
+                VStack(alignment: .center, spacing: 28) {
+                    scoopInfoView
+                    titleView
+                    contentView
+                }
+                .padding(20)
+                .navigationTitle(StringLiterals.navigationTitle.text)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarItem(leading: {
+                    Text(StringLiterals.close.text)
+                        .basicText(.PTBody1, .scmGray90)
+                        .asButton {
+                            dismiss()
+                        }
+                })
             }
-            .padding(20)
-            .navigationTitle(StringLiterals.navigationTitle.text)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarItem(leading: {
-                Text(StringLiterals.close.text)
-                    .basicText(.PTBody1, .scmGray90)
-                    .asButton {
-                        dismiss()
-                    }
-            })
         }
     }
 }
@@ -86,6 +92,41 @@ extension CreatePostView {
                 }
             }
     }
+    
+    // 내용
+    private var contentView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(StringLiterals.postContent.text)
+                .basicText(.PTTitle6, .scmGray90)
+            contentEditor
+        }
+    }
+    
+    private var contentEditor: some View {
+        TextEditor(text: $contentText)
+            .foregroundStyle(.scmGray90)
+            .font(.PTBody2)
+            .padding(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.scmGray60, lineWidth: 0.5)
+            )
+            .overlay(alignment: .topLeading) {
+                if contentText.isEmpty {
+                    Text(StringLiterals.contentPlaceholder.text)
+                        .basicText(.PTBody2, .scmGray60)
+                        .padding(.top, 16)
+                        .padding(.leading, 12)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scrollContentBackground(.hidden)
+            .onChange(of: contentText) { newText in
+                if newText.count > 300 {
+                    contentText = String(newText.prefix(300))
+                }
+            }
+    }
 }
 
 // MARK: Action
@@ -107,6 +148,7 @@ private enum StringLiterals: String {
     case mediaUpload = "사진/영상 업로드"
     case completeWrite = "작성 완료"
     case titlePlaceholder = "제목을 15자 이내로 작성해주세요."
+    case contentPlaceholder = "주변 소식통에 올릴 포스트 내용을 작성해 주세요.(300자 이내)"
     
     var text: String {
         return self.rawValue
