@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct StoreBanner {
+    let name: String
+    let detail: String
+    let imageUrl: String
+}

@@ -98,31 +98,13 @@ extension CommunityPostCell {
     }
     
     private var storeInfoView: some View {
-        HStack(alignment: .center, spacing: 0) {
-            NukeRequestImageCell(
-                imageHelper: DIContainer.shared.imageHelper,
-                url: post.storeInfo.image,
-                topLeading: 8,
-                bottomLeading: 8,
-                bottomTrailing: 0,
-                topTrailing: 0
+        StoreInfoBannerCell(
+            store: StoreBanner(
+                name: post.storeInfo.name,
+                detail: post.storeInfo.category + " • " + post.storeInfo.address,
+                imageUrl: post.storeInfo.image
             )
-            .frame(width: 60, height: 60)
-            .clippedUnevenRectangle(8, 8, 0, 0)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text(post.storeInfo.name)
-                    .basicText(.PTBody3, .scmBlackSprout)
-                Text(post.storeInfo.category + " • " + post.storeInfo.address)
-                    .basicText(.PTCaption1, .scmDeepSprout)
-            }
-            .frame(maxWidth: .infinity, maxHeight: 60, alignment: .leading)
-            .padding(.leading, 10)
-            .background(
-                UnevenRoundedRectangle(bottomTrailingRadius: 8, topTrailingRadius: 8)
-                    .fill(.scmBrightSprout)
-            )
-        }
+        )
     }
 }
 
