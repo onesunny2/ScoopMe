@@ -93,10 +93,16 @@ struct HomeDetailView: View {
         .fullScreenCover(isPresented: $selectedPostButton) {  // 커뮤니티 작성 View 화면 전환
             CreatePostView(
                 repository: DIContainer.shared.createPostRepository,
-                store: StoreBanner(
+                storeBannerInfo: StoreBanner(
                     name: "[\(storeInfos.category)] " + storeInfos.storeName,
                     detail: storeInfos.address,
                     imageUrl: storeInfos.imageUrls.first ?? ""
+                ),
+                postStore: PostStore(
+                    storeID: storeID,
+                    category: storeInfos.category,
+                    latitude: storeInfos.latitude,
+                    longitude: storeInfos.longitude
                 )
             )
         }
@@ -500,7 +506,9 @@ extension HomeDetailView {
         time: "",
         rating: "",
         review: "",
-        distance: ""
+        distance: "",
+        latitude: 0.0,
+        longitude: 0.0
     )
 }
 

@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct PostStore {
+    let storeID: String
+    let category: String
+    let latitude: Double
+    let longitude: Double
+}
