@@ -25,7 +25,8 @@ struct CreatePostView: View {
     @State private var selectedItems = [PhotosPickerItem]()
     @State private var uploadMedias: [PostMediaItem] = []
     
-    @State private var showAlert: Bool = false
+    @State private var showAlert: Bool = false  // 닫기 눌렀을 때 알럿창 용도
+    @State private var showToastMessage: Bool = false  // 작성 완료한 후 토스트 메시지 용도
     
     private let storeBannerInfo: StoreBanner
     private let postStore: PostStore
@@ -85,6 +86,17 @@ struct CreatePostView: View {
                     message: StringLiterals.alertMessage.text,
                     multiAction: { dismiss() })
             }
+            .overlay(alignment: .center) {
+                if showToastMessage {
+                    ToastView(
+                        isShowing: $showToastMessage,
+                        message: ToastMessage(
+                            text: StringLiterals.toastMessage.text,
+                            type: .success
+                        )
+                    )
+                }
+            }
         }
     }
 }
@@ -115,28 +127,10 @@ extension CreatePostView {
     }
     
     private var titleTextField: some View {
-        TextField("", text: $titleText)
-            .foregroundStyle(.scmGray90)
-            .font(.PTBody2)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled(true)
-            .placeholder(StringLiterals.titlePlaceholder.text, $titleText)
-            .padding([.bottom, .leading], 8)
-            .background(alignment: .bottom) {
-                Rectangle()
-                    .fill(.scmGray45)
-                    .frame(height: 1)
-            }
-            .overlay(alignment: .trailing) {
-                Text("\(titleText.count) / 15")
-                    .basicText(.PTBody2, (titleText.count <= 15) ? .scmGray60 : .red)
-                    .padding(.trailing, 8)
-            }
-            .onChange(of: titleText) { newText in
-                if newText.count > 15 {
-                    titleText = String(newText.prefix(15))
-                }
-            }
+        TitleTextFieldCell(
+            titleText: $titleText,
+            placeholder: StringLiterals.titlePlaceholder.text
+        )
     }
     
     // 내용
@@ -149,35 +143,10 @@ extension CreatePostView {
     }
     
     private var contentEditor: some View {
-        TextEditor(text: $contentText)
-            .foregroundStyle(.scmGray90)
-            .font(.PTBody2)
-            .lineSpacing(4)
-            .padding(8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.scmGray60, lineWidth: 0.5)
-            )
-            .overlay(alignment: .topLeading) {
-                if contentText.isEmpty {
-                    Text(StringLiterals.contentPlaceholder.text)
-                        .basicText(.PTBody2, .scmGray60)
-                        .padding(.top, 16)
-                        .padding(.leading, 12)
-                }
-            }
-            .overlay(alignment: .bottomTrailing) {
-                Text("\(contentText.count) / 300")
-                    .basicText(.PTBody2, (contentText.count <= 300) ? .scmGray60 : .red)
-                    .padding([.trailing, .bottom], 12)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .scrollContentBackground(.hidden)
-            .onChange(of: contentText) { newText in
-                if newText.count > 300 {
-                    contentText = String(newText.prefix(300))
-                }
-            }
+        ContentTextEditorCell(
+            contentText: $contentText,
+            placeholder: StringLiterals.contentPlaceholder.text
+        )
     }
     
     // 사진, 영상 업로드
@@ -242,6 +211,7 @@ extension CreatePostView {
 //                    let files = uploadMedias.map { $0.itemIdentifier }
 //                    await postFiles(files)
                     await postContents()
+                    handleToastMessage()
                 }
             }, disabled: !isComplete)
     }
@@ -313,6 +283,19 @@ extension CreatePostView {
             Log.error("🔗 post 업로드 실패: \(error)")
         }
     }
+    
+    // toastMessage 관리
+    private func handleToastMessage() {
+        showToastMessage = true
+        
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            await MainActor.run {
+                showToastMessage = false
+                dismiss()
+            }
+        }
+    }
 }
 
 struct Movie: Transferable {
@@ -345,6 +328,7 @@ private enum StringLiterals: String {
     case contentPlaceholder = "주변 소식통에 올릴 포스트 내용을 작성해 주세요.(300자 이내)"
     case alertTitle = "안내"
     case alertMessage = "현재 작성 중인 내용이 있습니다. 뒤로가면 해당 내용은 삭제됩니다. 나가시겠습니까?"
+    case toastMessage = "포스트가 성공적으로 업로드 되었습니다 :>"
     
     var text: String {
         return self.rawValue
