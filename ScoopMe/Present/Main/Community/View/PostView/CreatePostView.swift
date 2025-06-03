@@ -8,11 +8,13 @@
 import SwiftUI
 import NukeUI
 import PhotosUI
+import SCMCommunity
 import SCMLogger
 
 struct CreatePostView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var repository: AnyCreatePostDisplayable
     
     // 텍스트필드
     @State private var titleText: String = ""
@@ -41,7 +43,8 @@ struct CreatePostView: View {
         return value
     }
     
-    init(store: StoreBanner) {
+    init(repository: AnyCreatePostDisplayable, store: StoreBanner) {
+        self._repository = StateObject(wrappedValue: repository)
         self.store = store
     }
     
@@ -228,14 +231,17 @@ extension CreatePostView {
         NextButtonCell(title: StringLiterals.completeWrite.text, buttonColor: isComplete ? .scmBlackSprout : .scmGray45)
             .asButton({
                 Log.debug("⏭️ 작성완료 버튼 클릭")
+                Task {
+                    let files = uploadMedias.map { $0.itemIdentifier }
+                    await postFiles(files)
+                }
             }, disabled: !isComplete)
     }
 }
 
 // MARK: Action
 extension CreatePostView {
-    
-    // 선택한 미디어 삭제
+
     private func deleteMedia(_ item: PostMediaItem) {
         // 앨범 아이템에서 삭제
         withTransaction(transaction) {
@@ -270,6 +276,18 @@ extension CreatePostView {
             }
         }
     }
+    
+    // post 통신 (1차는 파일 업로드, 2차는 업로드한 파일 통신받은 후 게시글 post)
+    private func postFiles(_ files: [String]) async {
+        do {
+            let files = try await repository.postFiles(files)
+        } catch {
+            await repository.checkTokenValidation(error) {
+                let files = try await repository.postFiles(files)
+            }
+        }
+    }
+    
 }
 
 struct Movie: Transferable {

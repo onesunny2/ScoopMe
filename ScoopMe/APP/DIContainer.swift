@@ -34,6 +34,9 @@ final class DIContainer {
         
         let communityRepo = MockCommunityPostRepository()
         self.communityPostRepository = AnyCommunityPostDisplayable(communityRepo)
+        
+        let createPostRepo = CreatePostRepository()
+        self.createPostRepository = AnyCreatePostDisplayable(createPostRepo)
     }
     
     /// SCMLogin
@@ -54,4 +57,5 @@ final class DIContainer {
     
     /// SCMCommunity
     private(set) var communityPostRepository: AnyCommunityPostDisplayable
+    private(set) var createPostRepository: AnyCreatePostDisplayable
 }
