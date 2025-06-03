@@ -83,7 +83,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         let result = try await getAllStores(store: lastStoreID)
         var entity: [AroundStoreInfoEntity] = []
         
-        Log.debug("통신 결과: \(result)")
+        Log.debug("통신 결과")
         
         switch round {
         case .픽슐랭:
@@ -111,7 +111,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
             
             lastStoreID = entity.last?.storeID ?? ""
             
-            Log.debug("✅ 전체 스쿱 통신 성공: \(entity)")
+            Log.debug("✅ 전체 스쿱 통신 성공")
             
             return entity
             
@@ -138,7 +138,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
                 entity.append(result)
             }
             
-            Log.debug("✅ 전체 스쿱 통신 성공: \(entity)")
+            Log.debug("✅ 전체 스쿱 통신 성공")
             
             lastStoreID = entity.last?.storeID ?? ""
             
@@ -152,7 +152,7 @@ public final class FoodCategoryRepository: FoodCategoryDisplayable {
         let value = ScoopInfoURL.postStoreLike(access: accessToken, storeID: id, status: status)
         let result = try await callRequest(value, type: LikeStoreResponseDTO.self)
         
-        Log.debug("✅ 가게 좋아요 post 완료: \(result.response)")
+        Log.debug("✅ 가게 좋아요 post 완료")
     }
 }
 
@@ -188,7 +188,7 @@ extension FoodCategoryRepository {
         )
         let result = try await callRequest(value, type: AllStoreListResponseDTO.self)
         
-        Log.debug("근처 전체 검색결과: \(result.response.data)")
+        Log.debug("근처 전체 통신 성공")
         
         return result.response.data
     }

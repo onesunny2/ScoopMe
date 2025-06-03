@@ -56,14 +56,15 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
             time: "\(result.open) ~ \(result.close)",
             rating: "\(result.totalRating)",
             review: "(\(result.totalReviewCount))",
-            distance: distance
+            distance: distance,
+            latitude: result.geolocation.latitude,
+            longitude: result.geolocation.longitude
         )
     }
     
     public func getStoreDetailMenu(id: String) async throws -> DetailMenu {
         let result = try await getStoreDetailRequest(store: id)
         let menuList = result.menuList
-        Log.debug("메뉴리스트: \(menuList)")
         var menuEntity: [StoreDetailMenuEntity] = []
         var menuSections: [String] = []
         
@@ -97,7 +98,7 @@ public final class StoreDetailRepository: StoreDetailDisplayable {
         let value = ScoopInfoURL.postStoreLike(access: accessToken, storeID: id, status: status)
         let result = try await callRequest(value, type: LikeStoreResponseDTO.self)
         
-        Log.debug("✅ 가게 좋아요 post 완료: \(result.response)")
+        Log.debug("✅ 가게 좋아요 post 완료")
     }
     
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
