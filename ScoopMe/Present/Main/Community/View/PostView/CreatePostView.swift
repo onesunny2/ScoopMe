@@ -10,6 +10,7 @@ import NukeUI
 import PhotosUI
 import SCMCommunity
 import SCMLogger
+import SCMNetwork
 
 struct CreatePostView: View {
     
@@ -26,7 +27,8 @@ struct CreatePostView: View {
     
     @State private var showAlert: Bool = false
     
-    private let store: StoreBanner
+    private let storeBannerInfo: StoreBanner
+    private let postStore: PostStore
     
     private var transaction: Transaction {
         var t = Transaction()
@@ -43,9 +45,14 @@ struct CreatePostView: View {
         return value
     }
     
-    init(repository: AnyCreatePostDisplayable, store: StoreBanner) {
+    init(
+        repository: AnyCreatePostDisplayable,
+        storeBannerInfo: StoreBanner,
+        postStore: PostStore
+    ) {
         self._repository = StateObject(wrappedValue: repository)
-        self.store = store
+        self.storeBannerInfo = storeBannerInfo
+        self.postStore = postStore
     }
     
     var body: some View {
@@ -95,7 +102,7 @@ extension CreatePostView {
     }
     
     private var storeInfoBanner: some View {
-        StoreInfoBannerCell(store: store)
+        StoreInfoBannerCell(store: storeBannerInfo)
     }
     
     // 제목
@@ -232,8 +239,9 @@ extension CreatePostView {
             .asButton({
                 Log.debug("⏭️ 작성완료 버튼 클릭")
                 Task {
-                    let files = uploadMedias.map { $0.itemIdentifier }
-                    await postFiles(files)
+//                    let files = uploadMedias.map { $0.itemIdentifier }
+//                    await postFiles(files)
+                    await postContents()
                 }
             }, disabled: !isComplete)
     }
@@ -288,6 +296,23 @@ extension CreatePostView {
         }
     }
     
+    // post content 업로드
+    private func postContents() async {
+        do {
+            let content = PostContent(
+                categoty: postStore.category,
+                title: titleText,
+                content: contentText,
+                storeID: postStore.storeID,
+                latitude: postStore.latitude,
+                longitude: postStore.longitude,
+                files: nil
+            )
+            try await repository.postContents(content)
+        } catch {
+            Log.error("🔗 post 업로드 실패: \(error)")
+        }
+    }
 }
 
 struct Movie: Transferable {
