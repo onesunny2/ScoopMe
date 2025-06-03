@@ -9,7 +9,6 @@ import SwiftUI
 import NukeUI
 import PhotosUI
 import SCMLogger
-import _AVKit_SwiftUI
 
 struct CreatePostView: View {
     
@@ -26,6 +25,12 @@ struct CreatePostView: View {
     @State private var uploadMedias: [PostMediaItem] = []
     
     private let store: StoreBanner
+    
+    private var transaction: Transaction {
+        var t = Transaction()
+        t.animation = .default
+        return t
+    }
     
     init(store: StoreBanner) {
         self.store = store
@@ -175,9 +180,9 @@ extension CreatePostView {
                 .overlay(alignment: .center) {
                     VStack(alignment: .center, spacing: 2) {
                         Image(.cameraFill)
-                            .basicImage(width: 26, color: (images.count + videoURLs.count == 3) ? .scmBlackSprout : .scmGray60)
-                        Text("\(images.count + videoURLs.count) / 3")
-                            .basicText(.PTBody2, (images.count + videoURLs.count == 3) ? .scmBlackSprout : .scmGray60)
+                            .basicImage(width: 26, color: (uploadMedias.count == 3) ? .scmBlackSprout : .scmGray60)
+                        Text("\(uploadMedias.count) / 3")
+                            .basicText(.PTBody2, (uploadMedias.count == 3) ? .scmBlackSprout : .scmGray60)
                     }
                 }
                 .frame(width: 68, height: 68)
@@ -191,28 +196,16 @@ extension CreatePostView {
     
     private var selectedAssets: some View {
         HStack(alignment: .center, spacing: 8) {
-            ForEach(0..<images.count, id: \.self) { index in
-                images[index]
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 68, height: 68)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(alignment: .topTrailing) {
-                        Image(.xmarkCircleFill)
-                            .basicImage(width:20, color: .scmGray90)
-                            .padding([.top, .trailing], 2)
-                            .asButton {
-                                Log.debug("⏭️ 지우기버튼 클릭")
-                            }
-                    }
-            }
             
-            ForEach(0..<videoURLs.count, id: \.self) { index in
-                VideoPlayer(player: AVPlayer(url: videoURLs[index]))
-                    .frame(width: 68, height: 68)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            ForEach(uploadMedias, id: \.itemIdentifier) { item in
+                MediaItemView(item: item) {
+                    withTransaction(transaction) {
+                        deleteMedia(item)
+                    }
+                }
             }
         }
+        .animation(.default, value: uploadMedias.map { $0.itemIdentifier })
     }
     
     // 작성완료 버튼
@@ -226,6 +219,19 @@ extension CreatePostView {
 
 // MARK: Action
 extension CreatePostView {
+    
+    // 선택한 미디어 삭제
+    private func deleteMedia(_ item: PostMediaItem) {
+        // 앨범 아이템에서 삭제
+        withTransaction(transaction) {
+            if let albumIndex = selectedItems.firstIndex(where: { $0.itemIdentifier == item.itemIdentifier }) {
+                selectedItems.remove(at: albumIndex)
+            }
+            if let uploadIndex = uploadMedias.firstIndex(where: { $0.itemIdentifier == item.itemIdentifier }) {
+                uploadMedias.remove(at: uploadIndex)
+            }
+        }
+    }
     
     // 선택한 이미지 로드
     private func loadMedias(_ items: [PhotosPickerItem]) async {
