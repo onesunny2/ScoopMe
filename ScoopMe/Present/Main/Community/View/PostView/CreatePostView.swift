@@ -23,8 +23,7 @@ struct CreatePostView: View {
     
     // photosUI
     @State private var selectedItems = [PhotosPickerItem]()
-    @State private var images: [Image] = []
-    @State private var videoURLs: [URL] = []
+    @State private var uploadMedias: [PostMediaItem] = []
     
     private let store: StoreBanner
     
@@ -230,68 +229,25 @@ extension CreatePostView {
     
     // 선택한 이미지 로드
     private func loadMedias(_ items: [PhotosPickerItem]) async {
-        images.removeAll()
-        videoURLs.removeAll()
+        var newMedias: [PostMediaItem] = []
         
         for item in items {
             guard let data = try? await item.loadTransferable(type: Data.self) else { return }
             
             if let uiImage = UIImage(data: data) {
                 let image = Image(uiImage: uiImage)
-                images.append(image)
+                let item = PostMediaItem(
+                    itemIdentifier: item.itemIdentifier ?? data.description,
+                    image: image,
+                    videoURL: nil
+                )
+                newMedias.append(item)
             }
             
-//            if let uiImage = UIImage(data: data) {
-//                if data.count <= 512_000 {
-//                    let image = Image(uiImage: uiImage)
-//                    Log.debug("이미지 압축: \(data.count)")
-//                    images.append(image)
-//                } else {
-//                    if let compressedImage = compressImage(uiImage, targetSizeKB: 512) {
-//                        images.append(compressedImage)
-//                    }
-//                }
-//            }
-            
-            if let movie = try? await item.loadTransferable(type: Movie.self) {
-                videoURLs.append(movie.url)
+            await MainActor.run {
+                uploadMedias = newMedias
             }
         }
-    }
-}
-
-func compressImage(_ image: UIImage, targetSizeKB: Int) -> Image? {
-    let targetSizeBytes = targetSizeKB * 1000
-    var compressionQuality: CGFloat = 1.0
-    var imageData = image.jpegData(compressionQuality: compressionQuality)
-    
-    // 용량이 목표보다 클 경우 반복적으로 압축
-    while let data = imageData, data.count > targetSizeBytes, compressionQuality > 0.1 {
-        compressionQuality -= 0.1
-        imageData = image.jpegData(compressionQuality: compressionQuality)
-    }
-    
-    // 압축 후에도 용량 초과 시 크기 조정
-    if let data = imageData, data.count > targetSizeBytes {
-        let scaleFactor = sqrt(Double(targetSizeBytes) / Double(data.count))
-        let newSize = CGSize(width: image.size.width * scaleFactor, height: image.size.height * scaleFactor)
-        if let resizedImage = resizeImage(image, to: newSize) {
-            imageData = resizedImage.jpegData(compressionQuality: 0.8)
-        }
-    }
-    
-    // 최종 데이터 확인
-    if let finalData = imageData, finalData.count <= targetSizeBytes, let uiImage = UIImage(data: finalData) {
-        Log.debug("이미지 압축: \(finalData.count)")
-        return Image(uiImage: uiImage)
-    }
-    return nil
-}
-
-func resizeImage(_ image: UIImage, to targetSize: CGSize) -> UIImage? {
-    let renderer = UIGraphicsImageRenderer(size: targetSize)
-    return renderer.image { _ in
-        image.draw(in: CGRect(origin: .zero, size: targetSize))
     }
 }
 
