@@ -40,6 +40,10 @@ public final class AnyCreatePostDisplayable: CreatePostDisplayable, ObservableOb
         try await _base.postFiles(files)
     }
     
+    public func postContents(_ content: PostContent) async throws {
+        try await _base.postContents(content)
+    }
+    
     public func checkTokenValidation(_ error: any Error, complete: @escaping () async throws -> ()) async {
         await _base.checkTokenValidation(error, complete: complete)
     }

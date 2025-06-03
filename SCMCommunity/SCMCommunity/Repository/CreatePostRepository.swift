@@ -38,6 +38,15 @@ public final class CreatePostRepository: CreatePostDisplayable {
         return PostFilesEntity(files: transFiles)
     }
     
+    public func postContents(_ content: PostContent) async throws {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let value = CommunityURL.postUpload(access: accessToken, value: content)
+        let result = try await callRequest(value, type: PostResponseDTO.self)
+        
+        Log.debug("🔗 포스트 업로드 성공: \(result.response)")
+    }
+    
     public func checkTokenValidation(_ error: Error, complete: @escaping () async throws -> ()) async {
         if let scmError = error as? SCMError {
             switch scmError {

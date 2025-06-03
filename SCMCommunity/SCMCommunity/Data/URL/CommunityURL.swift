@@ -10,6 +10,7 @@ import SCMNetwork
 
 public enum CommunityURL {
     case fileUpload(access: String, files: [String])
+    case postUpload(access: String, value: PostContent)
     
     var baseURL: String {
         return Secret.baseURL
@@ -17,7 +18,7 @@ public enum CommunityURL {
     
     var method: HTTPMethods {
         switch self {
-        case .fileUpload:
+        default:
             return .post
         }
     }
@@ -25,6 +26,7 @@ public enum CommunityURL {
     var path: String {
         switch self {
         case .fileUpload: "/v1/posts/files"
+        case .postUpload: "/v1/posts"
         }
     }
     
@@ -36,6 +38,16 @@ public enum CommunityURL {
     
     var jsonBody: [String: Any?]? {
         switch self {
+        case let .postUpload(_, value):
+            return [
+                "category": value.categoty,
+                "title": value.title,
+                "content": value.content,
+                "store_id": value.storeID,
+                "latitude": value.latitude,
+                "longitude": value.longitude,
+                "files": value.files
+            ]
         default: return nil
         }
     }
@@ -45,6 +57,12 @@ public enum CommunityURL {
         case let .fileUpload(access, _):
             return [
                 "Content-Type": "multipart/form-data",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .postUpload(access, _):
+            return [
+                "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
                 "Authorization": access
             ]
