@@ -18,11 +18,11 @@ struct CreatePostView: View {
     @State private var titleText: String = ""
     @State private var contentText: String = ""
     
-    @State private var isComplete: Bool = false
-    
     // photosUI
     @State private var selectedItems = [PhotosPickerItem]()
     @State private var uploadMedias: [PostMediaItem] = []
+    
+    @State private var showAlert: Bool = false
     
     private let store: StoreBanner
     
@@ -30,6 +30,15 @@ struct CreatePostView: View {
         var t = Transaction()
         t.animation = .default
         return t
+    }
+    private var isComplete: Bool {
+        let value = !titleText.isEmpty && !contentText.isEmpty
+        return value
+    }
+    
+    private var onWriting: Bool {
+        let value = !titleText.isEmpty || !contentText.isEmpty || !uploadMedias.isEmpty
+        return value
     }
     
     init(store: StoreBanner) {
@@ -56,9 +65,15 @@ struct CreatePostView: View {
                     Text(StringLiterals.close.text)
                         .basicText(.PTBody1, .scmGray90)
                         .asButton {
-                            dismiss()
+                            if !onWriting { dismiss() }
+                            else { showAlert = true }
                         }
                 })
+                .showAlert(
+                    isPresented: $showAlert,
+                    title: StringLiterals.alertTitle.text,
+                    message: StringLiterals.alertMessage.text,
+                    multiAction: { dismiss() })
             }
         }
     }
@@ -285,6 +300,8 @@ private enum StringLiterals: String {
     case completeWrite = "작성 완료"
     case titlePlaceholder = "제목을 15자 이내로 작성해주세요."
     case contentPlaceholder = "주변 소식통에 올릴 포스트 내용을 작성해 주세요.(300자 이내)"
+    case alertTitle = "안내"
+    case alertMessage = "현재 작성 중인 내용이 있습니다. 뒤로가면 해당 내용은 삭제됩니다. 나가시겠습니까?"
     
     var text: String {
         return self.rawValue
