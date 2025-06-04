@@ -5,77 +5,54 @@
 //  Created by Lee Wonsun on 6/3/25.
 //
 
-import Foundation
+import UIKit
 
 public struct MultipartFormData {
-    public struct FormField {
-        let name: String
-        let value: String
-        
-        public init(name: String, value: String) {
-            self.name = name
-            self.value = value
-        }
-    }
+    private let boundary: String
+    private var data: Data
     
-    public struct FileData {
-        let name: String
-        let data: Data
-        let filename: String
-        let mimeType: String
-        
-        public init(name: String, data: Data, filename: String, mimeType: String = "image/jpeg") {
-            self.name = name
-            self.data = data
-            self.filename = filename
-            self.mimeType = mimeType
-        }
-    }
-    
-    let boundary: String
-    let fields: [FormField]
-    let files: [FileData]
-    
-    public init(fields: [FormField] = [], files: [FileData] = []) {
-        self.boundary = "Boundary-\(UUID().uuidString)"
-        self.fields = fields
-        self.files = files
-    }
-    
-    var contentType: String {
+    public var contentType: String {
         return "multipart/form-data; boundary=\(boundary)"
     }
     
-    var httpBody: Data {
-        var body = Data()
-        
-        // 일반 필드들 추가
-        for field in fields {
-            body.append("--\(boundary)\r\n")
-            body.append("Content-Disposition: form-data; name=\"\(field.name)\"\r\n\r\n")
-            body.append("\(field.value)\r\n")
-        }
-        
-        // 파일 데이터들 추가
-        for file in files {
-            body.append("--\(boundary)\r\n")
-            body.append("Content-Disposition: form-data; name=\"\(file.name)\"; filename=\"\(file.filename)\"\r\n")
-            body.append("Content-Type: \(file.mimeType)\r\n\r\n")
-            body.append(file.data)
-            body.append("\r\n")
-        }
-        
-        // 종료 boundary
-        body.append("--\(boundary)--\r\n")
-        
-        return body
+    public var httpBody: Data {
+        return data
     }
-}
-
-extension Data {
-    mutating func append(_ string: String) {
-        if let data = string.data(using: .utf8) {
-            append(data)
-        }
+    
+    public init() {
+        self.boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
+        self.data = Data()
+    }
+    
+    // 텍스트 파라미터 추가
+    public mutating func append(_ value: String, withName name: String) {
+        data.append("--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"\(name)\"\r\n\r\n".data(using: .utf8)!)
+        data.append("\(value)\r\n".data(using: .utf8)!)
+    }
+    
+    // 이미지 데이터 추가
+    public mutating func append(_ image: UIImage, withName name: String, fileName: String = "image.jpg", mimeType: String = "image/jpeg") {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
+        data.append("--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        data.append(imageData)
+        data.append("\r\n".data(using: .utf8)!)
+    }
+    
+    // 동영상 데이터 추가
+    public mutating func append(_ videoURL: URL, withName name: String, fileName: String = "video.mp4", mimeType: String = "video/mp4") throws {
+        let videoData = try Data(contentsOf: videoURL)
+        data.append("--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        data.append(videoData)
+        data.append("\r\n".data(using: .utf8)!)
+    }
+    
+    // Boundary 종료
+    public mutating func finalize() {
+        data.append("--\(boundary)--\r\n".data(using: .utf8)!)
     }
 }

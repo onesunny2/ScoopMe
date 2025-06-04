@@ -60,7 +60,7 @@ extension HTTPRequest: Requestable {
         return request
     }
     
-    public func addMultipartData(_ multipartData: MultipartFormData) -> Self {
+    public func addMultipartData(_ multipartData: MultipartFormData?) -> Self {
         var request = self
         request.multipartData = multipartData
         return request
