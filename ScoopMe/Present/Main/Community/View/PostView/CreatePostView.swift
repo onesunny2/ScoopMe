@@ -208,9 +208,7 @@ extension CreatePostView {
             .asButton({
                 Log.debug("⏭️ 작성완료 버튼 클릭")
                 Task {
-//                    let files = uploadMedias.map { $0.itemIdentifier }
-//                    await postFiles(files)
-                    await postContents()
+                    await postFiles()
                     handleToastMessage()
                 }
             }, disabled: !isComplete)
@@ -238,36 +236,59 @@ extension CreatePostView {
         
         for item in items {
             guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+            guard let utType = UTTypeHelper.getUTTypeFromImageData(data) else { return }
             
             if let uiImage = UIImage(data: data) {
-                let image = Image(uiImage: uiImage)
                 let item = PostMediaItem(
                     itemIdentifier: item.itemIdentifier ?? data.description,
-                    image: image,
-                    videoURL: nil
+                    image: uiImage,
+                    videoURL: nil,
+                    utType: String(utType.preferredMIMEType ?? "image/jpeg")
                 )
                 newMedias.append(item)
             }
             
-            await MainActor.run {
-                uploadMedias = newMedias
-            }
+            uploadMedias = newMedias
+            
         }
     }
     
     // post 통신 (1차는 파일 업로드, 2차는 업로드한 파일 통신받은 후 게시글 post)
-    private func postFiles(_ files: [String]) async {
+    private func postFiles() async {
         do {
-            let files = try await repository.postFiles(files)
+//            let files = try await repository.postFiles(files)
+            var files: [FileData] = []
+            uploadMedias.forEach { item in
+                guard let image = item.image, item.isImage else { return }
+                let file = FileData.image(image, fileName: item.itemIdentifier, mimeType: item.utType)
+                Log.debug("🔗 업로드 타입: \(item.utType)")
+                files.append(file)
+                // TODO: 비디오 추가 필요
+            }
+            
+            let urls = try await repository.postFiles(files)
+            
+            // url 전달받아 post 업로드 통신
+            await postContents(urls.files)
+            
         } catch {
             await repository.checkTokenValidation(error) {
-                let files = try await repository.postFiles(files)
+                var files: [FileData] = []
+                uploadMedias.forEach { item in
+                    guard let image = item.image, item.isImage else { return }
+                    let file = FileData.image(image, fileName: item.itemIdentifier, mimeType: item.utType)
+                    Log.debug("🔗 업로드 타입: \(item.utType)")
+                    files.append(file)
+                    // TODO: 비디오 추가 필요
+                }
+                
+                let urls = try await repository.postFiles(files)
             }
         }
     }
     
     // post content 업로드
-    private func postContents() async {
+    private func postContents(_ files: [String]) async {
         do {
             let content = PostContent(
                 categoty: postStore.category,
@@ -276,11 +297,22 @@ extension CreatePostView {
                 storeID: postStore.storeID,
                 latitude: postStore.latitude,
                 longitude: postStore.longitude,
-                files: nil
+                files: files
             )
             try await repository.postContents(content)
         } catch {
-            Log.error("🔗 post 업로드 실패: \(error)")
+            await repository.checkTokenValidation(error) {
+                let content = PostContent(
+                    categoty: postStore.category,
+                    title: titleText,
+                    content: contentText,
+                    storeID: postStore.storeID,
+                    latitude: postStore.latitude,
+                    longitude: postStore.longitude,
+                    files: files
+                )
+                try await repository.postContents(content)
+            }
         }
     }
     

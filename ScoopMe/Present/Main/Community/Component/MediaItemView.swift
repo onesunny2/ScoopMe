@@ -15,7 +15,7 @@ struct MediaItemView: View {
     
     var body: some View {
         if let image = item.image, item.isImage {
-            image
+            Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 68, height: 68)
