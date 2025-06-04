@@ -20,6 +20,8 @@ public struct StoreDetailInfoEntity: Hashable {
     public let rating: String
     public let review: String
     public let distance: String
+    public let latitude: Double
+    public let longitude: Double
     
     public init(
         storeID: String,
@@ -33,7 +35,9 @@ public struct StoreDetailInfoEntity: Hashable {
         time: String,
         rating: String,
         review: String,
-        distance: String
+        distance: String,
+        latitude: Double,
+        longitude: Double
     ) {
         self.storeID = storeID
         self.storeName = storeName
@@ -47,5 +51,7 @@ public struct StoreDetailInfoEntity: Hashable {
         self.rating = rating
         self.review = review
         self.distance = distance
+        self.latitude = latitude
+        self.longitude = longitude
     }
 }

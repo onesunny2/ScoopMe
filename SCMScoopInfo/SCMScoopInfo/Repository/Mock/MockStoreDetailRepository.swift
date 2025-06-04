@@ -40,7 +40,9 @@ public final class MockStoreDetailRepository: StoreDetailDisplayable {
             time: "매주 월~토 10:00 ~ 19:00",
             rating: "4.9",
             review: "(333)",
-            distance: "2.2km"
+            distance: "2.2km",
+            latitude: 0.0,
+            longitude: 0.0
         )
     }
     

@@ -9,7 +9,11 @@ import SwiftUI
 
 struct StoreInfoBannerCell: View {
     
-    let store: StoreBanner
+    private let store: StoreBanner
+    
+    init(store: StoreBanner) {
+        self.store = store
+    }
     
     var body: some View {
         HStack(alignment: .center, spacing: 0) {

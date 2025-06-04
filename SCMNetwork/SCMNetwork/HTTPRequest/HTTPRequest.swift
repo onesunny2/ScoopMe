@@ -14,6 +14,7 @@ public struct HTTPRequest {
     private var path: String = ""
     private var parameters: [String: String?]? = nil
     private var jsonBody: [String: Any]? = nil
+    private var multipartData: MultipartFormData? = nil 
     private var httpHeaders: [String: String] = [:]
     private var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
     private var successStatusCodes: Set<Int>
@@ -59,6 +60,12 @@ extension HTTPRequest: Requestable {
         return request
     }
     
+    public func addMultipartData(_ multipartData: MultipartFormData?) -> Self {
+        var request = self
+        request.multipartData = multipartData
+        return request
+    }
+    
     public func addHeaders(_ headers: [String: String]) -> Self {
         var request = self
         request.httpHeaders = headers
@@ -98,7 +105,10 @@ extension HTTPRequest: Requestable {
             }
             
         case .post, .put:
-            if let jsonBody {
+            if let multipartData = multipartData {
+                request.setValue(multipartData.contentType, forHTTPHeaderField: "Content-Type")
+                request.httpBody = multipartData.httpBody
+            } else if let jsonBody {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
                     request.httpBody = jsonData

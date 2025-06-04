@@ -8,11 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		43B03AAA2DE97ECE0057AD45 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43B03AA92DE97ECE0057AD45 /* Secret.xcconfig */; };
+		43FDF0442DF06472004C10E9 /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF0432DF06472004C10E9 /* SCMLogger.framework */; };
+		43FDF0452DF06472004C10E9 /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF0432DF06472004C10E9 /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43FDF0482DF06475004C10E9 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF0472DF06475004C10E9 /* SCMNetwork.framework */; };
+		43FDF0492DF06475004C10E9 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF0472DF06475004C10E9 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43FDF04B2DF06479004C10E9 /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF04A2DF06479004C10E9 /* SCMLogin.framework */; };
+		43FDF04C2DF06479004C10E9 /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF04A2DF06479004C10E9 /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43FDF0462DF06472004C10E9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				43FDF0452DF06472004C10E9 /* SCMLogger.framework in Embed Frameworks */,
+				43FDF0492DF06475004C10E9 /* SCMNetwork.framework in Embed Frameworks */,
+				43FDF04C2DF06479004C10E9 /* SCMLogin.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		43B03A552DE8732F0057AD45 /* SCMCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SCMCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43B03AA92DE97ECE0057AD45 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		43FDF0432DF06472004C10E9 /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43FDF0472DF06475004C10E9 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43FDF04A2DF06479004C10E9 /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -44,6 +69,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43FDF0442DF06472004C10E9 /* SCMLogger.framework in Frameworks */,
+				43FDF0482DF06475004C10E9 /* SCMNetwork.framework in Frameworks */,
+				43FDF04B2DF06479004C10E9 /* SCMLogin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +83,7 @@
 			children = (
 				43B03AA92DE97ECE0057AD45 /* Secret.xcconfig */,
 				43B03A572DE8732F0057AD45 /* SCMCommunity */,
+				43FDF0422DF06472004C10E9 /* Frameworks */,
 				43B03A562DE8732F0057AD45 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,6 +94,16 @@
 				43B03A552DE8732F0057AD45 /* SCMCommunity.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		43FDF0422DF06472004C10E9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43FDF04A2DF06479004C10E9 /* SCMLogin.framework */,
+				43FDF0472DF06475004C10E9 /* SCMNetwork.framework */,
+				43FDF0432DF06472004C10E9 /* SCMLogger.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -88,6 +127,7 @@
 				43B03A512DE8732F0057AD45 /* Sources */,
 				43B03A522DE8732F0057AD45 /* Frameworks */,
 				43B03A532DE8732F0057AD45 /* Resources */,
+				43FDF0462DF06472004C10E9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
