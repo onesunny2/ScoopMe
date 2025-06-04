@@ -256,6 +256,17 @@ extension CreatePostView {
     // post 통신 (1차는 파일 업로드, 2차는 업로드한 파일 통신받은 후 게시글 post)
     private func postFiles() async {
         do {
+            try await requestFileAndContents()
+            
+        } catch {
+            await repository.checkTokenValidation(error) {
+                try await requestFileAndContents()
+            }
+        }
+    }
+    
+    private func requestFileAndContents() async throws {
+        if !uploadMedias.isEmpty {
             var files: [FileData] = []
             uploadMedias.forEach { item in
                 guard let image = item.image, item.isImage else { return }
@@ -269,50 +280,33 @@ extension CreatePostView {
             
             // url 전달받아 post 업로드 통신
             await postContents(urls.files)
-            
-        } catch {
-            await repository.checkTokenValidation(error) {
-                var files: [FileData] = []
-                uploadMedias.forEach { item in
-                    guard let image = item.image, item.isImage else { return }
-                    let file = FileData.image(image, fileName: item.itemIdentifier, mimeType: item.utType)
-                    Log.debug("🔗 업로드 타입: \(item.utType)")
-                    files.append(file)
-                    // TODO: 비디오 추가 필요
-                }
-                
-                let urls = try await repository.postFiles(files)
-            }
+        } else {
+            await postContents([])
         }
     }
     
     // post content 업로드
     private func postContents(_ files: [String]) async {
         do {
-            let content = PostContent(
-                categoty: postStore.category,
-                title: titleText,
-                content: contentText,
-                storeID: postStore.storeID,
-                latitude: postStore.latitude,
-                longitude: postStore.longitude,
-                files: files
-            )
-            try await repository.postContents(content)
+            try await requestContents(files)
         } catch {
             await repository.checkTokenValidation(error) {
-                let content = PostContent(
-                    categoty: postStore.category,
-                    title: titleText,
-                    content: contentText,
-                    storeID: postStore.storeID,
-                    latitude: postStore.latitude,
-                    longitude: postStore.longitude,
-                    files: files
-                )
-                try await repository.postContents(content)
+                try await requestContents(files)
             }
         }
+    }
+    
+    private func requestContents(_ files: [String]) async throws {
+        let content = PostContent(
+            categoty: postStore.category,
+            title: titleText,
+            content: contentText,
+            storeID: postStore.storeID,
+            latitude: postStore.latitude,
+            longitude: postStore.longitude,
+            files: files
+        )
+        try await repository.postContents(content)
     }
     
     // toastMessage 관리
