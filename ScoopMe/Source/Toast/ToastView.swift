@@ -13,22 +13,31 @@ struct ToastView: View {
     let message: ToastMessage
     
     var body: some View {
+        ZStack {
+            Color.scmGray90.opacity(0.4)
+                .ignoresSafeArea()
+            
+            messageView
+        }
+    }
+    
+    private var messageView: some View {
         HStack(alignment: .center, spacing: 4) {
             message.type.icon
-                .basicImage(width: 20, color: .scmBrightForsythia)
+                .basicImage(width: 24, color: .scmBrightForsythia)
             
             Text(message.text)
-                .basicText(.PTBody2, message.type.color)
+                .basicText(.PTBody1, message.type.color)
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(.scmGray75.opacity(0.5))
+                .fill(.scmGray15.opacity(0.7))
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(message.type.color, lineWidth: 1)
+                        .stroke(message.type.color, lineWidth: 1.5)
                 )
         )
         .defaultHorizontalPadding()

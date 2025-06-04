@@ -256,7 +256,6 @@ extension CreatePostView {
     // post 통신 (1차는 파일 업로드, 2차는 업로드한 파일 통신받은 후 게시글 post)
     private func postFiles() async {
         do {
-//            let files = try await repository.postFiles(files)
             var files: [FileData] = []
             uploadMedias.forEach { item in
                 guard let image = item.image, item.isImage else { return }
