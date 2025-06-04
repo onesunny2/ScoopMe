@@ -25,17 +25,17 @@ public final class CreatePostRepository: CreatePostDisplayable {
         self.network = SCMNetworkImpl()
     }
     
-    public func postFiles(_ files: [String]) async throws -> PostFilesEntity {
+    public func postFiles(_ files: [FileData]) async throws -> PostFilesEntity {
         
         let accessToken = loginTokenManager.fetchToken(.accessToken)
         let value = CommunityURL.fileUpload(access: accessToken, files: files)
-        let result = try await callRequest(value, type: FileResponseDTO.self)
+        let result = try await callMultipartRequest(value, type: FileResponseDTO.self)
         
-        let transFiles = result.response.files.map { Secret.baseURL + "/v1" + $0 }
+        let urls = result.response.files
         
-        Log.debug("🔗 파일 업로드 성공: \(transFiles)")
+        Log.debug("🔗 파일 업로드 성공: \(urls)")
         
-        return PostFilesEntity(files: transFiles)
+        return PostFilesEntity(files: urls)
     }
     
     public func postContents(_ content: PostContent) async throws {
@@ -82,6 +82,21 @@ extension CreatePostRepository {
             .addPath(value.path)
             .addParameters(value.parameters)
             .addJSONBody(value.jsonBody)
+            .addHeaders(value.headers)
+        
+        return try await network.fetchData(request, T.self)
+    }
+    
+    private func callMultipartRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T> {
+        let request = HTTPRequest(
+            scheme: .http,
+            method: value.method,
+            successCodes: [200]
+        )
+            .addBaseURL(value.baseURL)
+            .addPath(value.path)
+            .addParameters(value.parameters)
+            .addMultipartData(value.multipartData!)
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)

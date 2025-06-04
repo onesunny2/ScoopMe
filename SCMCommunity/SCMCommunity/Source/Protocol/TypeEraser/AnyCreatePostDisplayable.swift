@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMNetwork
 
 public final class AnyCreatePostDisplayable: CreatePostDisplayable, ObservableObject {
     private let _base: any CreatePostDisplayable
@@ -36,7 +37,7 @@ public final class AnyCreatePostDisplayable: CreatePostDisplayable, ObservableOb
         self.alertMessage = base.alertMessage
     }
     
-    public func postFiles(_ files: [String]) async throws -> PostFilesEntity {
+    public func postFiles(_ files: [FileData]) async throws -> PostFilesEntity {
         try await _base.postFiles(files)
     }
     

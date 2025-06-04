@@ -5,11 +5,16 @@
 //  Created by Lee Wonsun on 6/3/25.
 //
 
-import Foundation
+import UIKit
 import SCMNetwork
 
+public enum FileData {
+    case image(UIImage, fileName: String, mimeType: String)
+    case video(URL, fileName: String, mimeType: String)
+}
+
 public enum CommunityURL {
-    case fileUpload(access: String, files: [String])
+    case fileUpload(access: String, files: [FileData])
     case postUpload(access: String, value: PostContent)
     
     var baseURL: String {
@@ -51,6 +56,27 @@ public enum CommunityURL {
         default: return nil
         }
     }
+    
+    var multipartData: MultipartFormData? {
+         switch self {
+         case let .fileUpload(_, files):
+             var multipartData = MultipartFormData()
+             
+             // 파일 추가
+             for file in files {
+                 switch file {
+                 case .image(let image, let fileName, let mimeType):
+                     multipartData.append(image, withName: "files", fileName: fileName, mimeType: mimeType)
+                 case .video(let videoURL, let fileName, let mimeType):
+                     try? multipartData.append(videoURL, withName: "files", fileName: fileName, mimeType: mimeType)
+                 }
+             }
+             multipartData.finalize()
+             return multipartData
+         default:
+             return nil
+         }
+     }
     
     var headers: [String: String] {
         switch self {
