@@ -8,11 +8,6 @@
 import UIKit
 import SCMNetwork
 
-public enum FileData {
-    case image(UIImage, fileName: String, mimeType: String)
-    case video(URL, fileName: String, mimeType: String)
-}
-
 public enum CommunityURL {
     case fileUpload(access: String, files: [FileData])
     case postUpload(access: String, value: PostContent)
