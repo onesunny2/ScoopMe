@@ -20,7 +20,7 @@ public struct MultipartFormData {
     }
     
     public init() {
-        self.boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
+        self.boundary = "----WebKitFormBoundary\(UUID().uuidString)"
         self.data = Data()
     }
     
