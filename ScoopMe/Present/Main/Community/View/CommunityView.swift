@@ -14,6 +14,9 @@ struct CommunityView: View {
     @StateObject private var repository: AnyCommunityPostDisplayable
     
     @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
+    
+    // pagination
+    @State private var isLoading: Bool = false
     @State private var cursorID: String? = nil
     
     @State private var searchKeyword: String = ""
@@ -114,14 +117,28 @@ extension CommunityView {
     }
     
     private var postContentsView: some View {
-        ForEach(posts, id: \.postID) { post in
-            Rectangle()
-                .fill(.scmBrightSprout)
-                .frame(height: 1)
-            CommunityPostCell(post: post)
-                .padding(.vertical, 12)
+        LazyVStack {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(posts, id: \.postID) { post in
+                    Rectangle()
+                        .fill(.scmBrightSprout)
+                        .frame(height: 1)
+                    CommunityPostCell(post: post)
+                        .padding(.vertical, 12)
+                        .onAppear {
+                            if (post.postID == posts.last?.postID) && cursorID != "0" {
+                                Task { await getCommunityPost() }
+                            }
+                        }
+                }
+            }
+            .padding(.top, 6)
+            
+            if isLoading {
+                ProgressView()
+                    .padding(4)
+            }
         }
-        .padding(.top, 6)
     }
 }
 
@@ -131,12 +148,17 @@ extension CommunityView {
     // 위치기반 포스트 호출
     private func getCommunityPost() async {
         do {
+            isLoading = true
+            
             let posts = try await repository.getCommunityPost(
                 max: Int(volume * 1000),
                 orderBy: selectedFilter,
                 next: cursorID
             )
-            self.posts = posts.data
+            self.posts.append(contentsOf: posts.data)
+            cursorID = posts.next
+            
+            isLoading = false
         } catch {
             Log.error("데이터 로드 실패: \(error)")
         }
@@ -150,6 +172,7 @@ extension CommunityView {
             try? await Task.sleep(for: .seconds(0.5))
             
             if !Task.isCancelled {
+                self.posts = []
                 await getCommunityPost()
             }
         }
