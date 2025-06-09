@@ -24,6 +24,7 @@ struct CreatePostView: View {
     // photosUI
     @State private var selectedItems = [PhotosPickerItem]()
     @State private var uploadMedias: [PostMediaItem] = []
+    private let maxPhotoCount: Int = 5
     
     @State private var showAlert: Bool = false  // 닫기 눌렀을 때 알럿창 용도
     @State private var showToastMessage: Bool = false  // 작성 완료한 후 토스트 메시지 용도
@@ -164,7 +165,7 @@ extension CreatePostView {
     private var uploadButton: some View {
         PhotosPicker(
             selection: $selectedItems,
-            maxSelectionCount: 3,
+            maxSelectionCount: 5,
             selectionBehavior: .ordered,
             matching: .any(of: [.images, .videos]),
             photoLibrary: .shared()
@@ -174,9 +175,9 @@ extension CreatePostView {
                 .overlay(alignment: .center) {
                     VStack(alignment: .center, spacing: 2) {
                         Image(.cameraFill)
-                            .basicImage(width: 26, color: (uploadMedias.count == 3) ? .scmBlackSprout : .scmGray60)
-                        Text("\(uploadMedias.count) / 3")
-                            .basicText(.PTBody2, (uploadMedias.count == 3) ? .scmBlackSprout : .scmGray60)
+                            .basicImage(width: 26, color: (uploadMedias.count == maxPhotoCount) ? .scmBlackSprout : .scmGray60)
+                        Text("\(uploadMedias.count) / \(maxPhotoCount)")
+                            .basicText(.PTBody2, (uploadMedias.count == maxPhotoCount) ? .scmBlackSprout : .scmGray60)
                     }
                 }
                 .frame(width: 68, height: 68)
@@ -189,12 +190,14 @@ extension CreatePostView {
     }
     
     private var selectedAssets: some View {
-        HStack(alignment: .center, spacing: 8) {
-            
-            ForEach(uploadMedias, id: \.itemIdentifier) { item in
-                MediaItemView(item: item) {
-                    withTransaction(transaction) {
-                        deleteMedia(item)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .center, spacing: 8) {
+                
+                ForEach(uploadMedias, id: \.itemIdentifier) { item in
+                    MediaItemView(item: item) {
+                        withTransaction(transaction) {
+                            deleteMedia(item)
+                        }
                     }
                 }
             }

@@ -28,6 +28,7 @@ struct MultiImageCell: View {
     let width: CGFloat
     let height: CGFloat
     var moreImage: Bool = false
+    var extraImagesCount: String? = nil
     
     var likeButtonAction: (() -> Void)?
     
@@ -118,9 +119,18 @@ struct MultiImageCell: View {
                 mainCornerRadius
             )
             .overlay(alignment: .center) {
-                if moreImage {
-                    Color.scmGray90.opacity(0.4)
-                    Text("Test")
+                // 이미지가 3개 이상인 경우 더 많은 경우 사용
+                if let extraImagesCount, moreImage {
+                    Color.scmGray90.opacity(0.5)
+                        .clippedUnevenRectangle(
+                            subCornerRadius,
+                            subCornerRadius,
+                            mainCornerRadius,
+                            mainCornerRadius
+                        )
+                    
+                    Text(extraImagesCount)
+                        .basicText(.JNTitle1, .scmBrightSprout.opacity(0.7))
                 }
             }
         }

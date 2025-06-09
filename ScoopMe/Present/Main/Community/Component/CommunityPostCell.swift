@@ -69,7 +69,8 @@ extension CommunityPostCell {
             switch postImage.count {
             case 1: postOneImageView(postImage[0])
             case 2: postTwoImageView(first: postImage[0], second: postImage[1])
-            case 3...: postThreeImageView(urls: postImage)
+            case 3: postThreeImageView(urls: postImage)
+            case 4...5: postOverThreeImageView(urls: postImage)
             default: postOneImageView(postImage[0])
             }
         }
@@ -120,6 +121,21 @@ extension CommunityPostCell {
             images: urls,
             width: 268,
             height: 240,
+            moreImage: true
+        )
+    }
+    
+    private func postOverThreeImageView(urls: [String]) -> some View {
+        MultiImageCell(
+            imageHelper: imageHelper,
+            onlyImage: true,
+            likeStatus: false,
+            picchelinStatus: false,
+            images: urls,
+            width: 268,
+            height: 240,
+            moreImage: true,
+            extraImagesCount: "+ \((post.mediaFiles?.count ?? 3) - 3)",
             likeButtonAction: nil
         )
     }
