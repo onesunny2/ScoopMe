@@ -39,8 +39,8 @@ public enum CommunityURL {
         case let .getCommunityPost(_, value):
             return [
                 "category": value.category,
-                "latitude": value.latitude,
                 "longitude": value.longitude,
+                "latitude": value.latitude,
                 "maxDistance": value.maxDistance,
                 "limit": "\(value.limit)",
                 "next": value.next,
