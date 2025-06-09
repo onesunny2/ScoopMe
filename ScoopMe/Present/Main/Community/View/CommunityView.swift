@@ -14,6 +14,7 @@ struct CommunityView: View {
     @StateObject private var repository: AnyCommunityPostDisplayable
     
     @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
+    @State private var cursorID: String? = nil
     
     @State private var searchKeyword: String = ""
     @State private var volume: CGFloat = 0.3
@@ -133,9 +134,9 @@ extension CommunityView {
             let posts = try await repository.getCommunityPost(
                 max: Int(volume * 1000),
                 orderBy: selectedFilter,
-                next: nil
+                next: cursorID
             )
-            self.posts = posts
+            self.posts = posts.data
         } catch {
             Log.error("데이터 로드 실패: \(error)")
         }

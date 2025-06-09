@@ -36,7 +36,7 @@ public final class AnyCommunityPostDisplayable: CommunityPostDisplayable, Observ
         self.lastStoreID = base.lastStoreID
     }
     
-    public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> [CommunityPostEntity] {
+    public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination {
         try await _base.getCommunityPost(max: distance, orderBy: orderBy, next: next)
     }
     

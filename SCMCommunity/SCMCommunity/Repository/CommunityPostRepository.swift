@@ -33,7 +33,7 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         max distance: Int = 300,
         orderBy: TimelineFilter = .최신순,
         next: String? = nil
-    ) async throws -> [CommunityPostEntity] {
+    ) async throws -> postForPagination {
         
         let accessToken = loginTokenManager.fetchToken(.accessToken)
         let geolocationPost = GeolocationPost(
@@ -96,7 +96,9 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
             entities.append(entity)
         }
         
-        return entities
+        let nextCursor = result.response.nextCursor
+        
+        return (entities, nextCursor)
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
