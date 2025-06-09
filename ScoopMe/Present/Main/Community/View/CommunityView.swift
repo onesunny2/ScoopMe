@@ -40,8 +40,10 @@ struct CommunityView: View {
                 distanceSliderCell
                 timelineTitleAndFilter
                 
-                ScrollView(.vertical, showsIndicators: false) {
+                if !posts.isEmpty {
                     postContentsView
+                } else {
+                    noResultsView
                 }
             }
             .defaultHorizontalPadding()
@@ -116,28 +118,40 @@ extension CommunityView {
         .padding(.bottom, -14)
     }
     
+    @ViewBuilder
     private var postContentsView: some View {
-        LazyVStack {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(posts, id: \.postID) { post in
-                    Rectangle()
-                        .fill(.scmBrightSprout)
-                        .frame(height: 1)
-                    CommunityPostCell(post: post)
-                        .padding(.vertical, 12)
-                        .onAppear {
-                            if (post.postID == posts.last?.postID) && cursorID != "0" {
-                                Task { await getCommunityPost() }
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(posts, id: \.postID) { post in
+                        Rectangle()
+                            .fill(.scmBrightSprout)
+                            .frame(height: 1)
+                        CommunityPostCell(post: post)
+                            .padding(.vertical, 12)
+                            .onAppear {
+                                if (post.postID == posts.last?.postID) && cursorID != "0" {
+                                    Task { await getCommunityPost() }
+                                }
                             }
-                        }
+                    }
+                }
+                .padding(.top, 6)
+                
+                if isLoading {
+                    ProgressView()
+                        .padding(4)
                 }
             }
-            .padding(.top, 6)
-            
-            if isLoading {
-                ProgressView()
-                    .padding(4)
-            }
+        }
+    }
+    
+    private var noResultsView: some View {
+        VStack {
+            Spacer()
+            Text(StringLiterals.noResults.text)
+                .basicText(.PTBody1, .scmGray90)
+            Spacer()
         }
     }
 }
@@ -185,6 +199,7 @@ private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case timelineTitle = "포스트"
     case distance = "범위"
+    case noResults = "조건에 맞는 포스트가 없습니다 :<"
     
     var text: String {
         return self.rawValue
