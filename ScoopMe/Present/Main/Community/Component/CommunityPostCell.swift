@@ -12,8 +12,11 @@ import SCMImageRequest
 struct CommunityPostCell: View {
     
     private let imageHelper: ImageHelper
+    private var firstWidth: CGFloat {
+        return UIScreen.main.bounds.size.width - 40
+    }
     private var secondWidth: CGFloat {
-        return (UIScreen.main.bounds.size.width - 40) / 2
+        return (UIScreen.main.bounds.size.width - 44) / 2
     }
     let post: CommunityPostEntity
     
@@ -81,7 +84,7 @@ extension CommunityPostCell {
             bottomTrailing: 8,
             topTrailing: 8
         )
-        .frame(height: 240)
+        .frame(width: firstWidth, height: 240)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .contentShape(RoundedRectangle(cornerRadius: 8))
     }

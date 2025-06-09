@@ -27,6 +27,7 @@ struct MultiImageCell: View {
     let images: [String]
     let width: CGFloat
     let height: CGFloat
+    var moreImage: Bool = false
     
     var likeButtonAction: (() -> Void)?
     
@@ -116,6 +117,12 @@ struct MultiImageCell: View {
                 mainCornerRadius,
                 mainCornerRadius
             )
+            .overlay(alignment: .center) {
+                if moreImage {
+                    Color.scmGray90.opacity(0.4)
+                    Text("Test")
+                }
+            }
         }
     }
 }
