@@ -46,7 +46,10 @@ struct CommunityView: View {
             .task {
                 await getCommunityPost()
             }
-            .onChange(of: volume) { newVolume in
+            .onChange(of: volume) { _ in
+                applyDebounceForRequestPost()
+            }
+            .onChange(of: selectedFilter) { _ in
                 applyDebounceForRequestPost()
             }
         }

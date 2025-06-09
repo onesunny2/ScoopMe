@@ -29,7 +29,11 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         self.network = SCMNetworkImpl()
     }
     
-    public func getCommunityPost(max distance: Int = 300, orderBy: TimelineFilter = .최신순, next: String? = nil) async throws -> [CommunityPostEntity] {
+    public func getCommunityPost(
+        max distance: Int = 300,
+        orderBy: TimelineFilter = .최신순,
+        next: String? = nil
+    ) async throws -> [CommunityPostEntity] {
         
         let accessToken = loginTokenManager.fetchToken(.accessToken)
         let geolocationPost = GeolocationPost(
@@ -45,8 +49,16 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         let result = try await callRequest(value, type: PostSummaryPaginationResponseDTO.self)
         
         var entities: [CommunityPostEntity] = []
+        var responses = result.response.data
         
-        for response in result.response.data {
+        switch orderBy {
+        case .최신순:
+            responses.sort { Date.from(iso8601String: $0.createdAt) ?? Date() > Date.from(iso8601String: $1.createdAt) ?? Date() }
+        case .좋아요순:
+            responses.sort { $0.store?.pickCount ?? 0 > $1.store?.pickCount ?? 0 }
+        }
+        
+        for response in responses {
             let creator = Creator(
                 id: response.creator.userId,
                 nickname: response.creator.nick,
