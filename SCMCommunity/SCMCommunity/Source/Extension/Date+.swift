@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Date {
+public extension Date {
     /// ISO8601 문자열을 Date로 변환
     static func from(iso8601String: String) -> Date? {
         let formatter = ISO8601DateFormatter()

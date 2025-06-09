@@ -55,7 +55,7 @@ struct CommunityView: View {
             .onChange(of: volume) { _ in
                 applyDebounceForRequestPost()
             }
-            .onChange(of: selectedFilter) { _ in
+            .onChange(of: selectedFilter) { newFilter in
                 applyDebounceForRequestPost()
             }
         }
@@ -99,7 +99,6 @@ extension CommunityView {
             
             Spacer()
             
-            // TODO: repostory 생기면 변경필요
             HStack(alignment: .center, spacing: 4) {
                 Text(selectedFilter.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
@@ -131,7 +130,7 @@ extension CommunityView {
                             .padding(.vertical, 12)
                             .onAppear {
                                 if (post.postID == posts.last?.postID) && cursorID != "0" {
-                                    Task { await getCommunityPost() }
+                                    Task { await getCommunityPostForPagination() }
                                 }
                             }
                     }
@@ -169,6 +168,25 @@ extension CommunityView {
                 orderBy: selectedFilter,
                 next: cursorID
             )
+            self.posts = posts.data
+            cursorID = posts.next
+            
+            isLoading = false
+        } catch {
+            Log.error("데이터 로드 실패: \(error)")
+        }
+    }
+    
+    // 페이지네이션 전용
+    private func getCommunityPostForPagination() async {
+        do {
+            isLoading = true
+            
+            let posts = try await repository.getCommunityPost(
+                max: Int(volume * 1000),
+                orderBy: selectedFilter,
+                next: cursorID
+            )
             self.posts.append(contentsOf: posts.data)
             cursorID = posts.next
             
@@ -186,7 +204,6 @@ extension CommunityView {
             try? await Task.sleep(for: .seconds(0.5))
             
             if !Task.isCancelled {
-                self.posts = []
                 await getCommunityPost()
             }
         }
