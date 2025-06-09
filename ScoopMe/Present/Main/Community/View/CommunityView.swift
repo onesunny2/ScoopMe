@@ -84,11 +84,6 @@ extension CommunityView {
                 .defaultHorizontalPadding()
             }
         }
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.scmGray45, lineWidth: 1)
-        )
     }
     
     private var timelineTitleAndFilter: some View {
