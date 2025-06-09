@@ -38,7 +38,6 @@ struct NukeRequestImageCell: View {
                 }
             }
             .pipeline(.shared) // Nuke의 캐싱 파이프라인 명시
-            .processors([.resize(width: UIScreen.main.bounds.width)])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
         } else {

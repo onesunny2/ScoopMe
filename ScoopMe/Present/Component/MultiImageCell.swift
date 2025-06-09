@@ -20,13 +20,14 @@ struct MultiImageCell: View {
     }
     
     let imageHelper: ImageHelper
+    var onlyImage: Bool = false
     let likeStatus: Bool
     let picchelinStatus: Bool
     let images: [String]
     let width: CGFloat
     let height: CGFloat
     
-    var likeButtonAction: () -> Void
+    var likeButtonAction: (() -> Void)?
     
     var body: some View {
         HStack(alignment: .center, spacing: 4) {
@@ -36,29 +37,48 @@ struct MultiImageCell: View {
         .frame(height: height)
     }
     
+    @ViewBuilder
     private var mainImage: some View {
-        NukeRequestImageCell(
-            imageHelper: imageHelper,
-            url: images[at: 0],
-            topLeading: cornerRadius,
-            bottomLeading: cornerRadius,
-            bottomTrailing: cornerRadius,
-            topTrailing: cornerRadius
-        )
-        .frame(width: width, height: height)
-        .clippedUnevenRectangle(
-            cornerRadius,
-            cornerRadius,
-            cornerRadius,
-            cornerRadius
-        )
-        .badgeOverlay(
-            likeStatus: likeStatus,
-            picchelinStatus: picchelinStatus,
-            likeOpacity: 1,
-            padding: 8
-        ) {
-            likeButtonAction()
+        if onlyImage {
+            NukeRequestImageCell(
+                imageHelper: imageHelper,
+                url: images[at: 0],
+                topLeading: cornerRadius,
+                bottomLeading: cornerRadius,
+                bottomTrailing: cornerRadius,
+                topTrailing: cornerRadius
+            )
+            .frame(width: width, height: height)
+            .clippedUnevenRectangle(
+                cornerRadius,
+                cornerRadius,
+                cornerRadius,
+                cornerRadius
+            )
+        } else {
+            NukeRequestImageCell(
+                imageHelper: imageHelper,
+                url: images[at: 0],
+                topLeading: cornerRadius,
+                bottomLeading: cornerRadius,
+                bottomTrailing: cornerRadius,
+                topTrailing: cornerRadius
+            )
+            .frame(width: width, height: height)
+            .clippedUnevenRectangle(
+                cornerRadius,
+                cornerRadius,
+                cornerRadius,
+                cornerRadius
+            )
+            .badgeOverlay(
+                likeStatus: likeStatus,
+                picchelinStatus: picchelinStatus,
+                likeOpacity: 1,
+                padding: 8
+            ) {
+                likeButtonAction?()
+            }
         }
     }
     
