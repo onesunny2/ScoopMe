@@ -128,7 +128,7 @@ extension CommunityView {
             let posts = try await repository.getCommunityPost()
             self.posts = posts
         } catch {
-            Log.error("데이터 로드 실패")
+            Log.error("데이터 로드 실패: \(error)")
         }
     }
 }

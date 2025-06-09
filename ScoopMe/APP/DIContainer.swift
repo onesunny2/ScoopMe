@@ -32,7 +32,7 @@ final class DIContainer {
         
         self.imageHelper = ImageHelper.shared
         
-        let communityRepo = MockCommunityPostRepository()
+        let communityRepo = CommunityPostRepository()
         self.communityPostRepository = AnyCommunityPostDisplayable(communityRepo)
         
         let createPostRepo = CreatePostRepository()

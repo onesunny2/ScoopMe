@@ -247,9 +247,8 @@ extension CreatePostView {
                 )
                 newMedias.append(item)
             }
-            
+
             uploadMedias = newMedias
-            
         }
     }
     

@@ -19,7 +19,9 @@ struct CommunityPostCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             creatorView
-            postImageView
+            if let postImage = post.mediaFiles, !postImage.isEmpty {
+                postImageView
+            }
             postContentsView
         }
     }
