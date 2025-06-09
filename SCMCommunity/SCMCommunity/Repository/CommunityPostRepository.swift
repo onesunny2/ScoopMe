@@ -29,13 +29,16 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         self.network = SCMNetworkImpl()
     }
     
-    public func getCommunityPost() async throws -> [CommunityPostEntity] {
+    public func getCommunityPost(max distance: Int = 300, orderBy: TimelineFilter = .최신순, next: String? = nil) async throws -> [CommunityPostEntity] {
         
         let accessToken = loginTokenManager.fetchToken(.accessToken)
         let geolocationPost = GeolocationPost(
             latitude: "\(locationManager.currentLocation.coordinate.latitude)",
-            longitude: "\(locationManager.currentLocation.coordinate.longitude)", maxDistance: "300",
-            limit: 5
+            longitude: "\(locationManager.currentLocation.coordinate.longitude)",
+            maxDistance: "\(distance)",
+            limit: 5,
+            next: next,
+            orderBy: orderBy
         )
         Log.debug("🔗 geolocationPost 정보: \(geolocationPost)")
         let value = CommunityURL.getCommunityPost(access: accessToken, value: geolocationPost)

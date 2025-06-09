@@ -16,7 +16,7 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
     
     public init () { }
     
-    public func getCommunityPost() async throws -> [CommunityPostEntity] {
+    public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> [CommunityPostEntity] {
         
         let creator = Creator(
             id: "65c9aa6932b0964405117d97",

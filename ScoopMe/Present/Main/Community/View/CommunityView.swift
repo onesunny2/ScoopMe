@@ -13,6 +13,8 @@ struct CommunityView: View {
     
     @StateObject private var repository: AnyCommunityPostDisplayable
     
+    @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
+    
     @State private var searchKeyword: String = ""
     @State private var volume: CGFloat = 0.3
     
@@ -43,6 +45,9 @@ struct CommunityView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await getCommunityPost()
+            }
+            .onChange(of: volume) { newVolume in
+                applyDebounceForRequestPost()
             }
         }
     }
@@ -123,12 +128,31 @@ extension CommunityView {
 
 // MARK: Action
 extension CommunityView {
+    
+    // 위치기반 포스트 호출
     private func getCommunityPost() async {
         do {
-            let posts = try await repository.getCommunityPost()
+            let posts = try await repository.getCommunityPost(
+                max: Int(volume * 1000),
+                orderBy: selectedFilter,
+                next: nil
+            )
             self.posts = posts
         } catch {
             Log.error("데이터 로드 실패: \(error)")
+        }
+    }
+    
+    // 포스트 호출 debounce
+    private func applyDebounceForRequestPost() {
+        debounceTask?.cancel()
+        
+        debounceTask = Task {
+            try? await Task.sleep(for: .seconds(0.5))
+            
+            if !Task.isCancelled {
+                await getCommunityPost()
+            }
         }
     }
 }
