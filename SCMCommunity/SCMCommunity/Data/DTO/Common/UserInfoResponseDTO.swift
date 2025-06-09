@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+struct UserInfoResponseDTO: Codable {
+    let userId: String
+    let nick: String
+    let profileImage: String?
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case nick, profileImage
+    }
+}

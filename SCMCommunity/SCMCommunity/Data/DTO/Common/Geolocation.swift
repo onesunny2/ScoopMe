@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct Geolocation: Codable {
+    let longitude: Double
+    let latitude: Double
+}
