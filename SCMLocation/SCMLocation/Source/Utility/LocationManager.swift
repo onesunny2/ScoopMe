@@ -26,6 +26,15 @@ public final class LocationManager: NSObject, ObservableObject {
     private let addressStorageKey: String = "savedAddresses"
     private let selectedAddressKey: String = "selectedAddress"
     
+    // MARK: - Throttling Properties
+    private var lastGeocodeTime = Date.distantPast
+    private var lastGeocodedLocation: CLLocation?
+    private var geocodeTimer: Timer?
+    private let minimumGeocodeInterval: TimeInterval = 1.2
+    private let minimumDistanceThreshold: Double = 50.0
+    private var geocodeCache: [String: (address: String, timestamp: Date)] = [:]
+    private let cacheExpirationTime: TimeInterval = 300 // 5분
+    
     public override init() {
         
         let selectedAddress = UserDefaults.standard.fetchStruct(SavedLocation.self, for: selectedAddressKey)
@@ -111,7 +120,7 @@ extension LocationManager: CLLocationManagerDelegate {
         
         Log.debug("현재위치: \(currentLocation)")
         
-        applyGeoAddress(currentLocation)
+        applyGeoAddressWithThrottling(currentLocation)
         stopUpdateLocation()
     }
     
@@ -142,6 +151,127 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 }
 
+// MARK: - Throttling Extensions
+extension LocationManager {
+    
+    /// 스로틀링이 적용된 지오코딩 요청
+    private func applyGeoAddressWithThrottling(_ location: CLLocation) {
+        
+        // 1. 캐시 확인
+        if let cachedAddress = getCachedAddress(for: location) {
+            Task { @MainActor in
+                self.currentAddress = cachedAddress
+            }
+            return
+        }
+        
+        // 2. 거리 기반 필터링
+        if let lastLocation = lastGeocodedLocation {
+            let distance = location.distance(from: lastLocation)
+            if distance < minimumDistanceThreshold {
+                Log.debug("거리 임계값 미만으로 지오코딩 스킵: \(distance)m")
+                return
+            }
+        }
+        
+        // 3. 시간 기반 스로틀링
+        let now = Date()
+        let timeSinceLastGeocode = now.timeIntervalSince(lastGeocodeTime)
+        
+        if timeSinceLastGeocode < minimumGeocodeInterval {
+            // 타이머로 지연 실행
+            geocodeTimer?.invalidate()
+            let delay = minimumGeocodeInterval - timeSinceLastGeocode
+            
+            geocodeTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+                self?.performGeocode(for: location)
+            }
+        } else {
+            performGeocode(for: location)
+        }
+    }
+    
+    /// 실제 지오코딩 실행
+    private func performGeocode(for location: CLLocation) {
+        lastGeocodeTime = Date()
+        lastGeocodedLocation = location
+        
+        Task {
+            do {
+                let address = try await getGeocodeLacation(location)
+                
+                // 캐시에 저장
+                setCachedAddress(address, for: location)
+                
+                await MainActor.run {
+                    self.currentAddress = address
+                }
+                
+                Log.debug("지오코딩 성공: \(address)")
+                
+            } catch {
+                Log.error("주소 변환 실패: \(error)")
+                
+                // GEOErrorDomain 에러 처리
+                if let nsError = error as NSError?,
+                   nsError.domain == "GEOErrorDomain",
+                   nsError.code == -3 {
+                    Log.error("지오코딩 API 제한 도달, 잠시 후 재시도")
+                    
+                    // 3초 후 재시도
+                    try? await Task.sleep(for: .seconds(3))
+                    self.performGeocode(for: location)
+                }
+            }
+        }
+    }
+    
+    /// 레거시 메서드 - 스로틀링 버전으로 리다이렉트
+    private func applyGeoAddress(_ location: CLLocation) {
+        applyGeoAddressWithThrottling(location)
+    }
+}
+
+// MARK: - Cache Management
+extension LocationManager {
+    
+    /// 캐시 키 생성
+    private func cacheKey(for location: CLLocation) -> String {
+        let lat = Int(location.coordinate.latitude * 1000)
+        let lon = Int(location.coordinate.longitude * 1000)
+        return "\(lat)_\(lon)"
+    }
+    
+    /// 캐시된 주소 조회
+    private func getCachedAddress(for location: CLLocation) -> String? {
+        let key = cacheKey(for: location)
+        
+        guard let cached = geocodeCache[key] else { return nil }
+        
+        // 캐시 만료 확인
+        if Date().timeIntervalSince(cached.timestamp) > cacheExpirationTime {
+            geocodeCache.removeValue(forKey: key)
+            return nil
+        }
+        
+        return cached.address
+    }
+    
+    /// 캐시에 주소 저장
+    private func setCachedAddress(_ address: String, for location: CLLocation) {
+        let key = cacheKey(for: location)
+        geocodeCache[key] = (address: address, timestamp: Date())
+        
+        // 메모리 사용량 제한 (최대 50개 항목)
+        if geocodeCache.count > 50 {
+            let oldestKey = geocodeCache.min { $0.value.timestamp < $1.value.timestamp }?.key
+            if let keyToRemove = oldestKey {
+                geocodeCache.removeValue(forKey: keyToRemove)
+            }
+        }
+    }
+}
+
 extension LocationManager {
     
     /// 위치정보 제공 허용 범위
@@ -159,20 +289,6 @@ extension LocationManager {
             Log.debug("위치 권한 항상 허용")
         default:
             Log.error("알 수 없는 위치 권한 상태 입니다")
-        }
-    }
-    
-    /// 주소 -> @published 변수에 적용
-    private func applyGeoAddress(_ location: CLLocation) {
-        Task {
-            do {
-                let address = try await getGeocodeLacation(location)
-                await MainActor.run {
-                    self.currentAddress = address
-                }
-            } catch {
-                Log.error("주소 변환 실패: \(error)")
-            }
         }
     }
     
