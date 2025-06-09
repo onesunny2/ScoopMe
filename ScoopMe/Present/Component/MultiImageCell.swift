@@ -11,7 +11,8 @@ import SCMImageRequest
 
 struct MultiImageCell: View {
     
-    private let cornerRadius: CGFloat = 10
+    private let mainCornerRadius: CGFloat = 10
+    private let subCornerRadius: CGFloat = 4
     private var subWidth: CGFloat {
         return UIScreen.main.bounds.size.width - (width + 44)
     }
@@ -43,33 +44,33 @@ struct MultiImageCell: View {
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 0],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: mainCornerRadius,
+                bottomLeading: mainCornerRadius,
+                bottomTrailing: subCornerRadius,
+                topTrailing: subCornerRadius
             )
             .frame(width: width, height: height)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                mainCornerRadius,
+                mainCornerRadius,
+                subCornerRadius,
+                subCornerRadius
             )
         } else {
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 0],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: mainCornerRadius,
+                bottomLeading: mainCornerRadius,
+                bottomTrailing: subCornerRadius,
+                topTrailing: subCornerRadius
             )
             .frame(width: width, height: height)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                mainCornerRadius,
+                mainCornerRadius,
+                subCornerRadius,
+                subCornerRadius
             )
             .badgeOverlay(
                 likeStatus: likeStatus,
@@ -87,33 +88,33 @@ struct MultiImageCell: View {
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 1],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: subCornerRadius,
+                bottomLeading: subCornerRadius,
+                bottomTrailing: mainCornerRadius,
+                topTrailing: mainCornerRadius
             )
             .frame(width: subWidth, height: subHeight)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                subCornerRadius,
+                subCornerRadius,
+                mainCornerRadius,
+                mainCornerRadius
             )
             
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 2],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: subCornerRadius,
+                bottomLeading: subCornerRadius,
+                bottomTrailing: mainCornerRadius,
+                topTrailing: mainCornerRadius
             )
             .frame(width: subWidth, height: subHeight)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                subCornerRadius,
+                subCornerRadius,
+                mainCornerRadius,
+                mainCornerRadius
             )
         }
     }
