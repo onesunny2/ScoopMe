@@ -39,7 +39,7 @@ public final class LocationManager: NSObject, ObservableObject {
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
         
-        applyGeoAddress()
+        applyGeoAddress(currentLocation)
     }
     
     /// 현재 시스템 설정 자체 권한 상태 확인
@@ -111,7 +111,7 @@ extension LocationManager: CLLocationManagerDelegate {
         
         Log.debug("현재위치: \(currentLocation)")
         
-        applyGeoAddress()
+        applyGeoAddress(currentLocation)
         stopUpdateLocation()
     }
     
@@ -126,6 +126,19 @@ extension LocationManager: CLLocationManagerDelegate {
         Task {
             await checkPermission()
         }
+    }
+    
+    /// 위치 좌표를 주소로 변환
+    public func getGeocodeLacation(_ location: CLLocation) async throws -> String {
+        
+        let placemarks = try await LocationManager.geocoder.reverseGeocodeLocation(location)
+        
+        guard let placemark = placemarks.first else {
+            Log.error("주소 정보 없음")
+            throw GeoLocationError.noAddressFound
+        }
+        
+        return formatAddress(from: placemark)
     }
 }
 
@@ -150,10 +163,10 @@ extension LocationManager {
     }
     
     /// 주소 -> @published 변수에 적용
-    private func applyGeoAddress() {
+    private func applyGeoAddress(_ location: CLLocation) {
         Task {
             do {
-                let address = try await getGeocodeLacation(currentLocation)
+                let address = try await getGeocodeLacation(location)
                 await MainActor.run {
                     self.currentAddress = address
                 }
@@ -161,19 +174,6 @@ extension LocationManager {
                 Log.error("주소 변환 실패: \(error)")
             }
         }
-    }
-    
-    /// 위치 좌표를 주소로 변환
-    private func getGeocodeLacation(_ location: CLLocation) async throws -> String {
-        
-        let placemarks = try await LocationManager.geocoder.reverseGeocodeLocation(location)
-        
-        guard let placemark = placemarks.first else {
-            Log.error("주소 정보 없음")
-            throw GeoLocationError.noAddressFound
-        }
-        
-        return formatAddress(from: placemark)
     }
     
     /// placemark 주소 포맷팅
