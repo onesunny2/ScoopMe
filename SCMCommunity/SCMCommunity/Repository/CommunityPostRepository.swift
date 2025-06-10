@@ -49,14 +49,7 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         let result = try await callRequest(value, type: PostSummaryPaginationResponseDTO.self)
         
         var entities: [CommunityPostEntity] = []
-        var responses = result.response.data
-        
-        switch orderBy {
-        case .최신순:
-            responses.sort { Date.from(iso8601String: $0.createdAt) ?? Date() > Date.from(iso8601String: $1.createdAt) ?? Date() }
-        case .좋아요순:
-            responses.sort { $0.store?.pickCount ?? 0 > $1.store?.pickCount ?? 0 }
-        }
+        let responses = result.response.data
         
         for response in responses {
             let creator = Creator(
@@ -97,6 +90,8 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         }
         
         let nextCursor = result.response.nextCursor
+        
+        Log.debug("🔗 현재 포스트리스트: \(entities)", "🔗 다음커서: \(nextCursor)")
         
         return (entities, nextCursor)
     }

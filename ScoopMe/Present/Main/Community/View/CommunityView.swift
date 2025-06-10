@@ -55,8 +55,9 @@ struct CommunityView: View {
             .onChange(of: volume) { _ in
                 applyDebounceForRequestPost()
             }
-            .onChange(of: selectedFilter) { newFilter in
-                applyDebounceForRequestPost()
+            .onChange(of: selectedFilter) { _ in
+                cursorID = nil
+                Task { await getCommunityPost() }
             }
         }
     }
@@ -168,8 +169,8 @@ extension CommunityView {
                 orderBy: selectedFilter,
                 next: cursorID
             )
-            self.posts = posts.data
             cursorID = posts.next
+            self.posts = posts.data
             
             isLoading = false
         } catch {
