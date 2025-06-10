@@ -37,6 +37,8 @@ extension Font {
     static let PTCaption1: Font = .custom(Name.pretendardSB.text, size: 12)
     static let PTCaption2: Font = .custom(Name.pretendardSB.text, size: 10)
     static let PTCaption3: Font = .custom(Name.pretendardSB.text, size: 8)
+    static let PTCaption4: Font = .custom(Name.pretendardM.text, size: 10)
+    static let PTCaption5: Font = .custom(Name.pretendardM.text, size: 8)
     
     enum Name: String {
         case pretendardB = "Pretendard-Bold"
