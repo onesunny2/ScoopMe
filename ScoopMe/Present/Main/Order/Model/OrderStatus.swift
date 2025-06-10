@@ -42,11 +42,21 @@ enum OrderType: String {
     var text: String {
         return self.rawValue
     }
+    
+    var bodyQuery: String {
+        switch self {
+        case .승인대기: return "PENDING_APPROVAL"
+        case .주문승인: return "APPROVED"
+        case .조리_중: return "IN_PROGRESS"
+        case .픽업대기: return "READY_FOR_PICKUP"
+        case .픽업완료: return "PICKED_UP"
+        }
+    }
 }
 
 let dummyOrderStatus: OrderStatus = OrderStatus(
     orderNum: "A4922",
-    storeName: "스쿱미 츄르 가게",
+    storeName: "스쿱미 냥츄르 어드벤쳐",
     orderDate: "2025년 6월 10일 오후 8시 17분",
     currentOrder: [
         CurrentStatus(orderType: .승인대기, isCompleted: true, completedTime: "오후 5:00"),

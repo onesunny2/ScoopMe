@@ -28,7 +28,7 @@ extension OrderView {
     
     // 상단 주문현황
     private var orderDashboard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             VStack {
                 Text(StringLiterals.currentOrderTitle.text)
                     .basicText(.PTTitle4, .scmGray60)
@@ -46,7 +46,7 @@ extension OrderView {
     private func orderStatus(order status: OrderStatus) -> some View {
         HStack(alignment: .center, spacing: 0) {
             leftOrderInfo(order: status)
-            Spacer()
+            Spacer(minLength: 20)
             rightOrderInfo(order: status)
         }
         .padding([.top, .horizontal], 20)
@@ -100,14 +100,14 @@ extension OrderView {
     
     // 우상단 현재 주문진행상태
     private func rightOrderInfo(order status: OrderStatus) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 20) {
             ForEach(status.currentOrder.indices, id: \.self) { index in
                 orderCell(current: status.currentOrder[index])
                     .background(alignment: .topLeading, content: {
                         if (status.currentOrder.count - 1) != index {
                             Rectangle()
                                 .fill(status.currentOrder[index].isCompleted ? Color.scmBlackSprout : .scmGray30)
-                                .frame(width: 4, height: 18)
+                                .frame(width: 4, height: 22)
                                 .padding(.leading, 6)
                                 .padding(.top, 15)
                         }
