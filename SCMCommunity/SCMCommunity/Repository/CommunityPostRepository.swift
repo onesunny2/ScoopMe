@@ -79,7 +79,7 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
                 postTitle: response.title,
                 postContent: response.content,
                 distance: distance,
-                likeCount: Int(response.store?.pickCount ?? 0),
+                likeCount: Int(response.likeCount),
                 likeStatus: response.isLike,
                 mediaFiles: files,
                 uploadTime: createdDate?.timeAgoFromNow() ?? "",
