@@ -14,6 +14,8 @@
 		43FDF0492DF06475004C10E9 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF0472DF06475004C10E9 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43FDF04B2DF06479004C10E9 /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF04A2DF06479004C10E9 /* SCMLogin.framework */; };
 		43FDF04C2DF06479004C10E9 /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF04A2DF06479004C10E9 /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43FDF1CC2DF57DEA004C10E9 /* SCMLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF1CB2DF57DEA004C10E9 /* SCMLocation.framework */; };
+		43FDF1CD2DF57DEA004C10E9 /* SCMLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF1CB2DF57DEA004C10E9 /* SCMLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,6 +26,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				43FDF0452DF06472004C10E9 /* SCMLogger.framework in Embed Frameworks */,
+				43FDF1CD2DF57DEA004C10E9 /* SCMLocation.framework in Embed Frameworks */,
 				43FDF0492DF06475004C10E9 /* SCMNetwork.framework in Embed Frameworks */,
 				43FDF04C2DF06479004C10E9 /* SCMLogin.framework in Embed Frameworks */,
 			);
@@ -38,6 +41,7 @@
 		43FDF0432DF06472004C10E9 /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FDF0472DF06475004C10E9 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FDF04A2DF06479004C10E9 /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43FDF1CB2DF57DEA004C10E9 /* SCMLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -70,6 +74,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43FDF0442DF06472004C10E9 /* SCMLogger.framework in Frameworks */,
+				43FDF1CC2DF57DEA004C10E9 /* SCMLocation.framework in Frameworks */,
 				43FDF0482DF06475004C10E9 /* SCMNetwork.framework in Frameworks */,
 				43FDF04B2DF06479004C10E9 /* SCMLogin.framework in Frameworks */,
 			);
@@ -99,6 +104,7 @@
 		43FDF0422DF06472004C10E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43FDF1CB2DF57DEA004C10E9 /* SCMLocation.framework */,
 				43FDF04A2DF06479004C10E9 /* SCMLogin.framework */,
 				43FDF0472DF06475004C10E9 /* SCMNetwork.framework */,
 				43FDF0432DF06472004C10E9 /* SCMLogger.framework */,

@@ -14,4 +14,13 @@ public enum TimelineFilter: String {
     public var text: String {
         return self.rawValue
     }
+    
+    public var query: String {
+        switch self {
+        case .최신순:
+            return "createdAt"
+        case .좋아요순:
+            return "likes"
+        }
+    }
 }

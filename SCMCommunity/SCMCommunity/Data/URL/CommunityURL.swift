@@ -8,14 +8,10 @@
 import UIKit
 import SCMNetwork
 
-public enum FileData {
-    case image(UIImage, fileName: String, mimeType: String)
-    case video(URL, fileName: String, mimeType: String)
-}
-
 public enum CommunityURL {
     case fileUpload(access: String, files: [FileData])
     case postUpload(access: String, value: PostContent)
+    case getCommunityPost(access: String, value: GeolocationPost)
     
     var baseURL: String {
         return Secret.baseURL
@@ -23,6 +19,8 @@ public enum CommunityURL {
     
     var method: HTTPMethods {
         switch self {
+        case .getCommunityPost:
+            return .get
         default:
             return .post
         }
@@ -32,11 +30,22 @@ public enum CommunityURL {
         switch self {
         case .fileUpload: "/v1/posts/files"
         case .postUpload: "/v1/posts"
+        case .getCommunityPost: "/v1/posts/geolocation"
         }
     }
     
     var parameters: [String: String?]? {
         switch self {
+        case let .getCommunityPost(_, value):
+            return [
+                "category": value.category,
+                "longitude": value.longitude,
+                "latitude": value.latitude,
+                "maxDistance": value.maxDistance,
+                "limit": "\(value.limit)",
+                "next": value.next,
+                "order_by": value.orderBy.query
+            ]
         default: return nil
         }
     }
@@ -87,6 +96,12 @@ public enum CommunityURL {
                 "Authorization": access
             ]
         case let .postUpload(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .getCommunityPost(access, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,

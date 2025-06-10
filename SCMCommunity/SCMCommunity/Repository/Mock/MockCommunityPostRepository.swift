@@ -16,7 +16,7 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
     
     public init () { }
     
-    public func getCommunityPost() async throws -> [CommunityPostEntity] {
+    public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination {
         
         let creator = Creator(
             id: "65c9aa6932b0964405117d97",
@@ -32,7 +32,7 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
             address: "짜몽시 고양동 숨숨리0130, 730호"
         )
         
-        return [
+        return ([
             CommunityPostEntity(
                 creator: creator,
                 postID: "670bcd66539a670e42b2a3d8" + "\(Int.random(in: 0...100))",
@@ -177,7 +177,7 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
                 uploadTime: "1시간 전",
                 storeInfo: store
             )
-        ]
+        ], "")
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {

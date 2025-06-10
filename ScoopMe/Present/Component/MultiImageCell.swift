@@ -11,7 +11,8 @@ import SCMImageRequest
 
 struct MultiImageCell: View {
     
-    private let cornerRadius: CGFloat = 10
+    private let mainCornerRadius: CGFloat = 10
+    private let subCornerRadius: CGFloat = 4
     private var subWidth: CGFloat {
         return UIScreen.main.bounds.size.width - (width + 44)
     }
@@ -20,13 +21,16 @@ struct MultiImageCell: View {
     }
     
     let imageHelper: ImageHelper
+    var onlyImage: Bool = false
     let likeStatus: Bool
     let picchelinStatus: Bool
     let images: [String]
     let width: CGFloat
     let height: CGFloat
+    var moreImage: Bool = false
+    var extraImagesCount: String? = nil
     
-    var likeButtonAction: () -> Void
+    var likeButtonAction: (() -> Void)?
     
     var body: some View {
         HStack(alignment: .center, spacing: 4) {
@@ -36,29 +40,48 @@ struct MultiImageCell: View {
         .frame(height: height)
     }
     
+    @ViewBuilder
     private var mainImage: some View {
-        NukeRequestImageCell(
-            imageHelper: imageHelper,
-            url: images[at: 0],
-            topLeading: cornerRadius,
-            bottomLeading: cornerRadius,
-            bottomTrailing: cornerRadius,
-            topTrailing: cornerRadius
-        )
-        .frame(width: width, height: height)
-        .clippedUnevenRectangle(
-            cornerRadius,
-            cornerRadius,
-            cornerRadius,
-            cornerRadius
-        )
-        .badgeOverlay(
-            likeStatus: likeStatus,
-            picchelinStatus: picchelinStatus,
-            likeOpacity: 1,
-            padding: 8
-        ) {
-            likeButtonAction()
+        if onlyImage {
+            NukeRequestImageCell(
+                imageHelper: imageHelper,
+                url: images[at: 0],
+                topLeading: mainCornerRadius,
+                bottomLeading: mainCornerRadius,
+                bottomTrailing: subCornerRadius,
+                topTrailing: subCornerRadius
+            )
+            .frame(width: width, height: height)
+            .clippedUnevenRectangle(
+                mainCornerRadius,
+                mainCornerRadius,
+                subCornerRadius,
+                subCornerRadius
+            )
+        } else {
+            NukeRequestImageCell(
+                imageHelper: imageHelper,
+                url: images[at: 0],
+                topLeading: mainCornerRadius,
+                bottomLeading: mainCornerRadius,
+                bottomTrailing: subCornerRadius,
+                topTrailing: subCornerRadius
+            )
+            .frame(width: width, height: height)
+            .clippedUnevenRectangle(
+                mainCornerRadius,
+                mainCornerRadius,
+                subCornerRadius,
+                subCornerRadius
+            )
+            .badgeOverlay(
+                likeStatus: likeStatus,
+                picchelinStatus: picchelinStatus,
+                likeOpacity: 1,
+                padding: 8
+            ) {
+                likeButtonAction?()
+            }
         }
     }
     
@@ -67,34 +90,49 @@ struct MultiImageCell: View {
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 1],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: subCornerRadius,
+                bottomLeading: subCornerRadius,
+                bottomTrailing: mainCornerRadius,
+                topTrailing: mainCornerRadius
             )
             .frame(width: subWidth, height: subHeight)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                subCornerRadius,
+                subCornerRadius,
+                mainCornerRadius,
+                mainCornerRadius
             )
             
             NukeRequestImageCell(
                 imageHelper: imageHelper,
                 url: images[at: 2],
-                topLeading: cornerRadius,
-                bottomLeading: cornerRadius,
-                bottomTrailing: cornerRadius,
-                topTrailing: cornerRadius
+                topLeading: subCornerRadius,
+                bottomLeading: subCornerRadius,
+                bottomTrailing: mainCornerRadius,
+                topTrailing: mainCornerRadius
             )
             .frame(width: subWidth, height: subHeight)
             .clippedUnevenRectangle(
-                cornerRadius,
-                cornerRadius,
-                cornerRadius,
-                cornerRadius
+                subCornerRadius,
+                subCornerRadius,
+                mainCornerRadius,
+                mainCornerRadius
             )
+            .overlay(alignment: .center) {
+                // 이미지가 3개 이상인 경우 더 많은 경우 사용
+                if let extraImagesCount, moreImage {
+                    Color.scmGray90.opacity(0.5)
+                        .clippedUnevenRectangle(
+                            subCornerRadius,
+                            subCornerRadius,
+                            mainCornerRadius,
+                            mainCornerRadius
+                        )
+                    
+                    Text(extraImagesCount)
+                        .basicText(.JNTitle1, .scmBrightSprout.opacity(0.7))
+                }
+            }
         }
     }
 }

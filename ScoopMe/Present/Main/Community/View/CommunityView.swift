@@ -13,6 +13,12 @@ struct CommunityView: View {
     
     @StateObject private var repository: AnyCommunityPostDisplayable
     
+    @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
+    
+    // pagination
+    @State private var isLoading: Bool = false
+    @State private var cursorID: String? = nil
+    
     @State private var searchKeyword: String = ""
     @State private var volume: CGFloat = 0.3
     
@@ -34,8 +40,10 @@ struct CommunityView: View {
                 distanceSliderCell
                 timelineTitleAndFilter
                 
-                ScrollView(.vertical, showsIndicators: false) {
+                if !posts.isEmpty {
                     postContentsView
+                } else {
+                    noResultsView
                 }
             }
             .defaultHorizontalPadding()
@@ -43,6 +51,13 @@ struct CommunityView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await getCommunityPost()
+            }
+            .onChange(of: volume) { _ in
+                applyDebounceForRequestPost()
+            }
+            .onChange(of: selectedFilter) { _ in
+                cursorID = nil
+                Task { await getCommunityPost() }
             }
         }
     }
@@ -76,11 +91,6 @@ extension CommunityView {
                 .defaultHorizontalPadding()
             }
         }
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.scmGray45, lineWidth: 1)
-        )
     }
     
     private var timelineTitleAndFilter: some View {
@@ -90,7 +100,6 @@ extension CommunityView {
             
             Spacer()
             
-            // TODO: repostory 생기면 변경필요
             HStack(alignment: .center, spacing: 4) {
                 Text(selectedFilter.text)
                     .basicText(.PTCaption1, .scmBlackSprout)
@@ -109,26 +118,95 @@ extension CommunityView {
         .padding(.bottom, -14)
     }
     
+    @ViewBuilder
     private var postContentsView: some View {
-        ForEach(posts, id: \.postID) { post in
-            Rectangle()
-                .fill(.scmBrightSprout)
-                .frame(height: 1)
-            CommunityPostCell(post: post)
-                .padding(.vertical, 12)
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(posts, id: \.postID) { post in
+                        Rectangle()
+                            .fill(.scmBrightSprout)
+                            .frame(height: 1)
+                        CommunityPostCell(post: post)
+                            .padding(.vertical, 12)
+                            .onAppear {
+                                if (post.postID == posts.last?.postID) && cursorID != "0" {
+                                    Task { await getCommunityPostForPagination() }
+                                }
+                            }
+                    }
+                }
+                .padding(.top, 6)
+                
+                if isLoading {
+                    ProgressView()
+                        .padding(4)
+                }
+            }
         }
-        .padding(.top, 6)
+    }
+    
+    private var noResultsView: some View {
+        VStack {
+            Spacer()
+            Text(StringLiterals.noResults.text)
+                .basicText(.PTBody1, .scmGray90)
+            Spacer()
+        }
     }
 }
 
 // MARK: Action
 extension CommunityView {
+    
+    // 위치기반 포스트 호출
     private func getCommunityPost() async {
         do {
-            let posts = try await repository.getCommunityPost()
-            self.posts = posts
+            isLoading = true
+            
+            let posts = try await repository.getCommunityPost(
+                max: Int(volume * 1000),
+                orderBy: selectedFilter,
+                next: cursorID
+            )
+            cursorID = posts.next
+            self.posts = posts.data
+            
+            isLoading = false
         } catch {
-            Log.error("데이터 로드 실패")
+            Log.error("데이터 로드 실패: \(error)")
+        }
+    }
+    
+    // 페이지네이션 전용
+    private func getCommunityPostForPagination() async {
+        do {
+            isLoading = true
+            
+            let posts = try await repository.getCommunityPost(
+                max: Int(volume * 1000),
+                orderBy: selectedFilter,
+                next: cursorID
+            )
+            self.posts.append(contentsOf: posts.data)
+            cursorID = posts.next
+            
+            isLoading = false
+        } catch {
+            Log.error("데이터 로드 실패: \(error)")
+        }
+    }
+    
+    // 포스트 호출 debounce
+    private func applyDebounceForRequestPost() {
+        debounceTask?.cancel()
+        
+        debounceTask = Task {
+            try? await Task.sleep(for: .seconds(0.5))
+            
+            if !Task.isCancelled {
+                await getCommunityPost()
+            }
         }
     }
 }
@@ -139,6 +217,7 @@ private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case timelineTitle = "포스트"
     case distance = "범위"
+    case noResults = "조건에 맞는 포스트가 없습니다 :<"
     
     var text: String {
         return self.rawValue

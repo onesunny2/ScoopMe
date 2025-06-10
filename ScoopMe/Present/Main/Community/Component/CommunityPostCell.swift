@@ -7,19 +7,28 @@
 
 import SwiftUI
 import SCMCommunity
+import SCMImageRequest
 
 struct CommunityPostCell: View {
     
+    private let imageHelper: ImageHelper
+    private var firstWidth: CGFloat {
+        return UIScreen.main.bounds.size.width - 40
+    }
+    private var secondWidth: CGFloat {
+        return (UIScreen.main.bounds.size.width - 44) / 2
+    }
     let post: CommunityPostEntity
     
     init(post: CommunityPostEntity) {
+        self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             creatorView
-            postImageView
+            contentImageView
             postContentsView
         }
     }
@@ -30,7 +39,7 @@ extension CommunityPostCell {
     private var creatorView: some View {
         HStack(alignment: .center, spacing: 8) {
             NukeRequestImageCell(
-                imageHelper: DIContainer.shared.imageHelper,
+                imageHelper: imageHelper,
                 url: post.creator.profileImage,
                 topLeading: 16,
                 bottomLeading: 16,
@@ -54,18 +63,81 @@ extension CommunityPostCell {
         .frame(height: 32)
     }
     
-    private var postImageView: some View {
+    @ViewBuilder
+    private var contentImageView: some View {
+        if let postImage = post.mediaFiles, !postImage.isEmpty {
+            switch postImage.count {
+            case 1: postOneImageView(postImage[0])
+            case 2: postTwoImageView(first: postImage[0], second: postImage[1])
+            case 3: postThreeImageView(urls: postImage)
+            case 4...5: postOverThreeImageView(urls: postImage)
+            default: postOneImageView(postImage[0])
+            }
+        }
+    }
+    
+    private func postOneImageView(_ url: String) -> some View {
         NukeRequestImageCell(
-            imageHelper: DIContainer.shared.imageHelper,
-            url: post.mediaFiles?.first ?? "",
+            imageHelper: imageHelper,
+            url: url,
             topLeading: 8,
             bottomLeading: 8,
             bottomTrailing: 8,
             topTrailing: 8
         )
-        .frame(height: 240)
+        .frame(width: firstWidth, height: 240)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .contentShape(RoundedRectangle(cornerRadius: 8))
+    }
+    
+    private func postTwoImageView(first url1: String, second url2: String) -> some View {
+        HStack(alignment: .center, spacing: 4) {
+            imageForTwoImagesCell(url1)
+            imageForTwoImagesCell(url2)
+        }
+    }
+    
+    // 이미지 2개일 때 사용할 이미지 1개의 cell
+    private func imageForTwoImagesCell(_ url: String) -> some View {
+        NukeRequestImageCell(
+            imageHelper: imageHelper,
+            url: url,
+            topLeading: 8,
+            bottomLeading: 8,
+            bottomTrailing: 8,
+            topTrailing: 8
+        )
+        .frame(width: secondWidth, height: secondWidth)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .contentShape(RoundedRectangle(cornerRadius: 8))
+    }
+    
+    private func postThreeImageView(urls: [String]) -> some View {
+        MultiImageCell(
+            imageHelper: imageHelper,
+            onlyImage: true,
+            likeStatus: false,
+            picchelinStatus: false,
+            images: urls,
+            width: 268,
+            height: 240,
+            moreImage: true
+        )
+    }
+    
+    private func postOverThreeImageView(urls: [String]) -> some View {
+        MultiImageCell(
+            imageHelper: imageHelper,
+            onlyImage: true,
+            likeStatus: false,
+            picchelinStatus: false,
+            images: urls,
+            width: 268,
+            height: 240,
+            moreImage: true,
+            extraImagesCount: "+ \((post.mediaFiles?.count ?? 3) - 3)",
+            likeButtonAction: nil
+        )
     }
     
     private var postContentsView: some View {
