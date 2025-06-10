@@ -56,7 +56,7 @@ struct HomeView: View {
                         popularKeywords
                         categoryButtons
                         realtimePopularScoop()
-                        adBanners()
+                        adBanners
                         aroundScoop()
                     }
                 }
@@ -211,7 +211,7 @@ struct HomeView: View {
         }
     }
     
-    private func adBanners() -> some View {
+    private var adBanners: some View {
         AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
     }
     
