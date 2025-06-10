@@ -27,6 +27,7 @@
 		43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43E01BDD2DDAF4530016391C /* SCMLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01BDC2DDAF4530016391C /* SCMLocation.framework */; };
 		43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01BDC2DDAF4530016391C /* SCMLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 43FDF49F2DF8643B004C10E9 /* iamport-ios */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -93,6 +94,7 @@
 				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
+				43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */,
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
@@ -164,6 +166,7 @@
 			packageProductDependencies = (
 				436532AD2DDCA67200313379 /* NukeUI */,
 				43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */,
+				43FDF49F2DF8643B004C10E9 /* iamport-ios */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -196,6 +199,7 @@
 			packageReferences = (
 				436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */,
 				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -463,6 +467,14 @@
 				minimumVersion = 3.1.3;
 			};
 		};
+		43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iamport/iamport-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.7;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -475,6 +487,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		43FDF49F2DF8643B004C10E9 /* iamport-ios */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */;
+			productName = "iamport-ios";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
