@@ -8,16 +8,18 @@
 import SwiftUI
 import SCMLogger
 import SCMScoopInfo
+import SCMPayment
 
 struct DetailMenuCell: View {
     
     @Namespace private var countButtonID
 
     @State private var isSelectedMenu: Bool = false
-    @State private var currentCount: Int = 0
     
-    @Binding var selectedCount: Int
-    @Binding var selectedPrice: Int
+    @State private var selectedCount: Int = 0
+    @State private var selectedPrice: Int = 0
+    
+    @Binding var selectedMenus: [OrderMenu]
     
     let menu: StoreDetailMenuEntity
     
@@ -86,7 +88,7 @@ struct DetailMenuCell: View {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            if currentCount == 0 && !menu.soldoutStatus {
+            if selectedCount == 0 && !menu.soldoutStatus {
                 Image(.plus)
                     .basicImage(width: 15, color: .scmGray90)
                     .padding(6)
@@ -98,15 +100,15 @@ struct DetailMenuCell: View {
                     .padding([.trailing, .bottom], 4)
                     .asButton {
                         withAnimation(.spring) {
-                            currentCount += 1
                             selectedCount += 1
                             selectedPrice += menu.price
                             
-                            Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
-                            Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
+                            appendOrderMenu()
+                            
+                            Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedMenus)")
                         }
                     }
-            } else if currentCount != 0 && !menu.soldoutStatus {
+            } else if selectedCount != 0 && !menu.soldoutStatus {
                 menuCountButton
                     .padding([.horizontal, .bottom], 4)
             }
@@ -121,18 +123,18 @@ struct DetailMenuCell: View {
                 .padding([.vertical, .leading], 6)
                 .asButton {
                     withAnimation(.spring) {
-                        currentCount -= 1
                         selectedCount -= 1
                         selectedPrice -= menu.price
                         
-                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
-                        Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
+                        appendOrderMenu()
+                        
+                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedMenus)")
                     }
                 }
             
             Spacer()
             
-            Text("\(currentCount)")
+            Text("\(selectedCount)")
                 .basicText(.PTBody2, .scmGray90)
             
             Spacer()
@@ -142,12 +144,12 @@ struct DetailMenuCell: View {
                 .padding([.vertical, .trailing], 6)
                 .asButton {
                     withAnimation(.spring) {
-                        currentCount += 1
                         selectedCount += 1
                         selectedPrice += menu.price
                         
-                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedCount)")
-                        Log.debug("🔗 현재 선택된 메뉴 총 금액: \(selectedPrice)")
+                        appendOrderMenu()
+                        
+                        Log.debug("🔗 현재 선택된 메뉴 총 갯수: \(selectedMenus)")
                     }
                 }
         }
@@ -156,5 +158,29 @@ struct DetailMenuCell: View {
                 .fill(.scmGray15)
                 .matchedGeometryEffect(id: "countButton", in: countButtonID)
         )
+    }
+}
+
+// MARK: Action
+extension DetailMenuCell {
+    
+    // 현재 메뉴 정보 배열에 담기
+    private func appendOrderMenu() {
+        
+        let menu: OrderMenu = OrderMenu(
+            menuID: menu.menuID,
+            quantity: selectedCount,
+            price: selectedPrice
+        )
+        
+        if let index = selectedMenus.firstIndex(where: { $0.menuID == menu.menuID }) {
+            if menu.quantity != 0 {
+                selectedMenus.replaceSubrange(index...index, with: [menu])
+            } else {
+                selectedMenus.remove(at: index)
+            }
+        } else {
+            selectedMenus.append(menu)
+        }
     }
 }
