@@ -10,7 +10,7 @@ import SCMLogin
 
 struct ContentView: View {
     
-    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher<MainFlow>
     
     var body: some View {
         mainFlowView

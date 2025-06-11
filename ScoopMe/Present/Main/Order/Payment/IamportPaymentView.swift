@@ -62,6 +62,7 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
         super.viewDidDisappear(animated)
         Iamport.shared.close()
         dismissAction?()
+        SCMSwitcher.shared.switchTo(.login)
     }
     
     private func setupWebView() {

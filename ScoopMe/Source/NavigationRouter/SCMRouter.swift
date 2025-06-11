@@ -24,7 +24,7 @@ final class SCMRouter<P: Hashable>: ObservableObject {
             path.removeLast()
         case .pops(let count):
             let removeCount = min(count, path.count)
-            path.removeLast(count)
+            path.removeLast(removeCount)
         case .popAll:
             path.removeAll()
         }
