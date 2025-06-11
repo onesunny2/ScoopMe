@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:SCMPayment/SCMPayment.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SCMCommunity/SCMCommunity.xcodeproj">
    </FileRef>
    <FileRef

@@ -2,79 +2,75 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>스쿱 소식통에 사진을 업로드 하기 위해서 앨범 접근이 필요합니다.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>원하는 위치에서의 가게를 찾기 위해 사용자의 위치가 필요합니다.</string>
+	<key>IamportUsercode</key>
+	<string>$(IamportUsercode)</string>
+	<key>APIKey</key>
+	<string>$(APIKey)</string>
+	<key>BaseURL</key>
+	<string>$(BaseURL)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao$(KAKAO_Native_Key)</string>
 			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 		</dict>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>SCM</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>scoopme</string>
 			</array>
 		</dict>
 	</array>
-	<key>APIKey</key>
-	<string>$(APIKey)</string>
-	<key>BaseURL</key>
-	<string>$(BaseURL)</string>
 	<key>KAKAO_Native_Key</key>
 	<string>$(KAKAO_Native_Key)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
-		<string>kftc-bankpay</string>
-		<string>ispmobile</string>
-		<string>itms-apps</string>
-		<string>hdcardappcardansimclick</string>
-		<string>smhyundaiansimclick</string>
-		<string>shinhan-sr-ansimclick</string>
-		<string>smshinhanansimclick</string>
-		<string>kb-acp</string>
-		<string>mpocket.online.ansimclick</string>
-		<string>ansimclickscard</string>
-		<string>ansimclickipcollect</string>
-		<string>vguardstart</string>
-		<string>samsungpay</string>
-		<string>scardcertiapp</string>
-		<string>lottesmartpay</string>
-		<string>lotteappcard</string>
-		<string>cloudpay</string>
-		<string>nhappcardansimclick</string>
-		<string>nonghyupcardansimclick</string>
-		<string>citispay</string>
-		<string>citicardappkr</string>
-		<string>citimobileapp</string>
-		<string>kakaotalk</string>
-		<string>payco</string>
-		<string>chaipayment</string>
-		<string>kb-auth</string>
-		<string>hyundaicardappcardid</string>
-		<string>com.wooricard.wcard</string>
-		<string>lmslpay</string>
-		<string>lguthepay-xpay</string>
-		<string>liivbank</string>
-		<string>supertoss</string>
-		<string>newsmartpib</string>
-		<string>kakaobank</string>
+        <string>kftc-bankpay</string>
+        <string>ispmobile</string>
+        <string>itms-apps</string>
+        <string>hdcardappcardansimclick</string>
+        <string>smhyundaiansimclick</string>
+        <string>shinhan-sr-ansimclick</string>
+        <string>smshinhanansimclick</string>
+        <string>kb-acp</string>
+        <string>mpocket.online.ansimclick</string>
+        <string>ansimclickscard</string>
+        <string>ansimclickipcollect</string>
+        <string>vguardstart</string>
+        <string>samsungpay</string>
+        <string>scardcertiapp</string>
+        <string>lottesmartpay</string>
+        <string>lotteappcard</string>
+        <string>cloudpay</string>
+        <string>nhappcardansimclick</string>
+        <string>nonghyupcardansimclick</string>
+        <string>citispay</string>
+        <string>citicardappkr</string>
+        <string>citimobileapp</string>
+        <string>kakaotalk</string>
+        <string>payco</string>
+        <string>chaipayment</string>
+        <string>kb-auth</string>
+        <string>hyundaicardappcardid</string>
+        <string>com.wooricard.wcard</string>
+        <string>lmslpay</string>
+        <string>lguthepay-xpay</string>
+        <string>liivbank</string>
+        <string>supertoss</string>
+        <string>newsmartpib</string>
+        <string>kakaobank</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoadsInWebContent</key>
-		<true/>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>

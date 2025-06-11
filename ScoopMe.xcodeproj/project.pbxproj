@@ -28,6 +28,8 @@
 		43E01BDD2DDAF4530016391C /* SCMLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01BDC2DDAF4530016391C /* SCMLocation.framework */; };
 		43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E01BDC2DDAF4530016391C /* SCMLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 43FDF49F2DF8643B004C10E9 /* iamport-ios */; };
+		43FDF4E32DF8A6A1004C10E9 /* SCMPayment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */; };
+		43FDF4E42DF8A6A1004C10E9 /* SCMPayment.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +42,7 @@
 				436532A62DDC991500313379 /* SCMScoopInfo.framework in Embed Frameworks */,
 				43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */,
 				43B03AB02DE980AC0057AD45 /* SCMCommunity.framework in Embed Frameworks */,
+				43FDF4E42DF8A6A1004C10E9 /* SCMPayment.framework in Embed Frameworks */,
 				436532F02DDD569600313379 /* SCMImageRequest.framework in Embed Frameworks */,
 				43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */,
 				43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */,
@@ -63,6 +66,7 @@
 		43E014B52DD21A2B0016391C /* OSLog.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSLog.framework; path = System/Library/Frameworks/OSLog.framework; sourceTree = SDKROOT; };
 		43E019A52DD6E0AC0016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E01BDC2DDAF4530016391C /* SCMLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMPayment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -94,6 +98,7 @@
 				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
+				43FDF4E32DF8A6A1004C10E9 /* SCMPayment.framework in Frameworks */,
 				43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */,
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
@@ -130,6 +135,7 @@
 		43AC4B382DD118120010D965 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */,
 				43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */,
 				43B03A622DE873430057AD45 /* SCMCommunity.framework */,
 				436532EE2DDD569600313379 /* SCMImageRequest.framework */,
@@ -366,6 +372,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScoopMe/APP/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "원하는 위치에서의 가게를 찾기 위해 사용자의 위치가 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "스쿱 소식통에 사진을 업로드 하기 위해서 앨범 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -403,6 +411,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScoopMe/APP/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "원하는 위치에서의 가게를 찾기 위해 사용자의 위치가 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "스쿱 소식통에 사진을 업로드 하기 위해서 앨범 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
