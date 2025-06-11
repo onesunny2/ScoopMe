@@ -28,9 +28,7 @@ struct MainTabView: View {
                     .tag(1)
                 
                 ChatView()
-                    .tabImage(
-                        Image(.tabMessageFill)
-                    )
+                    .tabImage(Image(.tabMessageFill))
                     .tag(2)
                 
                 CommunityView(

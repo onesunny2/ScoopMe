@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SCMLogger
+import SCMPayment
 
 struct OrderView: View {
     var body: some View {
@@ -43,7 +44,7 @@ extension OrderView {
         .background(Color.scmGray15)
     }
     
-    private func orderStatus(order status: OrderStatus) -> some View {
+    private func orderStatus(order status: OrderStatusEntity) -> some View {
         HStack(alignment: .center, spacing: 0) {
             leftOrderInfo(order: status)
             Spacer(minLength: 20)
@@ -74,7 +75,7 @@ extension OrderView {
     }
     
     // 좌상단 주문번호 및 가게 정보
-    private func leftOrderInfo(order status: OrderStatus) -> some View {
+    private func leftOrderInfo(order status: OrderStatusEntity) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 4) {
                 Text(StringLiterals.orderNum.text)
@@ -99,7 +100,7 @@ extension OrderView {
     }
     
     // 우상단 현재 주문진행상태
-    private func rightOrderInfo(order status: OrderStatus) -> some View {
+    private func rightOrderInfo(order status: OrderStatusEntity) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             ForEach(status.currentOrder.indices, id: \.self) { index in
                 orderCell(current: status.currentOrder[index])
