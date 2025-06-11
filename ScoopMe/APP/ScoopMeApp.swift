@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import SCMLogin
 import UserNotifications
+import iamport_ios
+import SCMLogin
 
 @main
 struct ScoopMeApp: App {
@@ -30,6 +31,7 @@ struct ScoopMeApp: App {
                 .environmentObject(flowSwitcher)
                 .onOpenURL { url in
                     _ = KakaoLoginConfiguration.handleKakaoCallback(url)
+                    Iamport.shared.receivedURL(url)
                 }
         }
     }
