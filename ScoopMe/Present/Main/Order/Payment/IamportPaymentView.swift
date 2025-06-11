@@ -61,8 +61,6 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         Iamport.shared.close()
-        dismissAction?()
-        SCMSwitcher.shared.switchTo(.login)
     }
     
     private func setupWebView() {
@@ -103,6 +101,8 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
                 if response.success == true {
                     showPaymentSuccessAlert {
                         self.dismissAction?()
+                        SCMRouter<HomePath>.shared.send(.popAll)
+                        SCMSwitcher<TabFlow>.shared.switchTo(.order)
                     }
                 } else {
                     self.dismissAction?()

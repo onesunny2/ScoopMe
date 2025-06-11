@@ -14,7 +14,8 @@ import SCMLogin
 struct ScoopMeApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject private var flowSwitcher = SCMSwitcher.shared
+    @StateObject private var mainFlowSwitcher = SCMSwitcher<MainFlow>.shared
+    @StateObject private var tabFlowSwitcher = SCMSwitcher<TabFlow>.shared
     
     init() {
         // kakao sdk 초기화
@@ -28,7 +29,8 @@ struct ScoopMeApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(flowSwitcher)
+                .environmentObject(mainFlowSwitcher)
+                .environmentObject(tabFlowSwitcher)
                 .onOpenURL { url in
                     _ = KakaoLoginConfiguration.handleKakaoCallback(url)
                     Iamport.shared.receivedURL(url)

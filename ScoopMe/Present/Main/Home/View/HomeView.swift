@@ -16,7 +16,7 @@ import SCMScoopInfo
 struct HomeView: View {
     
     @StateObject private var repository: AnyFoodCategoryDisplayable
-    @StateObject private var switcher = SCMSwitcher.shared
+    @StateObject private var switcher = SCMSwitcher<MainFlow>.shared
     @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager: LocationManager
     @StateObject private var loginTokenManager: LoginTokenManager

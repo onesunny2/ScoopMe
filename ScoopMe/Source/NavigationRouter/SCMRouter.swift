@@ -35,14 +35,6 @@ extension SCMRouter where SCMRouter == SCMRouter<LoginPath> {
     static let shared = SCMRouter()
 }
 
-extension SCMRouter where SCMRouter == SCMRouter<MainFlow> {
-    static let shared = SCMRouter()
-}
-
-extension SCMRouter where SCMRouter == SCMRouter<TabFlow> {
-    static let shared = SCMRouter()
-}
-
 extension SCMRouter where SCMRouter == SCMRouter<HomePath> {
     static let shared = SCMRouter()
 }

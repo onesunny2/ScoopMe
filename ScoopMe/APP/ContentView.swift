@@ -31,5 +31,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(SCMSwitcher.shared)
+        .environmentObject(SCMSwitcher<MainFlow>.shared)
 }

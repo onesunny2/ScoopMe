@@ -70,5 +70,5 @@ extension SplashView {
 
 #Preview {
     SplashView()
-        .environmentObject(SCMSwitcher.shared)
+        .environmentObject(SCMSwitcher<MainFlow>.shared)
 }

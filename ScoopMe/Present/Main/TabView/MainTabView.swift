@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     
+    @EnvironmentObject private var tabFlowSwitcher: SCMSwitcher<TabFlow>
     @State private var selectedTab: Int = 0
     
     var body: some View {
@@ -44,6 +45,15 @@ struct MainTabView: View {
             }
             .toolbarBackground(.scmGray0, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
+            .onChange(of: selectedTab) { newValue in
+                let flow = TabFlow.allCases[newValue]
+                tabFlowSwitcher.switchTo(flow)
+            }
+            .onChange(of: tabFlowSwitcher.currentFlow) { newFlow in
+                if let index = TabFlow.allCases.firstIndex(of: newFlow) {
+                    selectedTab = index
+                }
+            }
         }
         .tint(.scmBlackSprout)
     }
