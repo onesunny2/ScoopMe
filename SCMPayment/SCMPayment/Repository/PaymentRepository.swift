@@ -29,6 +29,17 @@ public final class PaymentRepository: PaymentDisplayable {
         
         return result.response.order_code
     }
+    
+    public func checkPaymentValidation(impUid: String) async throws -> String {
+        
+        let accessToken = loginTokenManager.fetchToken(.accessToken)
+        let value = PaymentURL.paymentValidation(access: accessToken, impUid: impUid)
+        let result = try await callRequest(value, type: ReceiptOrderResponseDTO.self)
+        
+        Log.debug("🔗 결제 검증 완료")
+        
+        return result.response.orderItem.orderCode
+    }
 }
 
 extension PaymentRepository {

@@ -12,6 +12,7 @@ import SCMLogger
 
 struct IamportPaymentView: UIViewControllerRepresentable {
     @Environment(\.dismiss) var dismiss
+    
     let paymentInfo: PaymentInfo
     
     func makeUIViewController(context: Context) -> UIViewController {
@@ -90,10 +91,17 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
             webViewMode: wkWebView,
             userCode: userCode,
             payment: payment) { [weak self] response in
-                guard let self else { return }
+                guard let self, let response else { return }
                 
-                self.dismissAction?()
                 Log.debug("🔗 결제 결과: \(String(describing: response))")
+                
+                // 결제가 success 하면 결제 uid 전달
+                let impUid = (response.success == true) ? response.imp_uid : nil
+                payInfo.onPaymentComplete(impUid)
+                
+                if response.success == true {
+                    self.dismissAction?()
+                }
             }
     }
     
@@ -117,4 +125,5 @@ struct PaymentInfo: Identifiable {
     let storeName: String
     let orderCode: String
     let totalPrice: String
+    let onPaymentComplete: (String?) -> Void
 }

@@ -520,16 +520,37 @@ extension HomeDetailView {
         do {
             let code = try await paymentRepository.getOrderCode(orderList: orderList)
             self.orderCode = code
+            
+            Log.debug("🔗 오더코드: \(self.orderCode)")
+            
             paymentInfo = PaymentInfo(
                 storeName: storeInfos.storeName,
                 orderCode: orderCode,
                 totalPrice: "\(selectedPrice)"
-            )
-            Log.debug("🔗 오더코드: \(self.orderCode)")
+            ) { impUid in  // 결제 성공 후 전달받는 uid
+                guard let impUid else { return }
+                Task {
+                    await checkPaymentValidation(impUid: impUid)
+                }
+            }
+            
         } catch {
             await storeDetailrepository.checkTokenValidation(error) {
                 let code = try await paymentRepository.getOrderCode(orderList: orderList)
                 self.orderCode = code
+            }
+        }
+    }
+    
+    // 결제 후 영수증 검증
+    private func checkPaymentValidation(impUid: String) async {
+        do {
+            let code = try await paymentRepository.checkPaymentValidation(impUid: impUid)
+            Log.debug("🔗 결제완료 후 최종 오더코드: \(code)")
+        } catch {
+            await storeDetailrepository.checkTokenValidation(error) {
+                let code = try await paymentRepository.checkPaymentValidation(impUid: impUid)
+                Log.debug("🔗 결제완료 후 최종 오더코드: \(code)")
             }
         }
     }
