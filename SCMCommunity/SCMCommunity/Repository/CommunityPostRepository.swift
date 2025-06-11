@@ -15,10 +15,6 @@ import SCMNetwork
 
 public final class CommunityPostRepository: CommunityPostDisplayable {
     
-    @Published public var selectedFiltering: TimelineFilter = .최신순
-    @Published public var isLoading: Bool = false
-    @Published public var lastStoreID: String = ""
-    
     private let locationManager: LocationManager
     private let loginTokenManager: LoginTokenManager
     private let network: SCMNetworkImpl
@@ -44,7 +40,6 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
             next: next,
             orderBy: orderBy
         )
-        Log.debug("🔗 geolocationPost 정보: \(geolocationPost)")
         let value = CommunityURL.getCommunityPost(access: accessToken, value: geolocationPost)
         let result = try await callRequest(value, type: PostSummaryPaginationResponseDTO.self)
         

@@ -11,29 +11,8 @@ import Combine
 public final class AnyCommunityPostDisplayable: CommunityPostDisplayable, ObservableObject {
     private let _base: any CommunityPostDisplayable
     
-    @Published public var selectedFiltering: TimelineFilter {
-        didSet {
-            _base.selectedFiltering = selectedFiltering
-        }
-    }
-    
-    @Published public var isLoading: Bool {
-        didSet {
-            _base.isLoading = isLoading
-        }
-    }
-    
-    @Published public var lastStoreID: String {
-        didSet {
-            _base.lastStoreID = lastStoreID
-        }
-    }
-    
     public init(_ base: any CommunityPostDisplayable) {
         self._base = base
-        self.selectedFiltering = base.selectedFiltering
-        self.isLoading = base.isLoading
-        self.lastStoreID = base.lastStoreID
     }
     
     public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination {

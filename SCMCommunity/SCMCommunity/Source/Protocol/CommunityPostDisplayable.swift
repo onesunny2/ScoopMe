@@ -11,11 +11,6 @@ import Combine
 public protocol CommunityPostDisplayable: AnyObject, ObservableObject {
     typealias postForPagination = (data: [CommunityPostEntity], next: String)
     
-    var selectedFiltering: TimelineFilter { get set }
-    
-    var isLoading: Bool { get set }
-    var lastStoreID: String { get set }
-    
     func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination
     func postStoreLikeStatus(store id: String, like status: Bool) async throws
 }

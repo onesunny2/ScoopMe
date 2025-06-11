@@ -10,10 +10,6 @@ import Combine
 
 public final class MockCommunityPostRepository: CommunityPostDisplayable {
     
-    @Published public var selectedFiltering: TimelineFilter = .최신순
-    @Published public var isLoading: Bool = false
-    @Published public var lastStoreID: String = ""
-    
     public init () { }
     
     public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination {
