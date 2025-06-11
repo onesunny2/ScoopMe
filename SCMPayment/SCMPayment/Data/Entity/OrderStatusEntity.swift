@@ -10,6 +10,7 @@ import Foundation
 public struct OrderStatusEntity: Hashable {
     public let orderNum: String
     public let storeName: String
+    public let storeImageURL: String
     public let orderDate: String
     public let currentOrder: [CurrentStatus]
     public let orderedMenus: [OrderedMenu]
@@ -19,6 +20,7 @@ public struct OrderStatusEntity: Hashable {
     public init(
         orderNum: String,
         storeName: String,
+        storeImageURL: String,
         orderDate: String,
         currentOrder: [CurrentStatus],
         orderedMenus: [OrderedMenu],
@@ -27,6 +29,7 @@ public struct OrderStatusEntity: Hashable {
     ) {
         self.orderNum = orderNum
         self.storeName = storeName
+        self.storeImageURL = storeImageURL
         self.orderDate = orderDate
         self.currentOrder = currentOrder
         self.orderedMenus = orderedMenus
@@ -83,31 +86,57 @@ public enum OrderType: String {
     }
 }
 
-public let dummyOrderStatus: OrderStatusEntity = OrderStatusEntity(
-    orderNum: "A4922",
-    storeName: "스쿱미 냥츄르 어드벤쳐",
-    orderDate: "2025년 6월 10일 오후 8시 17분",
-    currentOrder: [
-        CurrentStatus(orderType: .승인대기, isCompleted: true, completedTime: "오후 5:00"),
-        CurrentStatus(orderType: .주문승인, isCompleted: true, completedTime: "오후 5:02"),
-        CurrentStatus(orderType: .조리_중, isCompleted: false, completedTime: nil),
-        CurrentStatus(orderType: .픽업대기, isCompleted: false, completedTime: nil),
-        CurrentStatus(orderType: .픽업완료, isCompleted: false, completedTime: nil)
-    ],
-    orderedMenus: [
-        OrderedMenu(
-            menuName: "올리브 그린 새싹 도넛",
-            quantity: "2EA",
-            price: "3,200원",
-            imageURL: Secret.baseURL + "/v1/data/menus/1748692151899.png"
-        ),
-        OrderedMenu(
-            menuName: "레몬 민트 새싹 도넛",
-            quantity: "3EA",
-            price: "3,600원",
-            imageURL: Secret.baseURL + "/v1/data/menus/1748713214481.jpg"
-        )
-    ],
-    totalQuantity: "5EA",
-    totalPrice: "17,200원"
-)
+public let dummyOrderStatus: [OrderStatusEntity] = [
+    OrderStatusEntity(
+        orderNum: "A4922",
+        storeName: "스쿱미 냥츄르 어드벤쳐",
+        storeImageURL: Secret.baseURL + "/v1/data/stores/andy-li-RndRFJ1v1kk_1748689676005.jpg",
+        orderDate: "2025년 6월 10일 오후 8시 17분",
+        currentOrder: [
+            CurrentStatus(orderType: .승인대기, isCompleted: true, completedTime: "오후 5:00"),
+            CurrentStatus(orderType: .주문승인, isCompleted: true, completedTime: "오후 5:02"),
+            CurrentStatus(orderType: .조리_중, isCompleted: false, completedTime: nil),
+            CurrentStatus(orderType: .픽업대기, isCompleted: false, completedTime: nil),
+            CurrentStatus(orderType: .픽업완료, isCompleted: false, completedTime: nil)
+        ],
+        orderedMenus: [
+            OrderedMenu(
+                menuName: "올리브 그린 새싹 도넛",
+                quantity: "2EA",
+                price: "3,200원",
+                imageURL: Secret.baseURL + "/v1/data/menus/1748692151899.png"
+            ),
+            OrderedMenu(
+                menuName: "레몬 민트 새싹 도넛",
+                quantity: "3EA",
+                price: "3,600원",
+                imageURL: Secret.baseURL + "/v1/data/menus/1748713214481.jpg"
+            )
+        ],
+        totalQuantity: "5EA",
+        totalPrice: "17,200원"
+    ),
+    OrderStatusEntity(
+        orderNum: "WS960730",
+        storeName: "내일은 수료식",
+        storeImageURL: Secret.baseURL + "/v1/data/stores/saahil-khatkhate-kfDsMDyX1K0_1748712227803.jpg",
+        orderDate: "2025년 6월 11일 오후 3시 45분",
+        currentOrder: [
+            CurrentStatus(orderType: .승인대기, isCompleted: true, completedTime: "오후 5:00"),
+            CurrentStatus(orderType: .주문승인, isCompleted: false, completedTime: nil),
+            CurrentStatus(orderType: .조리_중, isCompleted: false, completedTime: nil),
+            CurrentStatus(orderType: .픽업대기, isCompleted: false, completedTime: nil),
+            CurrentStatus(orderType: .픽업완료, isCompleted: false, completedTime: nil)
+        ],
+        orderedMenus: [
+            OrderedMenu(
+                menuName: "킹킹킹 피자킹",
+                quantity: "2EA",
+                price: "3,200원",
+                imageURL: Secret.baseURL + "/v1/data/menus/1748713236491.jpg"
+            )
+        ],
+        totalQuantity: "2EA",
+        totalPrice: "6,400원"
+    )
+]

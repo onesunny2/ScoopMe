@@ -77,8 +77,16 @@ extension OrderStatusCell {
                 .basicText(.PTCaption2, .scmGray45)
                 .padding(.bottom, 16)
             
-            Image(.doughnut)
-                .basicImage(width: 120)
+            NukeRequestImageCell(
+                imageHelper: DIContainer.shared.imageHelper,
+                url: entity.storeImageURL,
+                topLeading: 5,
+                bottomLeading: 5,
+                bottomTrailing: 5,
+                topTrailing: 5
+            )
+            .frame(width: 132, height: 100)
+            .clipShape(RoundedRectangle(cornerRadius: 5))
         }
     }
     
@@ -219,7 +227,7 @@ private enum StringLiterals: String {
     ZStack {
         Color.scmGray90
         
-        OrderStatusCell(entity: dummyOrderStatus)
+        OrderStatusCell(entity: dummyOrderStatus.first!)
             .defaultHorizontalPadding()
     }
 }
