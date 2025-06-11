@@ -100,6 +100,10 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
                 payInfo.onPaymentComplete(impUid)
                 
                 if response.success == true {
+                    showPaymentSuccessAlert {
+                        self.dismissAction?()
+                    }
+                } else {
                     self.dismissAction?()
                 }
             }
@@ -116,6 +120,22 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
             $0.buyer_name = "이원선"
             $0.app_scheme = "scoopme"
         }
+    }
+    
+    // 결제 성공 시 띄울 알럿창
+    private func showPaymentSuccessAlert(completion: @escaping () -> ()) {
+        let alert = UIAlertController(
+            title: "결제 완료",
+            message: "결제가 성공적으로 완료되었습니다.",
+            preferredStyle: .alert
+        )
+        
+        let confirmAction = UIAlertAction(title: "닫기", style: .default) { _ in
+            completion()
+        }
+        
+        alert.addAction(confirmAction)
+        present(alert, animated: true)
     }
 }
 
