@@ -42,12 +42,11 @@ struct HomeDetailView: View {
     @State private var selectedMenus: [OrderMenu] = []
     
     // 결제 관련
-    @State private var showPaymentView = false
+    @State private var paymentInfo: PaymentInfo?
     @State private var orderCode: String = ""
     
     // 커뮤니티 글쓰기
     @State private var selectedPostButton: Bool = false
-    @State private var paymentInfo: PaymentInfo?
     
     init(storeDetailrepository: AnyStoreDetailDisplayable, storeID: String) {
         self._storeDetailrepository = StateObject(wrappedValue: storeDetailrepository)
@@ -119,7 +118,7 @@ struct HomeDetailView: View {
                 )
             )
         }
-        .sheet(item: $paymentInfo) { payment in
+        .fullScreenCover(item: $paymentInfo) { payment in
             IamportPaymentView(paymentInfo: payment)
         }
     }
@@ -425,7 +424,6 @@ extension HomeDetailView {
                         )
                         
                         await postOrders(orderList: orderList)
-                        showPaymentView = true
                     }
                 }
         }

@@ -11,11 +11,13 @@ import iamport_ios
 import SCMLogger
 
 struct IamportPaymentView: UIViewControllerRepresentable {
+    @Environment(\.dismiss) var dismiss
     let paymentInfo: PaymentInfo
     
     func makeUIViewController(context: Context) -> UIViewController {
         let view = IamportPaymentViewController()
         view.paymentInfo = paymentInfo
+        view.dismissAction = dismiss
         return view
     }
     
@@ -25,7 +27,7 @@ struct IamportPaymentView: UIViewControllerRepresentable {
 final class IamportPaymentViewController: UIViewController, WKNavigationDelegate {
     
     var paymentInfo: PaymentInfo?
-    var presentationMode: Binding<PresentationMode>?
+    var dismissAction: DismissAction?
     
     private lazy var wkWebView: WKWebView = {
         let view = WKWebView()
@@ -42,7 +44,6 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(#function)
         setupWebView()
         
         // 결제 정보가 있으면 결제 요청 시작
@@ -59,23 +60,20 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         Iamport.shared.close()
-        presentationMode?.wrappedValue.dismiss()
+        dismissAction?()
     }
     
     private func setupWebView() {
-        print(#function)
         view.addSubview(wkWebView)
+        wkWebView.frame = view.frame
         wkWebView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            wkWebView.topAnchor.constraint(equalTo: view.topAnchor),
-            wkWebView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            wkWebView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            wkWebView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        wkWebView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        wkWebView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        wkWebView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        wkWebView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
     private func removeWebView() {
-        print(#function)
         view.willRemoveSubview(wkWebView)
         wkWebView.stopLoading()
         wkWebView.removeFromSuperview()
@@ -85,7 +83,6 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
     
     // SDK 결제 요청
     func requestIamportPayment(payInfo: PaymentInfo) {
-        print(#function)
         let userCode = Secret.iamportUsercode
         let payment = createPaymentData(payInfo: payInfo)
         
@@ -93,13 +90,14 @@ final class IamportPaymentViewController: UIViewController, WKNavigationDelegate
             webViewMode: wkWebView,
             userCode: userCode,
             payment: payment) { [weak self] response in
-                guard self != nil else { return }
+                guard let self else { return }
+                
+                self.dismissAction?()
                 Log.debug("🔗 결제 결과: \(String(describing: response))")
             }
     }
     
     private func createPaymentData(payInfo: PaymentInfo) -> IamportPayment {
-        print(#function)
         return IamportPayment(
             pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
             merchant_uid: payInfo.orderCode,
