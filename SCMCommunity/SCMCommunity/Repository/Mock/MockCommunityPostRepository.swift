@@ -6,11 +6,21 @@
 //
 
 import Foundation
-import Combine
+import SCMLocation
+import SCMLogin
+import SCMNetwork
 
 public final class MockCommunityPostRepository: CommunityPostDisplayable {
     
-    public init () { }
+    public var locationManager: LocationManager
+    public var loginTokenManager: LoginTokenManager
+    public var network: SCMNetworkImpl
+    
+    public init() {
+        self.locationManager = LocationManager()
+        self.loginTokenManager = LoginTokenManager()
+        self.network = SCMNetworkImpl()
+    }
     
     public func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination {
         

@@ -34,9 +34,7 @@ final class DIContainer {
         self.imageHelper = ImageHelper.shared
         
         self.communityPostRepository = CommunityPostRepository()
-        
-        let createPostRepo = CreatePostRepository()
-        self.createPostRepository = AnyCreatePostDisplayable(createPostRepo)
+        self.createPostRepository = CreatePostRepository()
         
         self.paymentRepository = PaymentRepository()
     }
@@ -59,7 +57,7 @@ final class DIContainer {
     
     /// SCMCommunity
     private(set) var communityPostRepository: CommunityPostDisplayable
-    private(set) var createPostRepository: AnyCreatePostDisplayable
+    private(set) var createPostRepository: CreatePostDisplayable
     
     /// SCMPayment
     private(set) var paymentRepository: PaymentDisplayable

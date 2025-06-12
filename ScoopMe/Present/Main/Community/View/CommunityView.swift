@@ -11,7 +11,7 @@ import SCMLogger
 
 struct CommunityView: View {
     
-    @StateObject private var repository: AnyCommunityPostDisplayable
+    private var repository: CommunityPostDisplayable
     
     @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
     
@@ -25,8 +25,8 @@ struct CommunityView: View {
     @State private var selectedFilter: TimelineFilter = .최신순
     @State private var posts: [CommunityPostEntity] = []
     
-    init(repository: AnyCommunityPostDisplayable) {
-        self._repository = StateObject(wrappedValue: repository)
+    init(repository: CommunityPostDisplayable) {
+        self.repository = repository
     }
     
     var body: some View {
