@@ -14,7 +14,7 @@ struct HomeDetailView: View {
     @Namespace private var textfieldID
     
     @StateObject private var storeDetailrepository: AnyStoreDetailDisplayable
-    private let paymentRepository = PaymentRepository()
+    private let paymentRepository: PaymentDisplayable
     
     let storeID: String
     
@@ -48,8 +48,9 @@ struct HomeDetailView: View {
     // 커뮤니티 글쓰기
     @State private var selectedPostButton: Bool = false
     
-    init(storeDetailrepository: AnyStoreDetailDisplayable, storeID: String) {
+    init(storeDetailrepository: AnyStoreDetailDisplayable, paymentRepository: PaymentDisplayable,  storeID: String) {
         self._storeDetailrepository = StateObject(wrappedValue: storeDetailrepository)
+        self.paymentRepository = paymentRepository
         self.storeID = storeID
     }
     
@@ -589,6 +590,7 @@ private enum StringLiterals: String {
 #Preview {
     HomeDetailView(
         storeDetailrepository: DIContainer.shared.storeDetailRepository,
+        paymentRepository: DIContainer.shared.paymentRepository,
         storeID: "storeID 예시"
     )
 }
