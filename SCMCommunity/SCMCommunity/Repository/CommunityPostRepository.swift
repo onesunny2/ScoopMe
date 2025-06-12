@@ -15,9 +15,9 @@ import SCMNetwork
 
 public final class CommunityPostRepository: CommunityPostDisplayable {
     
-    private let locationManager: LocationManager
-    private let loginTokenManager: LoginTokenManager
-    private let network: SCMNetworkImpl
+    public let locationManager: LocationManager
+    public let loginTokenManager: LoginTokenManager
+    public let network: SCMNetworkImpl
     
     public init() {
         self.locationManager = LocationManager()
@@ -93,32 +93,5 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
-    }
-}
-
-extension CommunityPostRepository {
-    
-    private func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T> {
-        let request = HTTPRequest(
-            scheme: .http,
-            method: value.method,
-            successCodes: [200]
-        )
-            .addBaseURL(value.baseURL)
-            .addPath(value.path)
-            .addParameters(value.parameters)
-            .addJSONBody(value.jsonBody)
-            .addHeaders(value.headers)
-        
-        return try await network.fetchData(request, T.self)
-    }
-    
-    private func checkRefreshToken(complete: @escaping () async throws -> ()) async {
-        do {
-            try await loginTokenManager.requestRefreshToken()
-            try await complete()
-        } catch {
-            // TODO: 만료되면 로그인 화면으로 돌아가도록 처리 필요
-        }
     }
 }
