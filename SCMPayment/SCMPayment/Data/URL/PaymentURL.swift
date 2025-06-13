@@ -11,6 +11,7 @@ import SCMNetwork
 public enum PaymentURL {
     case orders(access: String, orderList: OrderList)
     case paymentValidation(access: String, impUid: String)
+    case requestAwaitingOrderList(access: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -20,12 +21,14 @@ public enum PaymentURL {
         switch self {
         case .orders, .paymentValidation:
             return .post
+        case .requestAwaitingOrderList:
+            return .get
         }
     }
     
     var path: String {
         switch self {
-        case .orders:
+        case .orders, .requestAwaitingOrderList:
             return "/v1/orders"
         case .paymentValidation:
             return "/v1/payments/validation"
@@ -54,6 +57,8 @@ public enum PaymentURL {
             ]
         case let .paymentValidation(_, impUid):
             return ["imp_uid": impUid]
+        default:
+            return nil
         }
     }
     
@@ -66,6 +71,12 @@ public enum PaymentURL {
                 "Authorization": access
             ]
         case let .paymentValidation(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .requestAwaitingOrderList(access):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
