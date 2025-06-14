@@ -30,6 +30,9 @@
 		43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 43FDF49F2DF8643B004C10E9 /* iamport-ios */; };
 		43FDF4E32DF8A6A1004C10E9 /* SCMPayment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */; };
 		43FDF4E42DF8A6A1004C10E9 /* SCMPayment.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43FDF5042DFD2608004C10E9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43FDF5032DFD2608004C10E9 /* GoogleService-Info.plist */; };
+		43FDF5072DFD267C004C10E9 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 43FDF5062DFD267C004C10E9 /* FirebaseCore */; };
+		43FDF5092DFD267C004C10E9 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 43FDF5082DFD267C004C10E9 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,6 +70,7 @@
 		43E019A52DD6E0AC0016391C /* SCMLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43E01BDC2DDAF4530016391C /* SCMLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMPayment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		43FDF5032DFD2608004C10E9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -99,6 +103,7 @@
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
 				43FDF4E32DF8A6A1004C10E9 /* SCMPayment.framework in Frameworks */,
+				43FDF5072DFD267C004C10E9 /* FirebaseCore in Frameworks */,
 				43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */,
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
@@ -106,6 +111,7 @@
 				43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */,
 				436532EF2DDD569600313379 /* SCMImageRequest.framework in Frameworks */,
 				436532A52DDC991500313379 /* SCMScoopInfo.framework in Frameworks */,
+				43FDF5092DFD267C004C10E9 /* FirebaseMessaging in Frameworks */,
 				43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */,
 				43E01BDD2DDAF4530016391C /* SCMLocation.framework in Frameworks */,
 			);
@@ -121,6 +127,7 @@
 				43AC47ED2DCF19040010D965 /* ScoopMe */,
 				43AC4B382DD118120010D965 /* Frameworks */,
 				43AC47EC2DCF19040010D965 /* Products */,
+				43FDF5032DFD2608004C10E9 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,6 +180,8 @@
 				436532AD2DDCA67200313379 /* NukeUI */,
 				43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */,
 				43FDF49F2DF8643B004C10E9 /* iamport-ios */,
+				43FDF5062DFD267C004C10E9 /* FirebaseCore */,
+				43FDF5082DFD267C004C10E9 /* FirebaseMessaging */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -206,6 +215,7 @@
 				436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */,
 				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */,
+				43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -223,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */,
+				43FDF5042DFD2608004C10E9 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +496,14 @@
 				minimumVersion = 1.4.7;
 			};
 		};
+		43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.14.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -502,6 +521,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */;
 			productName = "iamport-ios";
+		};
+		43FDF5062DFD267C004C10E9 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		43FDF5082DFD267C004C10E9 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
