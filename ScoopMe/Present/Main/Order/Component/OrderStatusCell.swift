@@ -87,6 +87,14 @@ extension OrderStatusCell {
             )
             .frame(width: 132, height: 100)
             .clipShape(RoundedRectangle(cornerRadius: 5))
+            .overlay(alignment: .bottomTrailing) {
+                Image(.sesac)
+                    .basicImage(width: 25, color: .scmBrightSprout)
+                    .padding([.trailing, .bottom], 4)
+                    .asButton {
+                        Log.debug("🔗 주문 다음 단계로!")
+                    }
+            }
         }
     }
     
