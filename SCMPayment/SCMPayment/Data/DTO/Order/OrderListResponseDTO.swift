@@ -18,7 +18,7 @@ struct OrderWithStatusResponseDTO: Codable {
     let review: Review?
     let store: StoreSummaryDTOOrder
     let orderMenuList: [OrderMenuDTO]
-    let currentOrderStatus: [String]?
+    let currentOrderStatus: String?
     let orderStatusTimeline: [OrderStatusTimeline]
     let paidAt: String
     let createdAt: String
@@ -44,5 +44,5 @@ struct Review: Codable {
 struct OrderStatusTimeline: Codable {
     let status: String
     let completed: Bool
-    let changedAt: String
+    let changedAt: String?
 }

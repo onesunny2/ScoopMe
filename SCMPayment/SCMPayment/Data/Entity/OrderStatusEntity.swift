@@ -52,19 +52,30 @@ public struct CurrentStatus: Hashable {
 
 public struct OrderedMenu: Hashable {
     public let menuName: String
-    public let quantity: String
-    public let price: String
+    public let quantity: Int
+    public let stringQuantity: String
+    public let price: Int
+    public let stringPrice: String
     public let imageURL: String
     
-    public init(menuName: String, quantity: String, price: String, imageURL: String) {
+    public init(
+        menuName: String,
+        quantity: Int,
+        stringQuantity: String,
+        price: Int,
+        stringPrice: String,
+        imageURL: String
+    ) {
         self.menuName = menuName
         self.quantity = quantity
+        self.stringQuantity = stringQuantity
         self.price = price
+        self.stringPrice = stringPrice
         self.imageURL = imageURL
     }
 }
 
-public enum OrderType: String {
+public enum OrderType: String, CaseIterable {
     case 승인대기
     case 주문승인
     case 조리_중 = "조리 중"
@@ -84,6 +95,16 @@ public enum OrderType: String {
         case .픽업완료: return "PICKED_UP"
         }
     }
+    
+    public init?(bodyQuery: String) {
+        for orderType in OrderType.allCases {
+            if orderType.bodyQuery == bodyQuery {
+                self = orderType
+                return
+            }
+        }
+        return nil
+    }
 }
 
 public let dummyOrderStatus: [OrderStatusEntity] = [
@@ -102,14 +123,18 @@ public let dummyOrderStatus: [OrderStatusEntity] = [
         orderedMenus: [
             OrderedMenu(
                 menuName: "올리브 그린 새싹 도넛",
-                quantity: "2EA",
-                price: "3,200원",
+                quantity: 2,
+                stringQuantity: "2EA",
+                price: 3200,
+                stringPrice: "3,200원",
                 imageURL: Secret.baseURL + "/v1/data/menus/1748692151899.png"
             ),
             OrderedMenu(
                 menuName: "레몬 민트 새싹 도넛",
-                quantity: "3EA",
-                price: "3,600원",
+                quantity: 3,
+                stringQuantity: "3EA",
+                price: 3600,
+                stringPrice: "3,600원",
                 imageURL: Secret.baseURL + "/v1/data/menus/1748713214481.jpg"
             )
         ],
@@ -131,8 +156,10 @@ public let dummyOrderStatus: [OrderStatusEntity] = [
         orderedMenus: [
             OrderedMenu(
                 menuName: "킹킹킹 피자킹",
-                quantity: "2EA",
-                price: "3,200원",
+                quantity: 2,
+                stringQuantity: "2EA",
+                price: 3200,
+                stringPrice: "3,200원",
                 imageURL: Secret.baseURL + "/v1/data/menus/1748713236491.jpg"
             )
         ],
