@@ -11,7 +11,12 @@ import SCMPayment
 
 struct OrderView: View {
     
-    @State private var orderStatusEntity: [OrderStatusEntity] = dummyOrderStatus
+    private let paymentRepository: PaymentDisplayable
+    @State private var orderStatusEntity: [OrderStatusEntity] = []
+    
+    init(paymentRepository: PaymentDisplayable) {
+        self.paymentRepository = paymentRepository
+    }
     
     var body: some View {
         NavigationStack {
@@ -23,6 +28,9 @@ struct OrderView: View {
             }
             .navigationTitle(StringLiterals.navigationTitle.text)
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                await getOrderStatusEntity()
+            }
         }
     }
 }
@@ -56,6 +64,19 @@ extension OrderView {
 }
 
 // MARK: Action
+extension OrderView {
+    
+    // 픽업 완료되지 않은 상태의 order Entity request
+    private func getOrderStatusEntity() async {
+        do {
+            let entity = try await paymentRepository.requestAwaitingPickupOrderList()
+            self.orderStatusEntity = entity
+        } catch {
+            Log.error("❎ 픽업 대기 중인 오더리스트 통신 실패: \(error)")
+            // TODO: refresh 토큰 오류 났을 때 처리 필요
+        }
+    }
+}
 
 // MARK: StringLiterals
 private enum StringLiterals: String {
@@ -73,5 +94,5 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    OrderView()
+    OrderView(paymentRepository: DIContainer.shared.paymentRepository)
 }

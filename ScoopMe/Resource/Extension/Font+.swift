@@ -18,6 +18,7 @@ extension Font {
     static let JNBody1: Font = .custom(Name.jalnanGothic.text, size: 20)
     
     static let JNCaption1: Font = .custom(Name.jalnanGothic.text, size: 14)
+    static let JNCaption2: Font = .custom(Name.jalnanGothic.text, size: 12)
     
     /// Pretendard
     static let PTTitle1: Font = .custom(Name.pretendardB.text, size: 20)

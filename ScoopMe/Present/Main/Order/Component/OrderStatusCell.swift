@@ -62,9 +62,9 @@ extension OrderStatusCell {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 4) {
                 Text(StringLiterals.orderNum.text)
-                    .basicText(.JNCaption1, .scmGray60)
+                    .basicText(.JNCaption2, .scmGray60)
                 Text(entity.orderNum)
-                    .basicText(.JNCaption1, .scmDeepSprout)
+                    .basicText(.JNCaption2, .scmDeepSprout)
             }
             .padding(.bottom, 8)
             
@@ -177,9 +177,9 @@ extension OrderStatusCell {
                 Text(menu.menuName)
                     .basicText(.PTTitle4, .scmGray90)
                 HStack(alignment: .center, spacing: 8) {
-                    Text(menu.price)
+                    Text(menu.stringPrice)
                         .basicText(.PTBody2, .scmGray75)
-                    Text(menu.quantity)
+                    Text(menu.stringQuantity)
                         .basicText(.PTBody2, .scmGray60)
                 }
             }

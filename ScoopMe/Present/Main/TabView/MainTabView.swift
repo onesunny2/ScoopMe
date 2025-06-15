@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SCMPayment
 
 struct MainTabView: View {
     
@@ -23,7 +24,7 @@ struct MainTabView: View {
                 .tabImage(Image(.homeFill))
                 .tag(0)
                 
-                OrderView()
+                OrderView(paymentRepository: DIContainer.shared.paymentRepository)
                     .tabImage(Image(.orderFill))
                     .tag(1)
                 
