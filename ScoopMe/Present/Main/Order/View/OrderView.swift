@@ -22,7 +22,9 @@ struct OrderView: View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    orderDashboard
+                    if !orderStatusEntity.isEmpty {
+                        orderDashboard
+                    }
                     adBanners
                 }
             }
