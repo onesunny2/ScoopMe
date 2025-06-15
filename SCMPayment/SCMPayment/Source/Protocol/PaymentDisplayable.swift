@@ -20,6 +20,7 @@ public protocol PaymentDisplayable: AnyObject {
     
     func callRequest<T: Decodable>(_ value: PaymentURL, type: T.Type) async throws -> HTTPResponse<T>
     func checkRefreshToken(complete: @escaping () async throws -> ()) async
+    func requestAwaitingPickupOrderList() async throws -> [OrderStatusEntity]
 }
 
 extension PaymentDisplayable {
