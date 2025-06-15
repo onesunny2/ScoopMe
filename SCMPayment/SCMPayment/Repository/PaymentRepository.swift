@@ -83,6 +83,7 @@ public final class PaymentRepository: PaymentDisplayable {
                 storeName: $0.store.name,
                 storeImageURL: Secret.baseURL + "/v1" +  ($0.store.storeImageUrls.first ?? ""),
                 orderDate: $0.paidAt.toKoreanDate(),
+                currentStatus: $0.currentOrderStatus ?? "PENDING_APPROVAL",
                 currentOrder: currentStatus,
                 orderedMenus: orderedMenus,
                 totalQuantity: "\(orderedMenus.reduce(0) { $0 + $1.quantity })EA",
