@@ -50,7 +50,7 @@ public final class PaymentRepository: PaymentDisplayable {
         
         let value = PaymentURL.requestAwaitingOrderList(access: accessToken)
         let result = try await callRequest(value, type: OrderListResponseDTO.self)
-        let data = result.response.data
+        let data = result.response.data.filter { $0.currentOrderStatus != "PICKED_UP" }
         
         Log.debug("🔗 픽업 대기 중인 오더리스트 통신 완료")
         
