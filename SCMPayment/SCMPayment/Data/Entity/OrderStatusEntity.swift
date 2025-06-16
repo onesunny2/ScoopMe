@@ -44,7 +44,7 @@ public struct OrderStatusEntity: Hashable {
 public struct CurrentStatus: Hashable {
     public let orderType: OrderType
     public var isCompleted: Bool
-    public let completedTime: String?
+    public var completedTime: String?
     
     public init(orderType: OrderType, isCompleted: Bool, completedTime: String?) {
         self.orderType = orderType

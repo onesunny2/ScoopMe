@@ -244,6 +244,7 @@ extension OrderStatusCell {
                 guard let index = entity.currentOrder.firstIndex(where: { $0.orderType == type }) else { return }
                 entity.currentOrder[index].isCompleted = true
                 entity.currentStatus = type
+                entity.currentOrder[index].completedTime = Date().toKoreanTimeString()
                 
                 // 픽업완료 상태가 되면 부모 뷰에 알림
                 if type == .픽업완료 {
