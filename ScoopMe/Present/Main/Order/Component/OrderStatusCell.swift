@@ -14,10 +14,20 @@ struct OrderStatusCell: View {
     @Namespace private var namespace
     @State private var isShowMore: Bool = false
     
-    private let entity: OrderStatusEntity
+    @State private var entity: OrderStatusEntity
+    private let repository: PaymentDisplayable
     
-    init(entity: OrderStatusEntity) {
-        self.entity = entity
+    // 픽업완료 시 부모에게 알려주는 콜백
+    private let onPickupCompleted: ((String) -> Void)?
+    
+    init(
+        repository: PaymentDisplayable,
+        entity: OrderStatusEntity,
+        onPickupCompleted: ((String) -> Void)? = nil
+    ) {
+        self.repository = repository
+        self._entity = State(initialValue: entity)
+        self.onPickupCompleted = onPickupCompleted
     }
     
     var body: some View {
@@ -93,6 +103,9 @@ extension OrderStatusCell {
                     .padding([.trailing, .bottom], 4)
                     .asButton {
                         Log.debug("🔗 주문 다음 단계로!")
+                        Task {
+                            await applyNextStatus()
+                        }
                     }
             }
         }
@@ -107,6 +120,7 @@ extension OrderStatusCell {
                         if (entity.currentOrder.count - 1) != index {
                             Rectangle()
                                 .fill(entity.currentOrder[index].isCompleted ? Color.scmBlackSprout : .scmGray30)
+                                .animation(.easeInOut(duration: 0.6), value: entity.currentOrder[index].isCompleted)
                                 .frame(width: 4, height: 22)
                                 .padding(.leading, 6)
                                 .padding(.top, 15)
@@ -126,6 +140,7 @@ extension OrderStatusCell {
         HStack(alignment: .center, spacing: 4) {
             Image(order.isCompleted ? .orderApproved : .orderAwait)
                 .basicImage(width: 16)
+                .animation(.easeInOut(duration: 0.5), value: order.isCompleted)
                 .padding(.trailing, 4)
             Text(order.orderType.text)
                 .basicText(.PTCaption2, .scmGray90)
@@ -217,6 +232,33 @@ extension OrderStatusCell {
     }
 }
 
+// MARK: Action
+extension OrderStatusCell {
+    // 다음 단계로 넘어가면 UI에도 반영되도록
+    private func applyNextStatus() async {
+        do {
+            let type = try await repository.changeOrderStatus(order: entity.orderNum, current: entity.currentStatus)
+            
+            // 기존 entity의 값 변경
+            withAnimation(.easeInOut(duration: 0.6)) {
+                guard let index = entity.currentOrder.firstIndex(where: { $0.orderType == type }) else { return }
+                entity.currentOrder[index].isCompleted = true
+                entity.currentStatus = type
+                
+                // 픽업완료 상태가 되면 부모 뷰에 알림
+                if type == .픽업완료 {
+                    Log.debug("✅ 픽업완료! 주문번호: \(entity.orderNum)")
+                    onPickupCompleted?(entity.orderNum)
+                }
+            }
+            
+        } catch {
+            // TODO: 추후 refreshToken 반영 필요
+            Log.error("❎ 오더 상태변경 오류: \(error)")
+        }
+    }
+}
+
 // MARK: StringLiterals
 private enum StringLiterals: String {
     case orderNum = "주문번호"
@@ -228,14 +270,5 @@ private enum StringLiterals: String {
     
     var text: String {
         return self.rawValue
-    }
-}
-
-#Preview {
-    ZStack {
-        Color.scmGray90
-        
-        OrderStatusCell(entity: dummyOrderStatus.first!)
-            .defaultHorizontalPadding()
     }
 }

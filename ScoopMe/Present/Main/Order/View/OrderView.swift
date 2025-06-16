@@ -48,8 +48,21 @@ extension OrderView {
             
             VStack(alignment: .leading, spacing: 20) {
                 ForEach(orderStatusEntity, id: \.self) { order in
-                    OrderStatusCell(entity: order)
+                    if order.currentStatus != .픽업완료 {
+                        OrderStatusCell(
+                            repository: paymentRepository,
+                            entity: order,
+                            onPickupCompleted: { completedOrderNum in
+                                // 픽업완료된 주문을 배열에서 제거
+                                removeCompletedOrder(orderNum: completedOrderNum)
+                            }
+                        )
                         .shadow(color: .scmGray90.opacity(0.1), radius: 12, x: 0, y: 4)
+                        .transition(.asymmetric(
+                            insertion: .scale.combined(with: .opacity),
+                            removal: .scale.combined(with: .opacity)
+                        ))
+                    }
                 }
             }
         }
@@ -77,6 +90,14 @@ extension OrderView {
             Log.error("❎ 픽업 대기 중인 오더리스트 통신 실패: \(error)")
             // TODO: refresh 토큰 오류 났을 때 처리 필요
         }
+    }
+    
+    // 픽업완료된 주문을 배열에서 제거하는 함수
+    private func removeCompletedOrder(orderNum: String) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            orderStatusEntity.removeAll { $0.orderNum == orderNum }
+        }
+        Log.debug("🗑️ 픽업완료된 주문 제거: \(orderNum)")
     }
 }
 
