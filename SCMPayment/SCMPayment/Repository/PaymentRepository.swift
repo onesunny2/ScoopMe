@@ -83,7 +83,7 @@ public final class PaymentRepository: PaymentDisplayable {
                 storeName: $0.store.name,
                 storeImageURL: Secret.baseURL + "/v1" +  ($0.store.storeImageUrls.first ?? ""),
                 orderDate: $0.paidAt.toKoreanDate(),
-                currentStatus: $0.currentOrderStatus ?? "PENDING_APPROVAL",
+                currentStatus: OrderType(bodyQuery: $0.currentOrderStatus ?? "PENDING_APPROVAL") ?? .승인대기,
                 currentOrder: currentStatus,
                 orderedMenus: orderedMenus,
                 totalQuantity: "\(orderedMenus.reduce(0) { $0 + $1.quantity })EA",
@@ -94,5 +94,37 @@ public final class PaymentRepository: PaymentDisplayable {
         }
         
         return entities
+    }
+    
+    // 주문 상태변경
+    public func changeOrderStatus(order code: String, current status: OrderType) async throws -> OrderType {
+        
+        let value = PaymentURL.nextOrderStatus(access: accessToken, orderCode: code, nextStatus: getNextStatusBody(status: status).body)
+        let result = try await callEmptyRequest(value)
+        
+        Log.debug("🔗 오더상태 업데이트 완료: \(getNextStatusBody(status: status).body)")
+        
+        return getNextStatusBody(status: status).status
+    }
+}
+
+// MARK: Action
+extension PaymentRepository {
+    typealias UpdatedStatus = (status: OrderType, body: String)
+    
+    // 현재 status를 기준으로 다음 status 계산
+    private func getNextStatusBody(status: OrderType) -> UpdatedStatus {
+        switch status {
+        case .승인대기:
+            return (OrderType.주문승인, OrderType.주문승인.bodyQuery)
+        case .주문승인:
+            return (OrderType.조리_중, OrderType.조리_중.bodyQuery)
+        case .조리_중:
+            return (OrderType.픽업대기, OrderType.픽업대기.bodyQuery)
+        case .픽업대기:
+            return (OrderType.픽업완료, OrderType.픽업완료.bodyQuery)
+        case .픽업완료:
+            return (OrderType.승인대기, "completed")
+        }
     }
 }

@@ -12,8 +12,8 @@ public struct OrderStatusEntity: Hashable {
     public let storeName: String
     public let storeImageURL: String
     public let orderDate: String
-    public let currentStatus: String
-    public let currentOrder: [CurrentStatus]
+    public var currentStatus: OrderType
+    public var currentOrder: [CurrentStatus]
     public let orderedMenus: [OrderedMenu]
     public let totalQuantity: String
     public let totalPrice: String
@@ -23,7 +23,7 @@ public struct OrderStatusEntity: Hashable {
         storeName: String,
         storeImageURL: String,
         orderDate: String,
-        currentStatus: String,
+        currentStatus: OrderType,
         currentOrder: [CurrentStatus],
         orderedMenus: [OrderedMenu],
         totalQuantity: String,
@@ -43,7 +43,7 @@ public struct OrderStatusEntity: Hashable {
 
 public struct CurrentStatus: Hashable {
     public let orderType: OrderType
-    public let isCompleted: Bool
+    public var isCompleted: Bool
     public let completedTime: String?
     
     public init(orderType: OrderType, isCompleted: Bool, completedTime: String?) {

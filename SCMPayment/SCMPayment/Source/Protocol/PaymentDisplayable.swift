@@ -19,8 +19,10 @@ public protocol PaymentDisplayable: AnyObject {
     func checkPaymentValidation(impUid: String) async throws -> OrderCode
     
     func callRequest<T: Decodable>(_ value: PaymentURL, type: T.Type) async throws -> HTTPResponse<T>
+    func callEmptyRequest(_ value: PaymentURL) async throws -> HTTPResponse<EmptyResponse>
     func checkRefreshToken(complete: @escaping () async throws -> ()) async
     func requestAwaitingPickupOrderList() async throws -> [OrderStatusEntity]
+    func changeOrderStatus(order code: String, current status: OrderType) async throws -> OrderType
 }
 
 extension PaymentDisplayable {
@@ -38,6 +40,20 @@ extension PaymentDisplayable {
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)
+    }
+    
+    public func callEmptyRequest(_ value: PaymentURL) async throws -> HTTPResponse<EmptyResponse> {
+        let request = HTTPRequest(
+            scheme: .http,
+            method: value.method,
+            successCodes: [200] // 200 OK
+        )
+            .addBaseURL(value.baseURL)
+            .addPath(value.path)
+            .addJSONBody(value.jsonBody)
+            .addHeaders(value.headers)
+        
+        return try await network.fetchEmptyData(request)
     }
     
     public func checkRefreshToken(complete: @escaping () async throws -> ()) async {
