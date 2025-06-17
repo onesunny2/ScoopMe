@@ -64,7 +64,7 @@ public final class PaymentRepository: PaymentDisplayable {
                 CurrentStatus(
                     orderType: OrderType(bodyQuery: $0.status) ?? .승인대기,
                     isCompleted: $0.completed,
-                    completedTime: $0.changedAt?.toKoreanTime()
+                    completedTime: $0.changedAt
                 )
             }
             

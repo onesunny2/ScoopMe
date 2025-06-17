@@ -144,7 +144,7 @@ extension OrderStatusCell {
                 .padding(.trailing, 4)
             Text(order.orderType.text)
                 .basicText(.PTCaption2, .scmGray90)
-            Text(order.completedTime ?? "")
+            Text(order.completedTime?.toKoreanTime() ?? "")
                 .basicText(.PTCaption4, .scmGray60)
         }
     }

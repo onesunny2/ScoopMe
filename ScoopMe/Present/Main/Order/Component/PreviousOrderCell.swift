@@ -37,7 +37,7 @@ extension PreviousOrderCell {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(entity.storeName)
-                    .basicText(.PTTitle1, .scmGray75)
+                    .basicText(.PTTitle7, .scmGray75)
                 
                 HStack(alignment: .center) {
                     Text(entity.orderCode)

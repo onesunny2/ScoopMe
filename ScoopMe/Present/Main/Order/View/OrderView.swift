@@ -13,6 +13,7 @@ struct OrderView: View {
     
     private let paymentRepository: PaymentDisplayable
     @State private var orderStatusEntity: [OrderStatusEntity] = []
+    @State private var previousOrderEntity: [PreviousOrderEntity] = []
     
     init(paymentRepository: PaymentDisplayable) {
         self.paymentRepository = paymentRepository
@@ -26,6 +27,7 @@ struct OrderView: View {
                         orderDashboard
                     }
                     adBanners
+                    previousOrderDashboard
                 }
             }
             .navigationTitle(StringLiterals.navigationTitle.text)
@@ -55,6 +57,10 @@ extension OrderView {
                             onPickupCompleted: { completedOrderNum in
                                 // 픽업완료된 주문을 배열에서 제거
                                 removeCompletedOrder(orderNum: completedOrderNum)
+                                // 이전 주문내역에 새롭게 추가
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    appendPickedUpOrder(order: order)
+                                }
                             }
                         )
                         .shadow(color: .scmGray90.opacity(0.1), radius: 12, x: 0, y: 4)
@@ -76,6 +82,22 @@ extension OrderView {
     private var adBanners: some View {
         AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
     }
+    
+    // 이전주문내역
+    private var previousOrderDashboard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(StringLiterals.previousOrderTitle.text)
+                .basicText(.PTTitle4, .scmGray45)
+            
+            ForEach(previousOrderEntity, id: \.orderCode) { entity in
+                PreviousOrderCell(entity: entity)
+            }
+        }
+        .padding(.top, 16)
+        .padding(.bottom, 24)
+        .defaultHorizontalPadding()
+        .background(Color.scmGray0)
+    }
 }
 
 // MARK: Action
@@ -86,18 +108,38 @@ extension OrderView {
         do {
             let entity = try await paymentRepository.requestAwaitingPickupOrderList()
             self.orderStatusEntity = entity.current
+            self.previousOrderEntity = entity.previous
         } catch {
             Log.error("❎ 픽업 대기 중인 오더리스트 통신 실패: \(error)")
             // TODO: refresh 토큰 오류 났을 때 처리 필요
         }
     }
     
-    // 픽업완료된 주문을 배열에서 제거하는 함수
+    // 픽업완료된 주문을 배열에서 제거
     private func removeCompletedOrder(orderNum: String) {
         withAnimation(.easeInOut(duration: 0.3)) {
             orderStatusEntity.removeAll { $0.orderCode == orderNum }
         }
         Log.debug("🗑️ 픽업완료된 주문 제거: \(orderNum)")
+    }
+    
+    // 픽업완료된 주문을 이전주문내역에 추가
+    private func appendPickedUpOrder(order: OrderStatusEntity) {
+        
+        let firstItemName = order.orderedMenus.first?.menuName ?? ""
+        let itemsCount = order.orderedMenus.count
+        
+        let newPreviousOrder: PreviousOrderEntity = PreviousOrderEntity(
+            orderCode: order.orderCode,
+            storeName: order.storeName,
+            storeImageURL: order.storeImageURL,
+            pickedDate: Date().toKoreanDateString(),
+            orderedItems: (itemsCount == 1) ? firstItemName : firstItemName + "외 \(itemsCount - 1)건",
+            totalPrice: order.totalPrice + " >",
+            review: nil
+        )
+        
+        previousOrderEntity.insert(newPreviousOrder, at: 0)
     }
 }
 
