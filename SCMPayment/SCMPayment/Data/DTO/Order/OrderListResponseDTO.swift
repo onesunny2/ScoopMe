@@ -36,9 +36,14 @@ struct OrderWithStatusResponseDTO: Codable {
     }
 }
 
-struct Review: Codable {
-    let id: String
-    let rating: Double
+public struct Review: Codable, Hashable {
+    public let id: String
+    public let rating: Double
+    
+    public init(id: String, rating: Double) {
+        self.id = id
+        self.rating = rating
+    }
 }
 
 struct OrderStatusTimeline: Codable {
