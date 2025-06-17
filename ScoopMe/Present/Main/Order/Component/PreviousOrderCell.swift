@@ -22,6 +22,11 @@ struct PreviousOrderCell: View {
             orderInfoView
             reviewButtonCell
         }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.scmGray30)
+        }
     }
 }
 
