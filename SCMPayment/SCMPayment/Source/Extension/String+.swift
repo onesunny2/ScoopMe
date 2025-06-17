@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension String {
+public extension String {
     
     func toKoreanDate() -> String {
         let isoFormatter = ISO8601DateFormatter()
@@ -21,7 +21,7 @@ extension String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = "yyyy년 M월 d일 a h시 m분"
+        formatter.dateFormat = "yy년 M월 d일 a h:mm"
 
         return formatter.string(from: date)
     }
