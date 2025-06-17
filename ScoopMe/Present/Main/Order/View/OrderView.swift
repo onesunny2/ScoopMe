@@ -85,7 +85,7 @@ extension OrderView {
     private func getOrderStatusEntity() async {
         do {
             let entity = try await paymentRepository.requestAwaitingPickupOrderList()
-            self.orderStatusEntity = entity
+            self.orderStatusEntity = entity.current
         } catch {
             Log.error("❎ 픽업 대기 중인 오더리스트 통신 실패: \(error)")
             // TODO: refresh 토큰 오류 났을 때 처리 필요
