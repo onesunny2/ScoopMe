@@ -95,7 +95,7 @@ extension OrderView {
     // 픽업완료된 주문을 배열에서 제거하는 함수
     private func removeCompletedOrder(orderNum: String) {
         withAnimation(.easeInOut(duration: 0.3)) {
-            orderStatusEntity.removeAll { $0.orderNum == orderNum }
+            orderStatusEntity.removeAll { $0.orderCode == orderNum }
         }
         Log.debug("🗑️ 픽업완료된 주문 제거: \(orderNum)")
     }

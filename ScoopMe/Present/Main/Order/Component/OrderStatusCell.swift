@@ -73,7 +73,7 @@ extension OrderStatusCell {
             HStack(alignment: .center, spacing: 4) {
                 Text(StringLiterals.orderNum.text)
                     .basicText(.JNCaption2, .scmGray60)
-                Text(entity.orderNum)
+                Text(entity.orderCode)
                     .basicText(.JNCaption2, .scmDeepSprout)
             }
             .padding(.bottom, 8)
@@ -237,7 +237,7 @@ extension OrderStatusCell {
     // 다음 단계로 넘어가면 UI에도 반영되도록
     private func applyNextStatus() async {
         do {
-            let type = try await repository.changeOrderStatus(order: entity.orderNum, current: entity.currentStatus)
+            let type = try await repository.changeOrderStatus(order: entity.orderCode, current: entity.currentStatus)
             
             // 기존 entity의 값 변경
             withAnimation(.easeInOut(duration: 0.6)) {
@@ -248,8 +248,8 @@ extension OrderStatusCell {
                 
                 // 픽업완료 상태가 되면 부모 뷰에 알림
                 if type == .픽업완료 {
-                    Log.debug("✅ 픽업완료! 주문번호: \(entity.orderNum)")
-                    onPickupCompleted?(entity.orderNum)
+                    Log.debug("✅ 픽업완료! 주문번호: \(entity.orderCode)")
+                    onPickupCompleted?(entity.orderCode)
                 }
             }
             

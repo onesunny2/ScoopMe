@@ -8,7 +8,7 @@
 import Foundation
 
 public struct OrderStatusEntity: Hashable {
-    public let orderNum: String
+    public let orderCode: String
     public let storeName: String
     public let storeImageURL: String
     public let orderDate: String
@@ -29,7 +29,7 @@ public struct OrderStatusEntity: Hashable {
         totalQuantity: String,
         totalPrice: String
     ) {
-        self.orderNum = orderNum
+        self.orderCode = orderNum
         self.storeName = storeName
         self.storeImageURL = storeImageURL
         self.orderDate = orderDate
