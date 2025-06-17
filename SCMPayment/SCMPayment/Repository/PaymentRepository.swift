@@ -46,17 +46,19 @@ public final class PaymentRepository: PaymentDisplayable {
     }
     
     // 결제 완료된 아직 픽업 완료되지 않은 항목 통신
-    public func requestAwaitingPickupOrderList() async throws -> [OrderStatusEntity] {
+    public func requestAwaitingPickupOrderList() async throws -> OrderEntities {
         
         let value = PaymentURL.requestAwaitingOrderList(access: accessToken)
         let result = try await callRequest(value, type: OrderListResponseDTO.self)
-        let data = result.response.data.filter { $0.currentOrderStatus != "PICKED_UP" }
+        let currentData = result.response.data.filter { $0.currentOrderStatus != "PICKED_UP" }
+        let previousData = result.response.data.filter { $0.currentOrderStatus == "PICKED_UP" }
         
         Log.debug("🔗 픽업 대기 중인 오더리스트 통신 완료")
         
-        var entities: [OrderStatusEntity] = []
+        var currentEntities: [OrderStatusEntity] = []
+        var previousEntites: [PreviousOrderEntity] = []
         
-        data.forEach {
+        currentData.forEach {
             
             let currentStatus: [CurrentStatus] = $0.orderStatusTimeline.map {
                 CurrentStatus(
@@ -90,10 +92,30 @@ public final class PaymentRepository: PaymentDisplayable {
                 totalPrice: "\($0.totalPrice.formatted())원"
             )
             
-            entities.append(entity)
+            currentEntities.append(entity)
         }
         
-        return entities
+        previousData.forEach {
+            
+            let completedDate = $0.orderStatusTimeline.last?.changedAt
+            let firstItem = $0.orderMenuList.first?.menu.name ?? ""
+            let itemsCount = $0.orderMenuList.count
+            
+            let entity = PreviousOrderEntity(
+                orderCode: $0.orderCode,
+                storeName: $0.store.name,
+                storeImageURL: Secret.baseURL + "/v1" +  ($0.store.storeImageUrls.first ?? ""),
+                pickedDate: completedDate?.toKoreanDate() ?? "",
+                orderedItems: (itemsCount == 1) ? firstItem : firstItem + "외 \(itemsCount - 1)건",
+                totalPrice: $0.totalPrice.formatted() + "원 >",
+                review: $0.review
+            )
+            
+            previousEntites.append(entity)
+            
+        }
+        
+        return (currentEntities, previousEntites)
     }
     
     // 주문 상태변경
@@ -111,6 +133,10 @@ public final class PaymentRepository: PaymentDisplayable {
 // MARK: Action
 extension PaymentRepository {
     typealias UpdatedStatus = (status: OrderType, body: String)
+    
+    private func mappingEntity() {
+        
+    }
     
     // 현재 status를 기준으로 다음 status 계산
     private func getNextStatusBody(status: OrderType) -> UpdatedStatus {

@@ -11,6 +11,7 @@ import SCMNetwork
 
 public protocol PaymentDisplayable: AnyObject {
     typealias OrderCode = String
+    typealias OrderEntities = (current: [OrderStatusEntity], previous: [PreviousOrderEntity])
     
     var network: SCMNetworkImpl { get }
     var loginTokenManager: LoginTokenManager { get }
@@ -21,7 +22,7 @@ public protocol PaymentDisplayable: AnyObject {
     func callRequest<T: Decodable>(_ value: PaymentURL, type: T.Type) async throws -> HTTPResponse<T>
     func callEmptyRequest(_ value: PaymentURL) async throws -> HTTPResponse<EmptyResponse>
     func checkRefreshToken(complete: @escaping () async throws -> ()) async
-    func requestAwaitingPickupOrderList() async throws -> [OrderStatusEntity]
+    func requestAwaitingPickupOrderList() async throws -> OrderEntities
     func changeOrderStatus(order code: String, current status: OrderType) async throws -> OrderType
 }
 
