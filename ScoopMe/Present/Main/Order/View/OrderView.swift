@@ -25,7 +25,9 @@ struct OrderView: View {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     orderDashboard
                     adBanners
-                    previousOrderDashboard
+                    if !previousOrderEntity.isEmpty {
+                        previousOrderDashboard
+                    }
                 }
             }
             .navigationTitle(StringLiterals.navigationTitle.text)
@@ -90,9 +92,12 @@ extension OrderView {
     
     // 이전주문내역
     private var previousOrderDashboard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(StringLiterals.previousOrderTitle.text)
-                .basicText(.PTTitle4, .scmGray45)
+        VStack(alignment: .center, spacing: 16) {
+            HStack {
+                Text(StringLiterals.previousOrderTitle.text)
+                    .basicText(.PTTitle4, .scmGray45)
+                Spacer()
+            }
             
             ForEach(previousOrderEntity, id: \.orderCode) { entity in
                 PreviousOrderCell(entity: entity)

@@ -11,7 +11,7 @@ struct CurrentOrderEmptyView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
             Image(.sesac)
-                .basicImage(width: 60, color: .scmBrightSprout)
+                .basicImage(width: 50, color: .scmBrightSprout)
             
             Text("스쿱미를 시작해보세요!")
                 .basicText(.JNTitle1, .scmBrightSprout)
