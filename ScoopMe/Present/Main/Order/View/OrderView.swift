@@ -23,9 +23,7 @@ struct OrderView: View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    if !orderStatusEntity.isEmpty {
-                        orderDashboard
-                    }
+                    orderDashboard
                     adBanners
                     previousOrderDashboard
                 }
@@ -44,32 +42,39 @@ extension OrderView {
     
     // 상단 주문현황
     private var orderDashboard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(StringLiterals.currentOrderTitle.text)
-                .basicText(.PTTitle4, .scmGray60)
+        VStack(alignment: .center, spacing: 16) {
+            HStack {
+                Text(StringLiterals.currentOrderTitle.text)
+                    .basicText(.PTTitle4, .scmGray60)
+                Spacer()
+            }
             
-            VStack(alignment: .leading, spacing: 20) {
-                ForEach(orderStatusEntity, id: \.self) { order in
-                    if order.currentStatus != .픽업완료 {
-                        OrderStatusCell(
-                            repository: paymentRepository,
-                            entity: order,
-                            onPickupCompleted: { completedOrderNum in
-                                // 픽업완료된 주문을 배열에서 제거
-                                removeCompletedOrder(orderNum: completedOrderNum)
-                                // 이전 주문내역에 새롭게 추가
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    appendPickedUpOrder(order: order)
+            if !orderStatusEntity.isEmpty {
+                VStack(alignment: .leading, spacing: 20) {
+                    ForEach(orderStatusEntity, id: \.self) { order in
+                        if order.currentStatus != .픽업완료 {
+                            OrderStatusCell(
+                                repository: paymentRepository,
+                                entity: order,
+                                onPickupCompleted: { completedOrderNum in
+                                    // 픽업완료된 주문을 배열에서 제거
+                                    removeCompletedOrder(orderNum: completedOrderNum)
+                                    // 이전 주문내역에 새롭게 추가
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        appendPickedUpOrder(order: order)
+                                    }
                                 }
-                            }
-                        )
-                        .shadow(color: .scmGray90.opacity(0.1), radius: 12, x: 0, y: 4)
-                        .transition(.asymmetric(
-                            insertion: .scale.combined(with: .opacity),
-                            removal: .scale.combined(with: .opacity)
-                        ))
+                            )
+                            .shadow(color: .scmGray90.opacity(0.1), radius: 12, x: 0, y: 4)
+                            .transition(.asymmetric(
+                                insertion: .scale.combined(with: .opacity),
+                                removal: .scale.combined(with: .opacity)
+                            ))
+                        }
                     }
                 }
+            } else {
+                CurrentOrderEmptyView()
             }
         }
         .padding(.top, 16)
