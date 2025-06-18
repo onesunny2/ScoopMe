@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TabFlow: Hashable {
+enum TabFlow: Hashable, CaseIterable {
     case home
     case order
     case chat

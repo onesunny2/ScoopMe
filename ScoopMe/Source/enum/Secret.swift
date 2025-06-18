@@ -28,4 +28,11 @@ enum Secret {
         }
         return urlString
     }()
+    
+    static let iamportUsercode: String = {
+        guard let urlString = Bundle.main.infoDictionary?["IamportUsercode"] as? String else {
+            fatalError("IamportUsercode ERROR")
+        }
+        return urlString
+    }()
 }

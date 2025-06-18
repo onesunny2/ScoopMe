@@ -15,7 +15,7 @@ import SCMNetwork
 struct CreatePostView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var repository: AnyCreatePostDisplayable
+    private var repository: CreatePostDisplayable
     
     // 텍스트필드
     @State private var titleText: String = ""
@@ -48,11 +48,11 @@ struct CreatePostView: View {
     }
     
     init(
-        repository: AnyCreatePostDisplayable,
+        repository: CreatePostDisplayable,
         storeBannerInfo: StoreBanner,
         postStore: PostStore
     ) {
-        self._repository = StateObject(wrappedValue: repository)
+        self.repository = repository
         self.storeBannerInfo = storeBannerInfo
         self.postStore = postStore
     }

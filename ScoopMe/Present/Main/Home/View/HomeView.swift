@@ -16,7 +16,7 @@ import SCMScoopInfo
 struct HomeView: View {
     
     @StateObject private var repository: AnyFoodCategoryDisplayable
-    @StateObject private var switcher = SCMSwitcher.shared
+    @StateObject private var switcher = SCMSwitcher<MainFlow>.shared
     @StateObject private var router = SCMRouter<HomePath>.shared
     @StateObject private var locationManager: LocationManager
     @StateObject private var loginTokenManager: LoginTokenManager
@@ -56,7 +56,7 @@ struct HomeView: View {
                         popularKeywords
                         categoryButtons
                         realtimePopularScoop()
-                        adBanners()
+                        adBanners
                         aroundScoop()
                     }
                 }
@@ -106,7 +106,12 @@ struct HomeView: View {
             })
             .navigationDestination(for: HomePath.self) { router in
                 switch router {
-                case let .detail(id): HomeDetailView(repository: DIContainer.shared.storeDetailRepository, storeID: id)
+                case let .detail(id):
+                    HomeDetailView(
+                        storeDetailrepository: DIContainer.shared.storeDetailRepository,
+                        paymentRepository: DIContainer.shared.paymentRepository,
+                        storeID: id
+                    )
                 }
             }
         }
@@ -211,7 +216,7 @@ struct HomeView: View {
         }
     }
     
-    private func adBanners() -> some View {
+    private var adBanners: some View {
         AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
     }
     

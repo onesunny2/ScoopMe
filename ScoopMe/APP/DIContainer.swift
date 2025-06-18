@@ -13,6 +13,7 @@ import SCMLogger
 import SCMLogin
 import SCMLocation
 import SCMScoopInfo
+import SCMPayment
 
 final class DIContainer {
     static let shared: DIContainer = DIContainer()
@@ -32,11 +33,10 @@ final class DIContainer {
         
         self.imageHelper = ImageHelper.shared
         
-        let communityRepo = CommunityPostRepository()
-        self.communityPostRepository = AnyCommunityPostDisplayable(communityRepo)
+        self.communityPostRepository = CommunityPostRepository()
+        self.createPostRepository = CreatePostRepository()
         
-        let createPostRepo = CreatePostRepository()
-        self.createPostRepository = AnyCreatePostDisplayable(createPostRepo)
+        self.paymentRepository = PaymentRepository()
     }
     
     /// SCMLogin
@@ -56,6 +56,9 @@ final class DIContainer {
     private(set) var imageHelper: ImageHelper
     
     /// SCMCommunity
-    private(set) var communityPostRepository: AnyCommunityPostDisplayable
-    private(set) var createPostRepository: AnyCreatePostDisplayable
+    private(set) var communityPostRepository: CommunityPostDisplayable
+    private(set) var createPostRepository: CreatePostDisplayable
+    
+    /// SCMPayment
+    private(set) var paymentRepository: PaymentDisplayable
 }

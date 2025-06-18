@@ -11,7 +11,7 @@ import SCMLogin
 
 struct SplashView: View {
     
-    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher<MainFlow>
     private let loginTokenManager = DIContainer.shared.loginTokenManager
     
     @State private var angle: Double = 0
@@ -70,5 +70,5 @@ extension SplashView {
 
 #Preview {
     SplashView()
-        .environmentObject(SCMSwitcher.shared)
+        .environmentObject(SCMSwitcher<MainFlow>.shared)
 }

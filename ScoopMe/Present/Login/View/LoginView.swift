@@ -12,7 +12,7 @@ import SCMLogin
 
 struct LoginView: View {
     
-    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher<MainFlow>
     @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager = DIContainer.shared.loginManager
     

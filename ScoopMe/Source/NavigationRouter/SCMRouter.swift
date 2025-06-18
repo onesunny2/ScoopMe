@@ -24,7 +24,7 @@ final class SCMRouter<P: Hashable>: ObservableObject {
             path.removeLast()
         case .pops(let count):
             let removeCount = min(count, path.count)
-            path.removeLast(count)
+            path.removeLast(removeCount)
         case .popAll:
             path.removeAll()
         }
@@ -32,14 +32,6 @@ final class SCMRouter<P: Hashable>: ObservableObject {
 }
 
 extension SCMRouter where SCMRouter == SCMRouter<LoginPath> {
-    static let shared = SCMRouter()
-}
-
-extension SCMRouter where SCMRouter == SCMRouter<MainFlow> {
-    static let shared = SCMRouter()
-}
-
-extension SCMRouter where SCMRouter == SCMRouter<TabFlow> {
     static let shared = SCMRouter()
 }
 

@@ -15,13 +15,9 @@ import SCMNetwork
 
 public final class CommunityPostRepository: CommunityPostDisplayable {
     
-    @Published public var selectedFiltering: TimelineFilter = .최신순
-    @Published public var isLoading: Bool = false
-    @Published public var lastStoreID: String = ""
-    
-    private let locationManager: LocationManager
-    private let loginTokenManager: LoginTokenManager
-    private let network: SCMNetworkImpl
+    public let locationManager: LocationManager
+    public let loginTokenManager: LoginTokenManager
+    public let network: SCMNetworkImpl
     
     public init() {
         self.locationManager = LocationManager()
@@ -44,7 +40,6 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
             next: next,
             orderBy: orderBy
         )
-        Log.debug("🔗 geolocationPost 정보: \(geolocationPost)")
         let value = CommunityURL.getCommunityPost(access: accessToken, value: geolocationPost)
         let result = try await callRequest(value, type: PostSummaryPaginationResponseDTO.self)
         
@@ -98,32 +93,5 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
-    }
-}
-
-extension CommunityPostRepository {
-    
-    private func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T> {
-        let request = HTTPRequest(
-            scheme: .http,
-            method: value.method,
-            successCodes: [200]
-        )
-            .addBaseURL(value.baseURL)
-            .addPath(value.path)
-            .addParameters(value.parameters)
-            .addJSONBody(value.jsonBody)
-            .addHeaders(value.headers)
-        
-        return try await network.fetchData(request, T.self)
-    }
-    
-    private func checkRefreshToken(complete: @escaping () async throws -> ()) async {
-        do {
-            try await loginTokenManager.requestRefreshToken()
-            try await complete()
-        } catch {
-            // TODO: 만료되면 로그인 화면으로 돌아가도록 처리 필요
-        }
     }
 }

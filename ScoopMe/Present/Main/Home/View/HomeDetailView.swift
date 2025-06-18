@@ -8,11 +8,13 @@
 import SwiftUI
 import SCMLogger
 import SCMScoopInfo
+import SCMPayment
 
 struct HomeDetailView: View {
     @Namespace private var textfieldID
     
-    @StateObject private var repository: AnyStoreDetailDisplayable
+    @StateObject private var storeDetailrepository: AnyStoreDetailDisplayable
+    private let paymentRepository: PaymentDisplayable
     
     let storeID: String
     
@@ -30,14 +32,25 @@ struct HomeDetailView: View {
     @State private var isButtonTriggered: Bool = false  // 스크롤 위치감지 막기위한 트리거
     
     // 메뉴 가격
-    @State private var selectedCount: Int = 0
-    @State private var selectedPrice: Int = 0
+    private var selectedCount: Int {
+        return selectedMenus.reduce(0) { $0 + $1.quantity }
+    }
+    private var selectedPrice: Int {
+        return selectedMenus.reduce(0) { $0 + $1.price }
+    }
+
+    @State private var selectedMenus: [OrderMenu] = []
+    
+    // 결제 관련
+    @State private var paymentInfo: PaymentInfo?
+    @State private var orderCode: String = ""
     
     // 커뮤니티 글쓰기
     @State private var selectedPostButton: Bool = false
     
-    init(repository: AnyStoreDetailDisplayable, storeID: String) {
-        self._repository = StateObject(wrappedValue: repository)
+    init(storeDetailrepository: AnyStoreDetailDisplayable, paymentRepository: PaymentDisplayable,  storeID: String) {
+        self._storeDetailrepository = StateObject(wrappedValue: storeDetailrepository)
+        self.paymentRepository = paymentRepository
         self.storeID = storeID
     }
     
@@ -105,6 +118,9 @@ struct HomeDetailView: View {
                     longitude: storeInfos.longitude
                 )
             )
+        }
+        .fullScreenCover(item: $paymentInfo) { payment in
+            IamportPaymentView(paymentInfo: payment)
         }
     }
 }
@@ -377,7 +393,7 @@ extension HomeDetailView {
         
         return ForEach(Array(sectionMenus.enumerated()), id: \.element.menuID) { index, menu in
             VStack(spacing: 0) {
-                DetailMenuCell(selectedCount: $selectedCount, selectedPrice: $selectedPrice, menu: menu)
+                DetailMenuCell(selectedMenus: $selectedMenus, menu: menu)
                 
                 if index < sectionMenus.count - 1 {
                     Rectangle()
@@ -401,6 +417,15 @@ extension HomeDetailView {
                 .ignoresSafeArea(.container, edges: .bottom)
                 .onTapGesture {
                     Log.debug("⏭️ 결제하기 버튼 클릭")
+                    Task {
+                        let orderList: OrderList = OrderList(
+                            storeID: storeID,
+                            orderMenuList: selectedMenus,
+                            totalPrice: selectedPrice
+                        )
+                        
+                        await postOrders(orderList: orderList)
+                    }
                 }
         }
     }
@@ -437,11 +462,11 @@ extension HomeDetailView {
     // 가게 운영 정보
     private func getStoreDetailInfo() async {
         do {
-            let info = try await repository.getStoreDetailInfo(id: storeID)
+            let info = try await storeDetailrepository.getStoreDetailInfo(id: storeID)
             self.storeInfos = info
         } catch {
-            await repository.checkTokenValidation(error) {
-                let info = try await repository.getStoreDetailInfo(id: storeID)
+            await storeDetailrepository.checkTokenValidation(error) {
+                let info = try await storeDetailrepository.getStoreDetailInfo(id: storeID)
                 self.storeInfos = info
             }
         }
@@ -450,7 +475,7 @@ extension HomeDetailView {
     // 가게 메뉴 정보
     private func getMenuInfo() async {
         do {
-            let info = try await repository.getStoreDetailMenu(id: storeID)
+            let info = try await storeDetailrepository.getStoreDetailMenu(id: storeID)
             
             self.menuInfos = info.menu
             self.menuSections = info.section
@@ -462,8 +487,8 @@ extension HomeDetailView {
             
             Log.debug("✅ menuSections 업데이트: \(info.section)")
         } catch {
-            await repository.checkTokenValidation(error) {
-                let info = try await repository.getStoreDetailMenu(id: storeID)
+            await storeDetailrepository.checkTokenValidation(error) {
+                let info = try await storeDetailrepository.getStoreDetailMenu(id: storeID)
                 
                 self.menuInfos = info.menu
                 self.menuSections = info.section
@@ -481,12 +506,52 @@ extension HomeDetailView {
     // 가게 좋아요 post
     private func postLikeStatus(id: String, status: Bool, action: (() -> ())?) async {
         do {
-            try await repository.postStoreLikeStatus(store: id, like: status)
+            try await storeDetailrepository.postStoreLikeStatus(store: id, like: status)
             action?()
         } catch {
-            await repository.checkTokenValidation(error) {
-                try await repository.postStoreLikeStatus(store: id, like: status)
+            await storeDetailrepository.checkTokenValidation(error) {
+                try await storeDetailrepository.postStoreLikeStatus(store: id, like: status)
                 action?()
+            }
+        }
+    }
+    
+    // 구매정보 post
+    private func postOrders(orderList: OrderList) async {
+        do {
+            let code = try await paymentRepository.getOrderCode(orderList: orderList)
+            self.orderCode = code
+            
+            Log.debug("🔗 오더코드: \(self.orderCode)")
+            
+            paymentInfo = PaymentInfo(
+                storeName: storeInfos.storeName,
+                orderCode: orderCode,
+                totalPrice: "\(selectedPrice)"
+            ) { impUid in  // 결제 성공 후 전달받는 uid
+                guard let impUid else { return }
+                Task {
+                    await checkPaymentValidation(impUid: impUid)
+                }
+            }
+            
+        } catch {
+            await storeDetailrepository.checkTokenValidation(error) {
+                let code = try await paymentRepository.getOrderCode(orderList: orderList)
+                self.orderCode = code
+            }
+        }
+    }
+    
+    // 결제 후 영수증 검증
+    private func checkPaymentValidation(impUid: String) async {
+        do {
+            let code = try await paymentRepository.checkPaymentValidation(impUid: impUid)
+            Log.debug("🔗 결제완료 후 최종 오더코드: \(code)")
+        } catch {
+            await storeDetailrepository.checkTokenValidation(error) {
+                let code = try await paymentRepository.checkPaymentValidation(impUid: impUid)
+                Log.debug("🔗 결제완료 후 최종 오더코드: \(code)")
             }
         }
     }
@@ -524,7 +589,8 @@ private enum StringLiterals: String {
 
 #Preview {
     HomeDetailView(
-        repository: DIContainer.shared.storeDetailRepository,
+        storeDetailrepository: DIContainer.shared.storeDetailRepository,
+        paymentRepository: DIContainer.shared.paymentRepository,
         storeID: "storeID 예시"
     )
 }

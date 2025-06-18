@@ -11,7 +11,7 @@ import SCMLogin
 
 struct EmailSignInView: View {
     
-    @EnvironmentObject private var flowSwitcher: SCMSwitcher
+    @EnvironmentObject private var flowSwitcher: SCMSwitcher<MainFlow>
     private let router = SCMRouter<LoginPath>.shared
     private let loginManager = DIContainer.shared.loginManager
     private let loginTokenManager = DIContainer.shared.loginTokenManager
