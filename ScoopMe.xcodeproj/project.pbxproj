@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4322FCD32E042F700026AC2A /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 4322FCD22E042F700026AC2A /* SocketIO */; };
 		435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435E58322DD1CA030005196F /* SCMLogin.framework */; };
 		435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 435E58322DD1CA030005196F /* SCMLogin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		436532A52DDC991500313379 /* SCMScoopInfo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532A42DDC991400313379 /* SCMScoopInfo.framework */; };
@@ -109,7 +108,6 @@
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
-				4322FCD32E042F700026AC2A /* SocketIO in Frameworks */,
 				43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */,
 				436532EF2DDD569600313379 /* SCMImageRequest.framework in Frameworks */,
 				436532A52DDC991500313379 /* SCMScoopInfo.framework in Frameworks */,
@@ -184,7 +182,6 @@
 				43FDF49F2DF8643B004C10E9 /* iamport-ios */,
 				43FDF5062DFD267C004C10E9 /* FirebaseCore */,
 				43FDF5082DFD267C004C10E9 /* FirebaseMessaging */,
-				4322FCD22E042F700026AC2A /* SocketIO */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -219,7 +216,6 @@
 				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */,
 				43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				4322FCD12E042F700026AC2A /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -476,14 +472,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4322FCD12E042F700026AC2A /* XCRemoteSwiftPackageReference "socket.io-client-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/socketio/socket.io-client-swift.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 16.1.1;
-			};
-		};
 		436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke.git";
@@ -519,11 +507,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4322FCD22E042F700026AC2A /* SocketIO */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4322FCD12E042F700026AC2A /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
-			productName = SocketIO;
-		};
 		436532AD2DDCA67200313379 /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */;
