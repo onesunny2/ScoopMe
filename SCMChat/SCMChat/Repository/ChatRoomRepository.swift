@@ -16,11 +16,8 @@ public final class ChatRoomRepository {
     public let loginTokenManager: LoginTokenManager
     public let network: SCMNetworkImpl
     
-    private var accessToken: String {
-        return loginTokenManager.fetchToken(.accessToken)
-    }
-    
-    public init() {
+    public init(roomID: String) {
+        
         self.loginTokenManager = LoginTokenManager()
         self.network = SCMNetworkImpl()
     }
