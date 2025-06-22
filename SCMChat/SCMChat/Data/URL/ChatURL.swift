@@ -6,3 +6,8 @@
 //
 
 import Foundation
+import SCMNetwork
+
+public enum ChatURL {
+    
+}
