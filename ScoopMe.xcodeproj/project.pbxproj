@@ -14,6 +14,8 @@
 		436532AE2DDCA67200313379 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 436532AD2DDCA67200313379 /* NukeUI */; };
 		436532EF2DDD569600313379 /* SCMImageRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532EE2DDD569600313379 /* SCMImageRequest.framework */; };
 		436532F02DDD569600313379 /* SCMImageRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532EE2DDD569600313379 /* SCMImageRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4374A9AD2E0C1E50008B81C4 /* SCMChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; };
+		4374A9AE2E0C1E50008B81C4 /* SCMChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
@@ -50,6 +52,7 @@
 				43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */,
 				43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */,
 				435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */,
+				4374A9AE2E0C1E50008B81C4 /* SCMChat.framework in Embed Frameworks */,
 				43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -61,6 +64,7 @@
 		435E58322DD1CA030005196F /* SCMLogin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMLogin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		436532A42DDC991400313379 /* SCMScoopInfo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMScoopInfo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		436532EE2DDD569600313379 /* SCMImageRequest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMImageRequest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC47EB2DCF19040010D965 /* ScoopMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScoopMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4B392DD118120010D965 /* SCMNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SCMNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43AC4C2A2DD11A200010D965 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
@@ -99,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4374A9AD2E0C1E50008B81C4 /* SCMChat.framework in Frameworks */,
 				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
@@ -142,6 +147,7 @@
 		43AC4B382DD118120010D965 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */,
 				43FDF4E22DF8A6A1004C10E9 /* SCMPayment.framework */,
 				43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */,
 				43B03A622DE873430057AD45 /* SCMCommunity.framework */,
