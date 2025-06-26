@@ -51,7 +51,7 @@ struct LoginView: View {
                 .basicText(.JNLargeTitle1, .scmBlackSprout)
             
             Text(StringLiterals.subTitle.text)
-                .basicText(.PTTitie2, .scmBlackSprout)
+                .basicText(.PTTitle2, .scmBlackSprout)
                 .multilineTextAlignment(.center)
                 .padding(.top, 8)
             

@@ -22,13 +22,12 @@ extension Font {
     
     /// Pretendard
     static let PTTitle1: Font = .custom(Name.pretendardB.text, size: 20)
-    static let PTTitie2: Font = .custom(Name.pretendardM.text, size: 20)
+    static let PTTitle2: Font = .custom(Name.pretendardM.text, size: 20)
     static let PTTitle3: Font = .custom(Name.pretendardB.text, size: 16)
     static let PTTitle4: Font = .custom(Name.pretendardB.text, size: 14)
     static let PTTitle5: Font = .custom(Name.pretendardR.text, size: 16)
     static let PTTitle6: Font = .custom(Name.pretendardSB.text, size: 15)
     static let PTTitle7: Font = .custom(Name.pretendardB.text, size: 18)
-    static let PTTitle8: Font = .custom(Name.pretendardR.text, size: 16)
     
     static let PTBody1: Font = .custom(Name.pretendardM.text, size: 16)
     static let PTBody2: Font = .custom(Name.pretendardM.text, size: 14)
