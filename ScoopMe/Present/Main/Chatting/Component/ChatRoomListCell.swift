@@ -1,5 +1,5 @@
 //
-//  ChatListCell.swift
+//  ChatRoomListCell.swift
 //  ScoopMe
 //
 //  Created by Lee Wonsun on 6/25/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SCMChat
 
-struct ChatListCell: View {
+struct ChatRoomListCell: View {
     
     private let entity: ChatListItemEntity
     
@@ -70,5 +70,5 @@ struct ChatListCell: View {
         messageCount: 2
     )
     
-    ChatListCell(entity: entity)
+    ChatRoomListCell(entity: entity)
 }

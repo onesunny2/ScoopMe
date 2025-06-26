@@ -9,7 +9,7 @@ import SwiftUI
 import SCMChat
 import SCMLogger
 
-struct ChatListView: View {
+struct ChatRoomListView: View {
     
     private let chatListRepository: ChatListDisplayable
     @State private var chatListItems: [ChatListItemEntity] = []
@@ -33,7 +33,7 @@ struct ChatListView: View {
 
 
 // MARK: UI
-extension ChatListView {
+extension ChatRoomListView {
     
     // 채팅유무에 따른 분기처리
     @ViewBuilder
@@ -50,7 +50,7 @@ extension ChatListView {
     private var chatLists: some View {
         LazyVStack(alignment: .center, spacing: 0) {
             ForEach(chatListItems, id: \.userID) { item in
-                ChatListCell(entity: item)
+                ChatRoomListCell(entity: item)
                     .padding(.vertical, 10)
                     .defaultHorizontalPadding()
             }
@@ -69,7 +69,7 @@ extension ChatListView {
 }
 
 // MARK: Action
-extension ChatListView {
+extension ChatRoomListView {
     
     // 채팅목록 로딩
     private func loadChatLists() async {
@@ -95,5 +95,5 @@ private enum stringLiterals: String {
 }
 
 #Preview {
-    ChatListView(chatListRepository: DIContainer.shared.chatListRepository)
+    ChatRoomListView(chatListRepository: DIContainer.shared.chatListRepository)
 }

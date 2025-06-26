@@ -28,7 +28,7 @@ struct MainTabView: View {
                     .tabImage(Image(.orderFill))
                     .tag(1)
                 
-                ChatListView(
+                ChatRoomListView(
                     chatListRepository: DIContainer.shared.chatListRepository
                 )
                     .tabImage(Image(.tabMessageFill))
