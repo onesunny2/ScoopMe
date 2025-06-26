@@ -48,11 +48,11 @@ extension ReceivedChatBubbleCell {
     private var messageInfo: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(senderName)
-                .basicText(.PTTitle8, .scmGray90)
+                .basicText(.PTTitle5, .scmGray90)
             
             HStack(alignment: .bottom, spacing: 4) {
                 Text(message)
-                    .basicText(.PTTitle8, .scmGray100)
+                    .basicText(.PTTitle5, .scmGray100)
                     .padding(12)
                     .background {
                         RoundedRectangle(cornerRadius: 10)

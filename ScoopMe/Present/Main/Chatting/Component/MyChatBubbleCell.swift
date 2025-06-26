@@ -24,7 +24,7 @@ struct MyChatBubbleCell: View {
             Text(sendDate)
                 .basicText(.PTBody5, .scmGray90)
             Text(message)
-                .basicText(.PTTitle8, .scmGray100)
+                .basicText(.PTTitle5, .scmGray100)
                 .padding(12)
                 .background {
                     RoundedRectangle(cornerRadius: 10)
