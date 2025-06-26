@@ -35,6 +35,7 @@ struct ChatListCell: View {
                     .basicText(.PTBody6, .scmGray100)
                 Text(entity.recentMessage)
                     .basicText(.PTCaption6, .scmGray75)
+                    .lineLimit(2)
             }
             
             Spacer(minLength: 8)
@@ -44,13 +45,15 @@ struct ChatListCell: View {
                 Text(entity.recentTime)
                     .basicText(.PTCaption6, .scmGray90)
                 
-                Circle()
-                    .fill(Color.scmBlackSprout)
-                    .frame(width: 12, height: 12)
-                    .overlay(alignment: .center) {
-                        Text(entity.messageCountString)
-                            .basicText(.PTCaption7, .scmGray0)
-                    }
+                if entity.messageCount != nil {
+                    Circle()
+                        .fill(Color.scmBlackSprout)
+                        .frame(width: 12, height: 12)
+                        .overlay(alignment: .center) {
+                            Text(entity.messageCountString)
+                                .basicText(.PTCaption7, .scmGray0)
+                        }
+                }
             }
         }
     }
