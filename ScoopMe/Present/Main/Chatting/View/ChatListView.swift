@@ -7,11 +7,12 @@
 
 import SwiftUI
 import SCMChat
+import SCMLogger
 
 struct ChatListView: View {
     
     private let chatListRepository: ChatListDisplayable
-    private let entities: [ChatListItemEntity] = []
+    @State private var chatListItems: [ChatListItemEntity] = []
     
     init(chatListRepository: ChatListDisplayable) {
         self.chatListRepository = chatListRepository
@@ -22,6 +23,9 @@ struct ChatListView: View {
             chatContainerView
             .navigationTitle(stringLiterals.navigationTitle.text)
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                await loadChatLists()
+            }
         }
     }
 }
@@ -34,17 +38,19 @@ extension ChatListView {
     // 채팅유무에 따른 분기처리
     @ViewBuilder
     private var chatContainerView: some View {
-        if entities.isEmpty {
+        if chatListItems.isEmpty {
             emptyView
         } else {
-            chatLists
+            ScrollView(.vertical, showsIndicators: false) {
+                chatLists
+            }
         }
     }
     
     private var chatLists: some View {
         LazyVStack(alignment: .center, spacing: 0) {
-            ForEach(entities, id: \.userID) { entity in
-                ChatListCell(entity: entity)
+            ForEach(chatListItems, id: \.userID) { item in
+                ChatListCell(entity: item)
                     .padding(.vertical, 10)
                     .defaultHorizontalPadding()
             }
@@ -58,6 +64,22 @@ extension ChatListView {
                 .basicImage(width: 25, color: .scmDeepSprout)
             Text(stringLiterals.empty.text)
                 .basicText(.PTBody1, .scmGray75)
+        }
+    }
+}
+
+// MARK: Action
+extension ChatListView {
+    
+    // 채팅목록 로딩
+    private func loadChatLists() async {
+        do {
+            let lists = try await chatListRepository.getChatLists()
+            self.chatListItems = lists
+            
+            Log.debug("✅ 채팅목록 불러오기 성공")
+        } catch {
+            Log.error("❎ 채팅목록 불러오기 실패: \(error)")
         }
     }
 }
