@@ -28,7 +28,7 @@ struct MainTabView: View {
                     .tabImage(Image(.orderFill))
                     .tag(1)
                 
-                ChatView()
+                ChatListView()
                     .tabImage(Image(.tabMessageFill))
                     .tag(2)
                 
