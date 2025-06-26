@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SCMChat
 import SCMCommunity
 import SCMImageRequest
 import SCMLogger
@@ -37,6 +38,8 @@ final class DIContainer {
         self.createPostRepository = CreatePostRepository()
         
         self.paymentRepository = PaymentRepository()
+        
+        self.chatListRepository = MockChatListRepository()
     }
     
     /// SCMLogin
@@ -61,4 +64,7 @@ final class DIContainer {
     
     /// SCMPayment
     private(set) var paymentRepository: PaymentDisplayable
+    
+    /// SCMChat
+    private(set) var chatListRepository: ChatListDisplayable
 }

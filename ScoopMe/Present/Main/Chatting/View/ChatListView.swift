@@ -10,7 +10,12 @@ import SCMChat
 
 struct ChatListView: View {
     
+    private let chatListRepository: ChatListDisplayable
     private let entities: [ChatListItemEntity] = []
+    
+    init(chatListRepository: ChatListDisplayable) {
+        self.chatListRepository = chatListRepository
+    }
     
     var body: some View {
         NavigationStack {
@@ -68,5 +73,5 @@ private enum stringLiterals: String {
 }
 
 #Preview {
-    ChatListView()
+    ChatListView(chatListRepository: DIContainer.shared.chatListRepository)
 }
