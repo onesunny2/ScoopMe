@@ -7,9 +7,19 @@
 
 import SwiftUI
 
+// 임시모델
+struct ChatMessages: Hashable {
+    let id = UUID()  // user 대신 id로 변경
+    let message: String
+    let sendDate: String
+}
+
 struct ChatRoomView: View {
     
-    private let sendMessageHeight: CGFloat = 40
+    @State private var textMessage: String = ""
+    @State private var sendStatus: Bool = false
+    
+    @State private var messages: [ChatMessages] = []
     
     var body: some View {
         ZStack {
@@ -74,29 +84,25 @@ extension ChatRoomView {
     
     // 하단 메시지 전송
     private var bottomSendMessageView: some View {
-        HStack(alignment: .center, spacing: 8) {
-            RoundedRectangle(cornerRadius: sendMessageHeight / 2)
-                .fill(Color.scmGray45)
-                .frame(height: sendMessageHeight)
-            
-            Circle()
-                .fill(Color.scmGray45)
-                .frame(width: sendMessageHeight)
-        }
-        .padding(.vertical, 12)
-        .defaultHorizontalPadding()
-        .frame(maxWidth: .infinity)
-        .background(.scmGray15)
-        .ignoresSafeArea(.container, edges: .bottom)
+        ChatInputView(textMessage: $textMessage, sendStatus: $sendStatus)
+            .onChange(of: sendStatus) { newStatus in
+                if newStatus {
+                    // 메시지가 비어있지 않을 때만 추가
+                    if !textMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        let newMessage = ChatMessages(message: textMessage, sendDate: "오후 7:54")
+                        messages.append(newMessage)
+                    }
+                    sendStatus = false
+                    textMessage = "" // 여기서 텍스트 초기화
+                }
+            }
     }
     
     // 중단 채팅내역
     private var messagesView: some View {
         LazyVStack(alignment: .center, spacing: 16) {
-            ForEach(0..<1, id: \.self) { _ in
-                MyChatBubbleCell(sendDate: "오후 9:50", message: "나 이제 슬슬 마무리해!")
-                MyChatBubbleCell(sendDate: "오후 9:51", message: "그 다음에 오는 버스 탈 것 같아")
-                ReceivedChatBubbleCell(profileImageURL: "", senderName: "이짜몽", sendDate: "오후 9:54", message: "버스는 몇시에 온대??")
+            ForEach(messages, id: \.id) { message in  // id로 변경
+                MyChatBubbleCell(sendDate: message.sendDate, message: message.message)
             }
         }
         .padding(.top, 12)

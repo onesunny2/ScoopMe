@@ -11,6 +11,7 @@ import SCMLogger
 struct ChatInputView: View {
     
     @Binding var textMessage: String
+    @Binding var sendStatus: Bool
     @State private var textHeight: CGFloat = 0
     
     private let font = Font.custom(Font.Name.pretendardR.text, size: 16)
@@ -74,11 +75,14 @@ struct ChatInputView: View {
                 Circle()
                     .fill(Color.scmGray45)
                     .frame(width: 46)
-                    .asButton {
+                    .asButton({
                         Log.debug("🔗 메시지 전송버튼 클릭")
-                        // 전송 후 텍스트 초기화
-                        textMessage = ""
-                    }
+                        
+                        if !textMessage.isEmpty {
+                            sendStatus = true
+                        }
+                        
+                    }, disabled: textMessage.isEmpty)
             }
             .padding(.vertical, 12)
             .defaultHorizontalPadding()
@@ -90,5 +94,5 @@ struct ChatInputView: View {
 }
 
 #Preview {
-    ChatInputView(textMessage: .constant(""))
+    ChatInputView(textMessage: .constant(""), sendStatus: .constant(false))
 }
