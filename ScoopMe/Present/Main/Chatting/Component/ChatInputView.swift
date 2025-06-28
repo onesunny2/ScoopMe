@@ -18,8 +18,8 @@ struct ChatInputView: View {
     private let lineHeight: CGFloat = 22 // 폰트 크기 16에 맞는 실제 라인 높이
     private let maxLines: Int = 3
     private let minHeight: CGFloat = 40
-    private let horizontalPadding: CGFloat = 12
-    private let verticalPadding: CGFloat = 12
+    private let horizontalPadding: CGFloat = 8
+    private let verticalPadding: CGFloat = 8
     
     private var dynamicHeight: CGFloat {
         let baseHeight = max(textHeight, lineHeight) // 최소 1줄 높이 보장

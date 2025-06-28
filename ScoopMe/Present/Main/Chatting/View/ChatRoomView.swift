@@ -41,7 +41,12 @@ extension ChatRoomView {
             // 상단 고정 영역
             topUserInfoView
                 .defaultHorizontalPadding()
-                .background(Color.scmBrightSprout) // 배경색 추가로 스크롤 시 겹침 방지
+                .background(Color.scmBrightSprout)
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .fill(Color.scmGray60)
+                        .frame(height: 0.5)
+                }
             
             // 중간 스크롤 영역
             ScrollView(.vertical, showsIndicators: false) {
@@ -66,15 +71,15 @@ extension ChatRoomView {
                 bottomTrailing: 16,
                 topTrailing: 16
             )
-            .frame(width: 55, height: 55)
+            .frame(width: 50, height: 50)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             
             VStack(alignment: .leading, spacing: 4) {
                 Text("이짜몽")
-                    .basicText(.PTTitle2, .scmGray100)
+                    .basicText(.PTBody1, .scmGray100)
                 
                 Text("가게이름")
-                    .basicText(.PTTitle5, .scmGray75)
+                    .basicText(.PTBody6, .scmGray75)
             }
             
             Spacer()
