@@ -18,6 +18,7 @@ struct ChatRoomView: View {
     
     @State private var textMessage: String = ""
     @State private var sendStatus: Bool = false
+    @FocusState private var focusBinding: Bool
     
     @State private var messages: [ChatMessages] = []
     
@@ -27,6 +28,10 @@ struct ChatRoomView: View {
                 .ignoresSafeArea()
             
             chatContainerView
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    focusBinding = false
+                }
         }
     }
 }
@@ -89,7 +94,7 @@ extension ChatRoomView {
     
     // 하단 메시지 전송
     private var bottomSendMessageView: some View {
-        ChatInputView(textMessage: $textMessage, sendStatus: $sendStatus)
+        ChatInputView(textMessage: $textMessage, sendStatus: $sendStatus, focusBinding: $focusBinding)
             .onChange(of: sendStatus) { newStatus in
                 if newStatus {
                     // 메시지가 비어있지 않을 때만 추가

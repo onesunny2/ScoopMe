@@ -12,6 +12,8 @@ struct ChatInputView: View {
     
     @Binding var textMessage: String
     @Binding var sendStatus: Bool
+    var focusBinding: FocusState<Bool>.Binding
+    
     @State private var textHeight: CGFloat = 0
     
     private let font = Font.custom(Font.Name.pretendardR.text, size: 16)
@@ -49,6 +51,7 @@ struct ChatInputView: View {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .fill(Color.scmGray45)
                     )
+                    .focused(focusBinding)
                 .background(
                     // 텍스트 높이 측정을 위한 숨겨진 Text
                     Text(textMessage.isEmpty ? " " : textMessage)
@@ -91,8 +94,4 @@ struct ChatInputView: View {
         .background(.scmGray15)
         .ignoresSafeArea(.container, edges: .bottom)
     }
-}
-
-#Preview {
-    ChatInputView(textMessage: .constant(""), sendStatus: .constant(false))
 }
