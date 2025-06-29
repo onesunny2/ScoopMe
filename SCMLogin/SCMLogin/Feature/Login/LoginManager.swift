@@ -17,6 +17,12 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     
     public var alertTitle: String = "로그인 실패"
     
+    // 추후 채팅방 입장 시 userID 비교를 위한 userdefaults 저장
+    private let userIDKey: String = "userIDKey"
+    public var savedUserID: String {
+        return UserDefaults.standard.string(forKey: userIDKey) ?? ""
+    }
+    
     public override init() {
         self.loginTokenManager = LoginTokenManager()
         self.deviceTokenManager = DeviceTokenManager()
@@ -37,7 +43,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 애플로그인 결과: \(result.response)")
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(savedUserID)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -53,7 +60,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 카카오로그인 결과: \(result.response)")
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(savedUserID)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -69,7 +77,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 이메일로그인 결과: \(result.response)")
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(savedUserID)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -79,7 +88,7 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         }
     }
     
-    /// 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
+    // 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
     private func setTokens(result: HTTPResponse<LoginDTO>) async {
         
         loginTokenManager.saveLoginTokens(
@@ -89,5 +98,10 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         
         let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
         await deviceTokenManager.updateDeviceToken(deviceToken)
+    }
+    
+    // 로그인 시 userID 저장을
+    private func saveUserID(_ userID: String) {
+        UserDefaults.standard.set(userID, forKey: userIDKey)
     }
 }
