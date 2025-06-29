@@ -17,12 +17,6 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     
     public var alertTitle: String = "로그인 실패"
     
-    // 추후 채팅방 입장 시 userID 비교를 위한 userdefaults 저장
-    private let userIDKey: String = "userIDKey"
-    public var savedUserID: String {
-        return UserDefaults.standard.string(forKey: userIDKey) ?? ""
-    }
-    
     public override init() {
         self.loginTokenManager = LoginTokenManager()
         self.deviceTokenManager = DeviceTokenManager()
@@ -44,7 +38,7 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let result = try await callRequest(value, type: LoginDTO.self)
             
             saveUserID(result.response.user_id)
-            Log.debug("✅ 현재 UserID: \(savedUserID)")
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -61,7 +55,7 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let result = try await callRequest(value, type: LoginDTO.self)
             
             saveUserID(result.response.user_id)
-            Log.debug("✅ 현재 UserID: \(savedUserID)")
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -78,7 +72,7 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let result = try await callRequest(value, type: LoginDTO.self)
             
             saveUserID(result.response.user_id)
-            Log.debug("✅ 현재 UserID: \(savedUserID)")
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -100,8 +94,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         await deviceTokenManager.updateDeviceToken(deviceToken)
     }
     
-    // 로그인 시 userID 저장을
+    // 로그인 시 userID 저장
     private func saveUserID(_ userID: String) {
-        UserDefaults.standard.set(userID, forKey: userIDKey)
+        UserDefaults.standard.set(userID, forKey: UserdefaultsValues.savedUserID.key)
     }
 }
