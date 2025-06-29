@@ -103,7 +103,7 @@ extension ChatRoomView {
                         messages.append(newMessage)
                     }
                     sendStatus = false
-                    textMessage = "" // 여기서 텍스트 초기화
+                    textMessage = ""
                 }
             }
     }

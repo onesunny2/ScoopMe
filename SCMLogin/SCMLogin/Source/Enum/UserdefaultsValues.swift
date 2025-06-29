@@ -10,13 +10,13 @@ import Foundation
 public enum UserdefaultsValues {
     case savedUserID
     
-    var key: String {
+    public var key: String {
         switch self {
         case .savedUserID: return "userIDKey"
         }
     }
     
-    var stringValue: String {
+    public var stringValue: String {
         switch self {
         case .savedUserID:
             return UserDefaults.standard.string(forKey: self.key) ?? ""

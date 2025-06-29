@@ -25,6 +25,9 @@ struct CommunityView: View {
     @State private var selectedFilter: TimelineFilter = .최신순
     @State private var posts: [CommunityPostEntity] = []
     
+    // 채팅창 호출 트리거
+    @State private var isMessageOpened: Bool = false
+    
     init(repository: CommunityPostDisplayable) {
         self.repository = repository
     }
@@ -58,6 +61,9 @@ struct CommunityView: View {
             .onChange(of: selectedFilter) { _ in
                 cursorID = nil
                 Task { await getCommunityPost() }
+            }
+            .sheet(isPresented: $isMessageOpened) {
+                ChatRoomView()
             }
         }
     }
@@ -127,7 +133,7 @@ extension CommunityView {
                         Rectangle()
                             .fill(.scmBrightSprout)
                             .frame(height: 1)
-                        CommunityPostCell(post: post)
+                        CommunityPostCell(post: post, isMessageOpened: $isMessageOpened)
                             .padding(.vertical, 12)
                             .onAppear {
                                 if (post.postID == posts.last?.postID) && cursorID != "0" {
