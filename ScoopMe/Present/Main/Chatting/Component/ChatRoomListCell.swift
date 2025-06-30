@@ -26,15 +26,15 @@ struct ChatRoomListCell: View {
                 bottomTrailing: 16,
                 topTrailing: 16
             )
-            .frame(width: 40, height: 40)
+            .frame(width: 50, height: 50)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             
             // 이름, 채팅내용
             VStack(alignment: .leading, spacing: 4) {
                 Text(entity.username)
-                    .basicText(.PTBody6, .scmGray100)
+                    .basicText(.PTTitle5, .scmGray100)
                 Text(entity.recentMessage)
-                    .basicText(.PTCaption6, .scmGray75)
+                    .basicText(.PTBody6, .scmGray75)
                     .lineLimit(2)
             }
             
@@ -43,15 +43,15 @@ struct ChatRoomListCell: View {
             // 시간, 알림뱃지
             VStack(alignment: .trailing, spacing: 4) {
                 Text(entity.recentTime)
-                    .basicText(.PTCaption6, .scmGray90)
+                    .basicText(.PTBody6, .scmGray75)
                 
                 if entity.messageCount != nil {
                     Circle()
                         .fill(Color.scmBlackSprout)
-                        .frame(width: 12, height: 12)
+                        .frame(width: 16, height: 16)
                         .overlay(alignment: .center) {
                             Text(entity.messageCountString)
-                                .basicText(.PTCaption7, .scmGray0)
+                                .basicText(.PTBody6, .scmGray0)
                         }
                 }
             }

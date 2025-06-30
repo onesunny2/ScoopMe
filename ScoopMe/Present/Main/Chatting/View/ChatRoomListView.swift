@@ -20,7 +20,10 @@ struct ChatRoomListView: View {
     
     var body: some View {
         NavigationStack {
-            chatContainerView
+            VStack(spacing: 0) {
+                AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
+                chatContainerView
+            }
             .navigationTitle(stringLiterals.navigationTitle.text)
             .navigationBarTitleDisplayMode(.inline)
             .task {
