@@ -12,6 +12,8 @@ import SCMLogger
 struct ChatRoomListView: View {
     
     private let chatListRepository: ChatListDisplayable
+    @StateObject private var router = SCMRouter<ChatPath>.shared
+    
     @State private var chatListItems: [ChatListItemEntity] = []
     
     init(chatListRepository: ChatListDisplayable) {
@@ -19,7 +21,7 @@ struct ChatRoomListView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             VStack(spacing: 0) {
                 AdBannerCell(imageHelper: DIContainer.shared.imageHelper)
                 chatContainerView
@@ -28,6 +30,16 @@ struct ChatRoomListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await loadChatLists()
+            }
+            .navigationDestination(for: ChatPath.self) { router in
+                switch router {
+                case let .chatRoom(roomID, opponentName):
+                    ChatRoomView(
+                        chatRoomRepository: DIContainer.shared.chatRoomRepository,
+                        roomID: roomID,
+                        opponentName: opponentName
+                    )
+                }
             }
         }
     }
@@ -56,6 +68,15 @@ extension ChatRoomListView {
                 ChatRoomListCell(entity: item)
                     .padding(.vertical, 10)
                     .defaultHorizontalPadding()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        Log.debug("⏭️ 채팅창 클릭")
+                        router.send(.push(
+                            .chatRoom(
+                                roomID: item.roomID,
+                                opponentName: item.username))
+                        )
+                    }
             }
         }
     }

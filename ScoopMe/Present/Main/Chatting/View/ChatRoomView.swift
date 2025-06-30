@@ -19,10 +19,12 @@ struct ChatRoomView: View {
     
     private let chatRoomRepository: ChatRoomDisplayable
     private let roomID: String
+    private let opponentName: String
     
-    init(chatRoomRepository: ChatRoomDisplayable, roomID: String) {
+    init(chatRoomRepository: ChatRoomDisplayable, roomID: String, opponentName: String) {
         self.chatRoomRepository = chatRoomRepository
         self.roomID = roomID
+        self.opponentName = opponentName
     }
     
     var body: some View {
@@ -36,6 +38,9 @@ struct ChatRoomView: View {
                     focusBinding = false
                 }
         }
+        .navigationTitle(opponentName)
+        .navigationBarTitleDisplayMode(.inline)
+        .backButton(.scmBlackSprout)
         .task {
             await getServerMessages()
         }
@@ -50,14 +55,14 @@ extension ChatRoomView {
     private var chatContainerView: some View {
         VStack(spacing: 0) {
             // 상단 고정 영역
-            topUserInfoView
-                .defaultHorizontalPadding()
-                .background(Color.scmBrightSprout)
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .fill(Color.scmGray60)
-                        .frame(height: 0.5)
-                }
+//            topUserInfoView
+//                .defaultHorizontalPadding()
+//                .background(Color.scmBrightSprout)
+//                .overlay(alignment: .bottom) {
+//                    Rectangle()
+//                        .fill(Color.scmGray60)
+//                        .frame(height: 0.5)
+//                }
             
             // 중간 스크롤 영역
             ScrollView(.vertical, showsIndicators: false) {
@@ -170,5 +175,5 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "")
+    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "", opponentName: "아무개")
 }

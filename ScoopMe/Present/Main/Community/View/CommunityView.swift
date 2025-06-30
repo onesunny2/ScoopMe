@@ -63,7 +63,9 @@ struct CommunityView: View {
                 Task { await getCommunityPost() }
             }
             .sheet(isPresented: $isMessageOpened) {
-                ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "")
+                NavigationStack {
+                    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "", opponentName: "test")
+                }
             }
         }
     }
