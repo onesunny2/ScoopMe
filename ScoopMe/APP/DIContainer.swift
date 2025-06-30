@@ -6,11 +6,9 @@
 //
 
 import Foundation
-import Combine
 import SCMChat
 import SCMCommunity
 import SCMImageRequest
-import SCMLogger
 import SCMLogin
 import SCMLocation
 import SCMScoopInfo
@@ -40,6 +38,7 @@ final class DIContainer {
         self.paymentRepository = PaymentRepository()
         
         self.chatListRepository = MockChatListRepository()
+        self.chatRoomRepository = MockChatRoomRepository()
     }
     
     /// SCMLogin
@@ -67,4 +66,5 @@ final class DIContainer {
     
     /// SCMChat
     private(set) var chatListRepository: ChatListDisplayable
+    private(set) var chatRoomRepository: ChatRoomDisplayable
 }

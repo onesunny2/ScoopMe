@@ -6,13 +6,8 @@
 //
 
 import SwiftUI
-
-// 임시모델
-struct ChatMessages: Hashable {
-    let id = UUID()  // user 대신 id로 변경
-    let message: String
-    let sendDate: String
-}
+import SCMChat
+import SCMLogger
 
 struct ChatRoomView: View {
     
@@ -20,7 +15,15 @@ struct ChatRoomView: View {
     @State private var sendStatus: Bool = false
     @FocusState private var focusBinding: Bool
     
-    @State private var messages: [ChatMessages] = []
+    @State private var messages: [EachChatMessageEntity] = []
+    
+    private let chatRoomRepository: ChatRoomDisplayable
+    private let roomID: String
+    
+    init(chatRoomRepository: ChatRoomDisplayable, roomID: String) {
+        self.chatRoomRepository = chatRoomRepository
+        self.roomID = roomID
+    }
     
     var body: some View {
         ZStack {
@@ -32,6 +35,9 @@ struct ChatRoomView: View {
                 .onTapGesture {
                     focusBinding = false
                 }
+        }
+        .task {
+            await getServerMessages()
         }
     }
 }
@@ -99,7 +105,15 @@ extension ChatRoomView {
                 if newStatus {
                     // 메시지가 비어있지 않을 때만 추가
                     if !textMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        let newMessage = ChatMessages(message: textMessage, sendDate: "오후 7:54")
+                        let newMessage = EachChatMessageEntity(
+                            chatID: "9999",
+                            sender: .me,
+                            senderInfo: nil,
+                            content: textMessage,
+                            files: [],
+                            sendDate: Date(),
+                            sendDateString: "오후 2:40"
+                        )
                         messages.append(newMessage)
                     }
                     sendStatus = false
@@ -111,11 +125,38 @@ extension ChatRoomView {
     // 중단 채팅내역
     private var messagesView: some View {
         LazyVStack(alignment: .center, spacing: 16) {
-            ForEach(messages, id: \.id) { message in  // id로 변경
-                MyChatBubbleCell(sendDate: message.sendDate, message: message.message)
+            ForEach(messages, id: \.chatID) { message in
+                seperateSenderView(message: message)
             }
         }
         .padding(.top, 12)
+    }
+    
+    @ViewBuilder
+    private func seperateSenderView(message: EachChatMessageEntity) -> some View {
+        if message.sender == .me {
+            MyChatBubbleCell(sendDate: message.sendDateString, message: message.content)
+        } else {
+            ReceivedChatBubbleCell(
+                profileImageURL: message.senderInfo?.profileURL ?? "",
+                senderName: message.senderInfo?.nickname ?? "알수없음",
+                sendDate: message.sendDateString,
+                message: message.content
+            )
+        }
+    }
+}
+
+// MARK: Action
+extension ChatRoomView {
+    // message 호출
+    private func getServerMessages() async {
+        do {
+            let messages = try await chatRoomRepository.getChatMessages()
+            self.messages = messages
+        } catch {
+            Log.error("❎ 서버에서 메시지 로딩 실패: \(error)")
+        }
     }
 }
 
@@ -129,5 +170,5 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    ChatRoomView()
+    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "")
 }
