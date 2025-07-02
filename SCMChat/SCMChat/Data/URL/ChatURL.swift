@@ -11,6 +11,7 @@ import SCMNetwork
 public enum ChatURL {
     case fetchChatRoom(access: String, opponentUserid: String)
     case loadChatRoom(access: String)
+    case postMessage(access: String, messageInfo: PostMessages)
     
     var baseURL: String {
         return Secret.baseURL
@@ -18,7 +19,7 @@ public enum ChatURL {
     
     var method: HTTPMethods {
         switch self {
-        case .fetchChatRoom:
+        case .fetchChatRoom, .postMessage:
             return .post
         case .loadChatRoom:
             return .get
@@ -29,6 +30,8 @@ public enum ChatURL {
         switch self {
         case .fetchChatRoom, .loadChatRoom:
             return "/v1/chats"
+        case let .postMessage(_, info):
+            return "/v1/chats/\(info.roomID)"
         }
     }
     
@@ -45,6 +48,11 @@ public enum ChatURL {
             return [
                 "opponent_id": opponentUserid
             ]
+        case let .postMessage(_, info):
+            return [
+                "content": info.contents,
+                "files": info.files
+            ]
         default:
             return nil
         }
@@ -59,6 +67,12 @@ public enum ChatURL {
                 "Authorization": access
             ]
         case let .loadChatRoom(access):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .postMessage(access, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
