@@ -7,10 +7,11 @@
 
 import Foundation
 
-public struct EachChatMessageEntity {
+public struct EachChatMessageEntity: Equatable {
     public let chatID: String
     public let sender: MessageSender
     public let senderInfo: SenderInfo?
+    public var sendStatus: MessageSendStatus
     public let content: String
     public let files: [String]
     public let sendDate: Date
@@ -20,6 +21,7 @@ public struct EachChatMessageEntity {
         chatID: String,
         sender: MessageSender,
         senderInfo: SenderInfo?,
+        sendStatus: MessageSendStatus,
         content: String,
         files: [String],
         sendDate: Date,
@@ -28,6 +30,7 @@ public struct EachChatMessageEntity {
         self.chatID = chatID
         self.sender = sender
         self.senderInfo = senderInfo
+        self.sendStatus = sendStatus
         self.content = content
         self.files = files
         self.sendDate = sendDate
@@ -40,7 +43,7 @@ public enum MessageSender {
     case opponent
 }
 
-public struct SenderInfo {
+public struct SenderInfo: Equatable {
     public let userID: String
     public let nickname: String
     public let profileURL: String?
