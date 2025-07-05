@@ -12,6 +12,7 @@ import SCMLogger
 struct ChatRoomView: View {
     
     @State private var textMessage: String = ""
+    @State private var resendMessage: String = ""
     @State private var sendStatus: Bool = false
     @FocusState private var focusBinding: Bool
     
@@ -54,17 +55,6 @@ extension ChatRoomView {
     @ViewBuilder
     private var chatContainerView: some View {
         VStack(spacing: 0) {
-            // 상단 고정 영역
-//            topUserInfoView
-//                .defaultHorizontalPadding()
-//                .background(Color.scmBrightSprout)
-//                .overlay(alignment: .bottom) {
-//                    Rectangle()
-//                        .fill(Color.scmGray60)
-//                        .frame(height: 0.5)
-//                }
-            
-            // 중간 스크롤 영역
             ScrollView(.vertical, showsIndicators: false) {
                 messagesView
                     .padding(.bottom, 12) // 마지막 메시지와 하단 뷰 사이 여백
@@ -76,33 +66,6 @@ extension ChatRoomView {
         }
     }
     
-    // 상단 상대방 정보
-    private var topUserInfoView: some View {
-        HStack(alignment: .center, spacing: 8) {
-            NukeRequestImageCell(
-                imageHelper: DIContainer.shared.imageHelper,
-                url: "",
-                topLeading: 16,
-                bottomLeading: 16,
-                bottomTrailing: 16,
-                topTrailing: 16
-            )
-            .frame(width: 50, height: 50)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("이짜몽")
-                    .basicText(.PTBody1, .scmGray100)
-                
-                Text("가게이름")
-                    .basicText(.PTBody6, .scmGray75)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 12)
-    }
-    
     // 하단 메시지 전송
     private var bottomSendMessageView: some View {
         ChatInputView(textMessage: $textMessage, sendStatus: $sendStatus, focusBinding: $focusBinding)
@@ -110,16 +73,9 @@ extension ChatRoomView {
                 if newStatus {
                     // 메시지가 비어있지 않을 때만 추가
                     if !textMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        let newMessage = EachChatMessageEntity(
-                            chatID: "9999",
-                            sender: .me,
-                            senderInfo: nil,
-                            content: textMessage,
-                            files: [],
-                            sendDate: Date(),
-                            sendDateString: "오후 2:40"
-                        )
-                        messages.append(newMessage)
+                        Task {
+                            await postMessageToServer()
+                        }
                     }
                     sendStatus = false
                     textMessage = ""
@@ -140,7 +96,16 @@ extension ChatRoomView {
     @ViewBuilder
     private func seperateSenderView(message: EachChatMessageEntity) -> some View {
         if message.sender == .me {
-            MyChatBubbleCell(sendDate: message.sendDateString, message: message.content)
+            MyChatBubbleCell(sendDate: message.sendDateString, message: message.content, sendStatus: message.sendStatus) {
+                Task {
+//                    if let index = messages.firstIndex(of: message) {
+//                        resendMessage = message.content
+//                        messages.remove(at: index)
+//                    }
+                    resendMessage = message.content
+                    await resendMessageToServer()
+                }
+            }
         } else {
             ReceivedChatBubbleCell(
                 profileImageURL: message.senderInfo?.profileURL ?? "",
@@ -161,6 +126,59 @@ extension ChatRoomView {
             self.messages = messages
         } catch {
             Log.error("❎ 서버에서 메시지 로딩 실패: \(error)")
+        }
+    }
+    
+    // 입력한 메시지 서버에 post
+    private func postMessageToServer() async {
+        do {
+            let messageInfo: PostMessages = PostMessages(
+                roomID: roomID,
+                contents: textMessage,
+                files: []
+            )
+            Log.debug("채팅방ID: \(roomID)")
+            let newMessage = try await chatRoomRepository.postNewMessage(messageInfo: messageInfo)
+            messages.append(newMessage)
+        } catch {
+            // TODO: 실패하면 서버에 전송이 안되기 때문에 DB에 저장하면 안되고, 재전송 버튼 보여야 함
+            Log.error("❎ 메시지 포스트 실패: \(error)")
+            // 전송이 실패해도 UI상 보여야 하기 때문에 하는 작업
+            let newMessage = EachChatMessageEntity(
+                chatID: "\(Date())",
+                sender: .me,
+                senderInfo: nil,
+                sendStatus: .failed,
+                content: resendMessage,
+                files: [],
+                sendDate: Date(),
+                sendDateString: Date().toKoreanTimeString()
+            )
+            messages.append(newMessage)
+        }
+    }
+    
+    // 실패한 메시지 서버에 재전송
+    private func resendMessageToServer() async {
+        do {
+            let messageInfo: PostMessages = PostMessages(
+                roomID: roomID,
+                contents: resendMessage,
+                files: []
+            )
+            
+            let resendMessage = try await chatRoomRepository.postNewMessage(messageInfo: messageInfo)
+            
+            if let index = messages.firstIndex(where: {
+                $0.content == resendMessage.content
+            }) {
+                messages[index] = resendMessage
+            }
+            
+            Log.debug("🔗 메시지 재전송 성공")
+            
+        } catch {
+            Log.error("❎ 메시지 재전송 실패")
         }
     }
 }
