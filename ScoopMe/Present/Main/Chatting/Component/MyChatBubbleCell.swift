@@ -6,20 +6,40 @@
 //
 
 import SwiftUI
+import SCMChat
+import SCMLogger
 
 struct MyChatBubbleCell: View {
     
     private let sendDate: String
     private let message: String
+    private let sendStatus: MessageSendStatus
+    private let onResendTapped: () -> Void
     
-    init(sendDate: String, message: String) {
+    init(
+        sendDate: String,
+        message: String,
+        sendStatus: MessageSendStatus,
+        onResendTapped: @escaping () -> Void
+    ) {
         self.sendDate = sendDate
         self.message = message
+        self.sendStatus = sendStatus
+        self.onResendTapped = onResendTapped
     }
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
             Spacer(minLength: 4)
+            
+            if sendStatus == .failed {
+                Image(.arrowCounterclockwiseCircleFill)
+                    .basicImage(width: 20, color: .scmGray45)
+                    .asButton {
+                        Log.debug("🔗 재전송버튼 클릭")
+                        onResendTapped()
+                    }
+            }
             
             Text(sendDate)
                 .basicText(.PTBody5, .scmGray90)
@@ -34,6 +54,6 @@ struct MyChatBubbleCell: View {
     }
 }
 
-#Preview {
-    MyChatBubbleCell(sendDate: "오후 10:51", message: "여기는 지금 비 안오는데 거기는 오고 있어?")
-}
+//#Preview {
+//    MyChatBubbleCell(isSendFailed: .constant(false), sendDate: "오후 10:51", message: "여기는 지금 비 안오는데 거기는 오고 있어?")
+//}
