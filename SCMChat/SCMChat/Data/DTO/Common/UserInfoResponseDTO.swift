@@ -10,7 +10,7 @@ import Foundation
 struct UserInfoResponseDTO: Codable {
     let userID: String
     let nick: String
-    let profileImage: String
+    let profileImage: String?
 
     enum CodingKeys: String, CodingKey {
         case userID = "user_id"

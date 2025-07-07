@@ -14,8 +14,7 @@ public struct EachChatMessageEntity: Equatable {
     public var sendStatus: MessageSendStatus
     public let content: String
     public let files: [String]
-    public let sendDate: Date
-    public let sendDateString: String
+    public let sendDate: String
     
     public init(
         chatID: String,
@@ -24,8 +23,7 @@ public struct EachChatMessageEntity: Equatable {
         sendStatus: MessageSendStatus,
         content: String,
         files: [String],
-        sendDate: Date,
-        sendDateString: String
+        sendDate: String
     ) {
         self.chatID = chatID
         self.sender = sender
@@ -34,7 +32,6 @@ public struct EachChatMessageEntity: Equatable {
         self.content = content
         self.files = files
         self.sendDate = sendDate
-        self.sendDateString = sendDateString
     }
 }
 
