@@ -41,7 +41,7 @@ struct MyChatBubbleCell: View {
                     }
             }
             
-            Text(sendDate)
+            Text(sendDate.isoStringToKoreanAMPM() ?? "")
                 .basicText(.PTBody5, .scmGray90)
             Text(message)
                 .basicText(.PTTitle5, .scmGray100)

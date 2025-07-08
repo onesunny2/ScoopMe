@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReceivedChatBubbleCell: View {
     
+    // TODO: 추후 Entity 나오면 모델로 갈아끼우기
     private let profileImageURL: String
     private let senderName: String
     private let sendDate: String
@@ -59,7 +60,7 @@ extension ReceivedChatBubbleCell {
                             .fill(Color.scmGray15)
                     }
                 
-                Text(sendDate)
+                Text(sendDate.isoStringToKoreanAMPM() ?? "")
                     .basicText(.PTBody5, .scmGray90)
             }
         }

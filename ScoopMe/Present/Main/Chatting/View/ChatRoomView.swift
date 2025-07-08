@@ -78,7 +78,6 @@ extension ChatRoomView {
                         }
                     }
                     sendStatus = false
-                    textMessage = ""
                 }
             }
     }
@@ -96,12 +95,8 @@ extension ChatRoomView {
     @ViewBuilder
     private func seperateSenderView(message: EachChatMessageEntity) -> some View {
         if message.sender == .me {
-            MyChatBubbleCell(sendDate: message.sendDateString, message: message.content, sendStatus: message.sendStatus) {
+            MyChatBubbleCell(sendDate: message.sendDate, message: message.content, sendStatus: message.sendStatus) {
                 Task {
-//                    if let index = messages.firstIndex(of: message) {
-//                        resendMessage = message.content
-//                        messages.remove(at: index)
-//                    }
                     resendMessage = message.content
                     await resendMessageToServer()
                 }
@@ -110,7 +105,7 @@ extension ChatRoomView {
             ReceivedChatBubbleCell(
                 profileImageURL: message.senderInfo?.profileURL ?? "",
                 senderName: message.senderInfo?.nickname ?? "알수없음",
-                sendDate: message.sendDateString,
+                sendDate: message.sendDate,
                 message: message.content
             )
         }
@@ -122,7 +117,8 @@ extension ChatRoomView {
     // message 호출
     private func getServerMessages() async {
         do {
-            let messages = try await chatRoomRepository.getChatMessages()
+            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "9999-07-06T05:13:54.357Z")
+            let messages = try await chatRoomRepository.getChatMessages(messageInfo: messageInfo)
             self.messages = messages
         } catch {
             Log.error("❎ 서버에서 메시지 로딩 실패: \(error)")
@@ -140,6 +136,8 @@ extension ChatRoomView {
             Log.debug("채팅방ID: \(roomID)")
             let newMessage = try await chatRoomRepository.postNewMessage(messageInfo: messageInfo)
             messages.append(newMessage)
+            
+            textMessage = ""
         } catch {
             // TODO: 실패하면 서버에 전송이 안되기 때문에 DB에 저장하면 안되고, 재전송 버튼 보여야 함
             Log.error("❎ 메시지 포스트 실패: \(error)")
@@ -149,12 +147,13 @@ extension ChatRoomView {
                 sender: .me,
                 senderInfo: nil,
                 sendStatus: .failed,
-                content: resendMessage,
+                content: textMessage,
                 files: [],
-                sendDate: Date(),
-                sendDateString: Date().toKoreanTimeString()
+                sendDate: Date().toISOString()
             )
             messages.append(newMessage)
+            
+            textMessage = ""
         }
     }
     

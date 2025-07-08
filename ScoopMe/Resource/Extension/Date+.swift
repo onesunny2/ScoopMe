@@ -21,4 +21,10 @@ extension Date {
         formatter.dateFormat = "yy년 M월 d일 a h:mm"
         return formatter.string(from: self)
     }
+    
+    func toISOString() -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.string(from: self)
+    }
 }
