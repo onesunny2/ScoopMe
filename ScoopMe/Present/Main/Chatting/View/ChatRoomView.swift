@@ -117,7 +117,7 @@ extension ChatRoomView {
     // message 호출
     private func getServerMessages() async {
         do {
-            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "2025-07-06T05:13:54.357Z")
+            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "2025-05-06T05:13:54.357Z")
             let messages = try await chatRoomRepository.getChatMessages(messageInfo: messageInfo)
             self.messages = messages
         } catch {

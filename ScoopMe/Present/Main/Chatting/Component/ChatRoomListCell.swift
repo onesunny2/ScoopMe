@@ -42,7 +42,7 @@ struct ChatRoomListCell: View {
             
             // 시간, 알림뱃지
             VStack(alignment: .trailing, spacing: 4) {
-                Text(entity.recentTime)
+                Text(entity.recentTime.isoStringToKoreanAMPM() ?? "")
                     .basicText(.PTBody6, .scmGray75)
                 
                 if entity.messageCount != nil {

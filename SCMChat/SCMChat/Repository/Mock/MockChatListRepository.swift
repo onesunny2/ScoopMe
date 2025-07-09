@@ -14,9 +14,17 @@ public final class MockChatListRepository: ChatListDisplayable {
     public let network: SCMNetworkImpl
     public let loginTokenManager: LoginTokenManager
     
+    private var accessToken: String {
+        return loginTokenManager.fetchToken(.accessToken)
+    }
+    
     public init() {
         self.network = SCMNetworkImpl()
         self.loginTokenManager = LoginTokenManager()
+    }
+    
+    public func getChatroomID(opponent id: String) async throws -> String {
+        return ""
     }
     
     public func getChatLists() async throws -> [ChatListItemEntity] {
@@ -61,5 +69,17 @@ public final class MockChatListRepository: ChatListDisplayable {
         ]
         
         return entities
+    }
+}
+
+extension MockChatListRepository {
+    // 현재 채팅방이 존재하는지 확인
+    private func checkChatRoom(opponent id: String) async throws -> Bool {
+        
+        let value = ChatURL.fetchChatRoom(access: accessToken, opponentUserid: id)
+        let result = try await callRequest(value, type: ChatRoomResponseDTO.self)
+        let lastChat = result.response.lastChat
+        
+        return lastChat != nil
     }
 }
