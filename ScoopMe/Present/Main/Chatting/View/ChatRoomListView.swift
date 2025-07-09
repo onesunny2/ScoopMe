@@ -15,6 +15,7 @@ struct ChatRoomListView: View {
     @StateObject private var router = SCMRouter<ChatPath>.shared
     
     @State private var chatListItems: [ChatListItemEntity] = []
+    @State private var opponentName: String = ""
     
     init(chatListRepository: ChatListDisplayable) {
         self.chatListRepository = chatListRepository
@@ -33,11 +34,11 @@ struct ChatRoomListView: View {
             }
             .navigationDestination(for: ChatPath.self) { router in
                 switch router {
-                case let .chatRoom(roomID, opponentName):
+                case let .chatRoom(roomID):
                     ChatRoomView(
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
                         roomID: roomID,
-                        opponentName: opponentName
+                        opponentName: $opponentName
                     )
                 }
             }
@@ -73,8 +74,7 @@ extension ChatRoomListView {
                         Log.debug("⏭️ 채팅창 클릭")
                         router.send(.push(
                             .chatRoom(
-                                roomID: item.roomID,
-                                opponentName: item.username))
+                                roomID: item.roomID))
                         )
                     }
             }

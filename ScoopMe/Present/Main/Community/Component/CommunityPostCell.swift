@@ -14,6 +14,7 @@ import SCMImageRequest
 struct CommunityPostCell: View {
     
     @Binding var isMessageOpened: Bool
+    @Binding var opponentName: String
     
     private let imageHelper: ImageHelper
     private var firstWidth: CGFloat {
@@ -24,10 +25,11 @@ struct CommunityPostCell: View {
     }
     let post: CommunityPostEntity
     
-    init(post: CommunityPostEntity, isMessageOpened: Binding<Bool>) {
+    init(post: CommunityPostEntity, isMessageOpened: Binding<Bool>, opponentName: Binding<String>) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
         self._isMessageOpened = isMessageOpened
+        self._opponentName = opponentName
     }
     
     var body: some View {
@@ -70,8 +72,13 @@ extension CommunityPostCell {
                     .basicImage(width: 16, color: .scmGray15)
                     .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
                     .asButton {
-                        Log.debug("🔗 채팅보내기 버튼 클릭")
-                        isMessageOpened = true
+                        opponentName = post.creator.nickname
+                        Log.debug("🔗 상대방이름: \(opponentName)")
+                        
+                        Task {
+                            try? await Task.sleep(for: .seconds(0.1))
+                            isMessageOpened = true
+                        }
                     }
             }
         }
@@ -224,6 +231,6 @@ extension CommunityPostCell {
         storeInfo: store
     )
     
-    CommunityPostCell(post: entity, isMessageOpened: .constant(false))
+    CommunityPostCell(post: entity, isMessageOpened: .constant(false), opponentName: .constant("test"))
         .defaultHorizontalPadding()
 }

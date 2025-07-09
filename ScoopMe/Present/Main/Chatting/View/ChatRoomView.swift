@@ -20,12 +20,12 @@ struct ChatRoomView: View {
     
     private let chatRoomRepository: ChatRoomDisplayable
     private let roomID: String
-    private let opponentName: String
+    @Binding var opponentName: String
     
-    init(chatRoomRepository: ChatRoomDisplayable, roomID: String, opponentName: String) {
+    init(chatRoomRepository: ChatRoomDisplayable, roomID: String, opponentName: Binding<String>) {
         self.chatRoomRepository = chatRoomRepository
         self.roomID = roomID
-        self.opponentName = opponentName
+        self._opponentName = opponentName
     }
     
     var body: some View {
@@ -117,7 +117,7 @@ extension ChatRoomView {
     // message 호출
     private func getServerMessages() async {
         do {
-            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "9999-07-06T05:13:54.357Z")
+            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "2025-07-06T05:13:54.357Z")
             let messages = try await chatRoomRepository.getChatMessages(messageInfo: messageInfo)
             self.messages = messages
         } catch {
@@ -192,5 +192,5 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "", opponentName: "아무개")
+    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "", opponentName: .constant("test"))
 }
