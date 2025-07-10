@@ -37,8 +37,8 @@ final class DIContainer {
         
         self.paymentRepository = PaymentRepository()
         
-        self.chatListRepository = MockChatListRepository()
-        self.chatRoomRepository = MockChatRoomRepository()
+        self.chatListRepository = ChatListRepository()
+        self.chatRoomRepository = ChatRoomRepository()
     }
     
     /// SCMLogin

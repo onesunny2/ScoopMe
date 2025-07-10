@@ -10,7 +10,7 @@ import Foundation
 public enum UserdefaultsValues {
     case savedUserID
     
-    public var key: String {
+    var key: String {
         switch self {
         case .savedUserID: return "userIDKey"
         }
