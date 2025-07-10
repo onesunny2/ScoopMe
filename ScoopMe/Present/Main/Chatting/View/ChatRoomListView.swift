@@ -40,6 +40,7 @@ struct ChatRoomListView: View {
                         roomID: roomID,
                         opponentName: $opponentName
                     )
+                    .toolbar(.hidden, for: .tabBar)
                 }
             }
         }
@@ -72,6 +73,7 @@ extension ChatRoomListView {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         Log.debug("⏭️ 채팅창 클릭")
+                        opponentName = item.username
                         router.send(.push(
                             .chatRoom(
                                 roomID: item.roomID))

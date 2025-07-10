@@ -63,7 +63,7 @@ struct CommunityView: View {
                 cursorID = nil
                 Task { await getCommunityPost() }
             }
-            .sheet(isPresented: $isMessageOpened) {
+            .fullScreenCover(isPresented: $isMessageOpened) {
                 NavigationStack {
                     ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "686e299952829caed0c63f38", opponentName: $opponentName)
                 }
