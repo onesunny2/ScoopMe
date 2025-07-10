@@ -76,8 +76,12 @@ struct ChatInputView: View {
                 
                 // 전송 버튼
                 Circle()
-                    .fill(Color.scmGray45)
-                    .frame(width: 46)
+                    .fill(textMessage.isEmpty ? Color.scmGray45 : Color.scmBrightForsythia)
+                    .frame(width: 40)
+                    .overlay(alignment: .center) {
+                        Image(.arrowUp)
+                            .basicImage(width: 25, color: textMessage.isEmpty ? .scmGray60 : .scmGray90)
+                    }
                     .asButton({
                         Log.debug("🔗 메시지 전송버튼 클릭")
                         
