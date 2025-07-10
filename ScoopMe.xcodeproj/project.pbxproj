@@ -16,6 +16,7 @@
 		436532F02DDD569600313379 /* SCMImageRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532EE2DDD569600313379 /* SCMImageRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4374A9AD2E0C1E50008B81C4 /* SCMChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; };
 		4374A9AE2E0C1E50008B81C4 /* SCMChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4374AE2D2E1FAD0E008B81C4 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4374AE2C2E1FAD0E008B81C4 /* RealmSwift */; };
 		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		43AC4C2B2DD11A200010D965 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 43AC4C2A2DD11A200010D965 /* Secret.xcconfig */; };
@@ -112,6 +113,7 @@
 				43FDF4A02DF8643B004C10E9 /* iamport-ios in Frameworks */,
 				43B03A632DE873430057AD45 /* SCMCommunity.framework in Frameworks */,
 				436532AE2DDCA67200313379 /* NukeUI in Frameworks */,
+				4374AE2D2E1FAD0E008B81C4 /* RealmSwift in Frameworks */,
 				435E58332DD1CA030005196F /* SCMLogin.framework in Frameworks */,
 				43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */,
 				436532EF2DDD569600313379 /* SCMImageRequest.framework in Frameworks */,
@@ -188,6 +190,7 @@
 				43FDF49F2DF8643B004C10E9 /* iamport-ios */,
 				43FDF5062DFD267C004C10E9 /* FirebaseCore */,
 				43FDF5082DFD267C004C10E9 /* FirebaseMessaging */,
+				4374AE2C2E1FAD0E008B81C4 /* RealmSwift */,
 			);
 			productName = ScoopMe;
 			productReference = 43AC47EB2DCF19040010D965 /* ScoopMe.app */;
@@ -222,6 +225,7 @@
 				43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				43FDF49E2DF8643B004C10E9 /* XCRemoteSwiftPackageReference "iamport-ios" */,
 				43FDF5052DFD267C004C10E9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4374AE2B2E1FAD0E008B81C4 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43AC47EC2DCF19040010D965 /* Products */;
@@ -486,6 +490,14 @@
 				minimumVersion = 12.8.0;
 			};
 		};
+		4374AE2B2E1FAD0E008B81C4 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 20.0.2;
+			};
+		};
 		43B03A6D2DE884820057AD45 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
@@ -517,6 +529,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 436532AC2DDCA67200313379 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
+		};
+		4374AE2C2E1FAD0E008B81C4 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4374AE2B2E1FAD0E008B81C4 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 		43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
