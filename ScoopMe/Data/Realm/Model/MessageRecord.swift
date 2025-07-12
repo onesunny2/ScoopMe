@@ -25,7 +25,8 @@ final class MessageRecord: Object {
     @Persisted var sendStatus: String
     @Persisted var messageType: String
     @Persisted var createdAt: String
-    @Persisted var readStatus: List<ReadStatus>
+    @Persisted var readStatus: ReadStatus
+    @Persisted var mediaType: MediaType
     
     convenience init(
         chatID: String,
@@ -33,7 +34,8 @@ final class MessageRecord: Object {
         sendStatus: String,
         messageType: String,
         createdAt: String,
-        readStatus: List<ReadStatus>
+        readStatus: ReadStatus,
+        mediaType: MediaType
     ) {
         self.init()
         self.chatID = chatID

@@ -15,9 +15,8 @@ import RealmSwift
  - mimeType
  */
 
-
 final class MediaType: EmbeddedObject {
-    @Persisted var fileName: String
+    @Persisted(primaryKey: true) var fileName: String
     @Persisted var fileSize: Double
     @Persisted var mimeType: String
 }
