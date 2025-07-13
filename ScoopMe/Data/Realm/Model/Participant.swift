@@ -8,16 +8,6 @@
 import Foundation
 import RealmSwift
 
-/*
- < 참여자 모델에 필요한 내용 >
- - 유저아이디
- - 닉네임
- - 프로필이미지
- - 입장한 시간 (최신 메시지 받아오기 위함)
- - 나간 시간
- - 활성화 여부 (메시지 안보내 지는거 막으려고)
- */
-
 final class Participant: Object {
     @Persisted(primaryKey: true) var userID: String
     @Persisted var nickname: String
