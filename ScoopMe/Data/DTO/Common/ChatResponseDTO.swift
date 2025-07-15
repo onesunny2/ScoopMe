@@ -1,8 +1,8 @@
 //
 //  ChatResponseDTO.swift
-//  SCMChat
+//  ScoopMe
 //
-//  Created by Lee Wonsun on 6/29/25.
+//  Created by Lee Wonsun on 7/16/25.
 //
 
 import Foundation
