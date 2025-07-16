@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SCMChat
 import SCMLogger
 
 struct MyChatBubbleCell: View {

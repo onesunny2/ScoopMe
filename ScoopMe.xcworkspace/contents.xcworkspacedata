@@ -5,9 +5,6 @@
       location = "group:SCMDateHelper/SCMDateHelper.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SCMChat/SCMChat.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:SCMPayment/SCMPayment.xcodeproj">
    </FileRef>
    <FileRef

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SCMChat
 
 enum ChatPath: Hashable {
     case chatRoom(roomID: String)

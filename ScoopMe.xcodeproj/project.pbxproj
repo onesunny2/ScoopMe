@@ -14,8 +14,6 @@
 		436532AE2DDCA67200313379 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 436532AD2DDCA67200313379 /* NukeUI */; };
 		436532EF2DDD569600313379 /* SCMImageRequest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 436532EE2DDD569600313379 /* SCMImageRequest.framework */; };
 		436532F02DDD569600313379 /* SCMImageRequest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 436532EE2DDD569600313379 /* SCMImageRequest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4374A9AD2E0C1E50008B81C4 /* SCMChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; };
-		4374A9AE2E0C1E50008B81C4 /* SCMChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4374A9AC2E0C1E50008B81C4 /* SCMChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4374AE2D2E1FAD0E008B81C4 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4374AE2C2E1FAD0E008B81C4 /* RealmSwift */; };
 		43AC4B3A2DD118120010D965 /* SCMNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43AC4B392DD118120010D965 /* SCMNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -53,7 +51,6 @@
 				43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */,
 				43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */,
 				435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */,
-				4374A9AE2E0C1E50008B81C4 /* SCMChat.framework in Embed Frameworks */,
 				43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -104,7 +101,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4374A9AD2E0C1E50008B81C4 /* SCMChat.framework in Frameworks */,
 				43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */,
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,

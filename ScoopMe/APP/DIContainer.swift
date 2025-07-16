@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SCMChat
 import SCMCommunity
 import SCMImageRequest
 import SCMLogin

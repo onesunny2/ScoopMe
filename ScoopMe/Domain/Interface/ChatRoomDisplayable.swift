@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+protocol ChatRoomDisplayable: ChatNetworkProvider {
+    func getChatMessages(messageInfo: GetMessages) async throws -> [EachChatMessageEntity]
+    func postNewMessage(messageInfo: PostMessages) async throws -> EachChatMessageEntity
+}

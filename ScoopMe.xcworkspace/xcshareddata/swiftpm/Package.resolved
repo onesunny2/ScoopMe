@@ -1,5 +1,5 @@
 {
-  "originHash" : "feb66c690b5d2d9e0660d71ad0dfba1872146fd8e25abf2e3ee6ff8722f2eea7",
+  "originHash" : "5436e53bfb8e50f10b174de1ebf71aa6b3e39f43ac70f8704ffd03ecf8a31432",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -197,24 +197,6 @@
       "state" : {
         "revision" : "451c6dfd5ecec2cf626d1d9ca81c2d4a60355172",
         "version" : "3.1.3"
-      }
-    },
-    {
-      "identity" : "socket.io-client-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/socketio/socket.io-client-swift.git",
-      "state" : {
-        "revision" : "42da871d9369f290d6ec4930636c40672143905b",
-        "version" : "16.1.1"
-      }
-    },
-    {
-      "identity" : "starscream",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/daltoniam/Starscream",
-      "state" : {
-        "revision" : "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
-        "version" : "4.0.8"
       }
     },
     {
