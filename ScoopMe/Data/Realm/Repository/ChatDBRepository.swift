@@ -7,20 +7,33 @@
 
 import Foundation
 import RealmSwift
+import SCMLogger
 
 final class ChatDBRepository: SCMDataSource {
     
+    static let shared = ChatDBRepository()
+    
     private let realm: Realm
     
-    init() throws {
-        realm = try Realm()
+    private init() {
+        do {
+            // 개발 중에는 기존 데이터 삭제하고 새로 시작
+            var config = Realm.Configuration.defaultConfiguration
+            config.deleteRealmIfMigrationNeeded = true  // 🔥 개발용
+            
+            self.realm = try Realm(configuration: config)
+            Log.debug("✅ Realm 초기화 성공")
+        } catch {
+            Log.error("❌ Realm 초기화 실패: \(error)")
+            fatalError("Realm 초기화 실패: \(error)")
+        }
     }
     
     func create(chatRoom: ChatRoom) throws {
         let newRoom = chatRoom
         
         try realm.write {
-            realm.add(newRoom)
+            realm.add(newRoom, update: .modified)
         }
     }
     
@@ -30,6 +43,11 @@ final class ChatDBRepository: SCMDataSource {
         }
         
         return chatRoom
+    }
+    
+    func fetchAllChatRooms() -> Results<ChatRoom> {
+        return realm.objects(ChatRoom.self)
+            .sorted(byKeyPath: "lastMessageAt", ascending: false)
     }
     
     func save(roomID: String, _ message: MessageRecord) throws {
@@ -53,6 +71,21 @@ final class ChatDBRepository: SCMDataSource {
         
         try realm.write {
             chatRoom.messages.remove(at: index)
+        }
+    }
+    
+    func deleteAllData() throws {
+        try realm.write {
+            realm.deleteAll()
+        }
+    }
+    
+    // 채팅방 읽음처리
+    func markAsRead(roomID: String) throws {
+        let chatRoom = try fetch(roomID: roomID)
+        
+        try realm.write {
+            chatRoom.unreadCount = 0
         }
     }
 }

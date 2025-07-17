@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import RealmSwift
 
 protocol ChatListDisplayable: ChatNetworkProvider {
     
     func getChatroomID(opponent id: String) async throws -> String
-    func getChatLists() async throws -> [ChatListItemEntity]
+    func checkChatLists() async throws
 }

@@ -27,7 +27,7 @@ final class MockChatListRepository: ChatListDisplayable {
         return ""
     }
     
-    func getChatLists() async throws -> [ChatListItemEntity] {
+    func checkChatLists() async throws {
         
         let entities: [ChatListItemEntity] = [
             ChatListItemEntity(
@@ -67,8 +67,6 @@ final class MockChatListRepository: ChatListDisplayable {
                 messageCount: nil
             )
         ]
-        
-        return entities
     }
 }
 

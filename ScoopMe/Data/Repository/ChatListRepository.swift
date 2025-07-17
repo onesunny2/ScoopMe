@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import RealmSwift
+import SCMLogger
 import SCMLogin
 import SCMNetwork
 
@@ -13,6 +15,8 @@ final class ChatListRepository: ChatListDisplayable {
     
     let network: SCMNetworkImpl
     let loginTokenManager: LoginTokenManager
+    
+    private let chatDBRepository: SCMDataSource
     
     private var accessToken: String {
         return loginTokenManager.fetchToken(.accessToken)
@@ -22,9 +26,10 @@ final class ChatListRepository: ChatListDisplayable {
         return UserdefaultsValues.savedUserID.stringValue
     }
     
-    init() {
+    init(chatDBRepo: SCMDataSource, loginTokenManager: LoginTokenManager) {
         self.network = SCMNetworkImpl()
-        self.loginTokenManager = LoginTokenManager()
+        self.chatDBRepository = chatDBRepo
+        self.loginTokenManager = loginTokenManager
     }
     
     func getChatroomID(opponent id: String) async throws -> String {
@@ -34,32 +39,40 @@ final class ChatListRepository: ChatListDisplayable {
         return result.response.roomID
     }
     
-    func getChatLists() async throws -> [ChatListItemEntity] {
+    @MainActor
+    func checkChatLists() async throws {
         let value = ChatURL.loadChatRoom(access: accessToken)
         let result = try await callRequest(value, type: ChatRoomListResponseDTO.self)
         let response = result.response.data
         
-        var entities: [ChatListItemEntity] = []
-        
         response.forEach {
             
             let opponent = $0.participants.filter { $0.userID != myUserID }.first
-            
             guard let opponent else { return }
             
-            let entity = ChatListItemEntity(
-                userID: opponent.userID,
+            let chatRoom = ChatRoom(
                 roomID: $0.roomID,
-                profileImageURL: opponent.profileImage ?? "",
-                username: opponent.nick,
-                recentMessage: $0.lastChat?.content ?? "",
-                recentTime: $0.updatedAt,
-                messageCount: nil
+                createdAt: $0.createdAt,
+                lastMessageAt: $0.updatedAt,
+                lastMessageContent: $0.lastChat?.content ?? "",
+                isActive: true,
+                unreadCount: nil
             )
             
-            entities.append(entity)
+            let participant = Participant(
+                userID: opponent.userID,
+                nickname: opponent.nick,
+                profileImage: opponent.profileImage ?? "",
+                isActive: true
+            )
+            
+            chatRoom.participant.append(participant)
+            
+            do {
+                try chatDBRepository.create(chatRoom: chatRoom)
+            } catch {
+                Log.error("❎ 채팅방 목록 로컬DB 저장 실패: \(error)")
+            }
         }
-        
-        return entities
     }
 }
