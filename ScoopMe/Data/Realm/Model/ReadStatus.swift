@@ -9,6 +9,6 @@ import Foundation
 import RealmSwift
 
 final class ReadStatus: EmbeddedObject {
-    @Persisted(primaryKey: true) var userID: String
+    @Persisted var userID: String
     @Persisted var readAt: String?
 }
