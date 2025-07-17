@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RealmSwift
 import SCMLogger
 
 struct ChatRoomListView: View {
@@ -13,6 +14,10 @@ struct ChatRoomListView: View {
     private let chatListRepository: ChatListDisplayable
     @StateObject private var router = SCMRouter<ChatPath>.shared
     
+    @ObservedResults(
+        ChatRoom.self,
+        sortDescriptor: SortDescriptor(keyPath: "lastMessageAt", ascending: false)
+    ) var chatListItem
     @State private var chatListItems: [ChatListItemEntity] = []
     @State private var opponentName: String = ""
     
@@ -30,6 +35,7 @@ struct ChatRoomListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await loadChatLists()
+                Log.debug("✅ 저장된 채팅 목록: \(chatListItem)")
             }
             .navigationDestination(for: ChatPath.self) { router in
                 switch router {
@@ -56,6 +62,8 @@ extension ChatRoomListView {
     private var chatContainerView: some View {
         if chatListItems.isEmpty {
             emptyView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.clear)
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 chatLists
@@ -99,8 +107,7 @@ extension ChatRoomListView {
     // 채팅목록 로딩
     private func loadChatLists() async {
         do {
-            let lists = try await chatListRepository.getChatLists()
-            self.chatListItems = lists
+            try await chatListRepository.checkChatLists()
             
             Log.debug("✅ 채팅목록 불러오기 성공")
         } catch {
