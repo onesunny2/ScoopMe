@@ -9,11 +9,12 @@ import Foundation
 import RealmSwift
 
 protocol SCMDataSource: AnyObject {
-    associatedtype FetchModel: Object
-    associatedtype MessageModel: Object
     
-    func create(chatRoom: FetchModel) throws
-    func fetch(roomID: String) throws -> FetchModel
-    func save(roomID: String, _ message: MessageModel) throws
-    func delete(roomID: String, chatID: String, _ message: MessageModel) throws
+    func create(chatRoom: ChatRoom) throws
+    func fetch(roomID: String) throws -> ChatRoom
+    func fetchAllChatRooms() -> Results<ChatRoom>
+    func save(roomID: String, _ message: MessageRecord) throws
+    func delete(roomID: String, chatID: String, _ message: MessageRecord) throws
+    func deleteAllData() throws
+    func markAsRead(roomID: String) throws
 }

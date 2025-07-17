@@ -36,7 +36,11 @@ final class DIContainer {
         
         self.paymentRepository = PaymentRepository()
         
-        self.chatListRepository = ChatListRepository()
+        self.chatDBRepository = ChatDBRepository.shared
+        self.chatListRepository = ChatListRepository(
+            chatDBRepo: self.chatDBRepository,
+            loginTokenManager: self.loginTokenManager
+        )
         self.chatRoomRepository = ChatRoomRepository()
     }
     
@@ -66,4 +70,7 @@ final class DIContainer {
     /// SCMChat
     private(set) var chatListRepository: ChatListDisplayable
     private(set) var chatRoomRepository: ChatRoomDisplayable
+    
+    /// Realm
+    private(set) var chatDBRepository: SCMDataSource
 }

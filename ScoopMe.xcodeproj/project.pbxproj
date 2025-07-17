@@ -23,6 +23,7 @@
 		43B03A6F2DE884820057AD45 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 43B03A6E2DE884820057AD45 /* SDWebImageSwiftUI */; };
 		43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */; };
 		43B03AB02DE980AC0057AD45 /* SCMCommunity.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43B03AAE2DE980AC0057AD45 /* SCMCommunity.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		43DA6CFC2E28FE16001252D6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4374AE2C2E1FAD0E008B81C4 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E014B52DD21A2B0016391C /* OSLog.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		43E019A62DD6E0AC0016391C /* SCMLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; };
 		43E019A72DD6E0AC0016391C /* SCMLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 43E019A52DD6E0AC0016391C /* SCMLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -51,6 +52,7 @@
 				43E01BDE2DDAF4530016391C /* SCMLocation.framework in Embed Frameworks */,
 				43B03A642DE873430057AD45 /* SCMCommunity.framework in Embed Frameworks */,
 				435E58342DD1CA030005196F /* SCMLogin.framework in Embed Frameworks */,
+				43DA6CFC2E28FE16001252D6 /* RealmSwift in Embed Frameworks */,
 				43AC4B3B2DD118120010D965 /* SCMNetwork.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
