@@ -11,7 +11,8 @@ import RealmSwift
 final class ChatRoom: Object, Identifiable {
     @Persisted(primaryKey: true) var roomID: String
     @Persisted var createdAt: String
-    @Persisted var participant = List<Participant>()
+    @Persisted var mainUser: MainUser?
+    @Persisted var participant: Participant?
     @Persisted var lastMessageAt: String
     @Persisted var lastMessageContent: String
     @Persisted var isActive: Bool
@@ -21,7 +22,8 @@ final class ChatRoom: Object, Identifiable {
     convenience init(
         roomID: String,
         createdAt: String,
-        participant: List<Participant> = List<Participant>(),
+        mainUser: MainUser = MainUser(),
+        participant: Participant = Participant(),
         lastMessageAt: String,
         lastMessageContent: String,
         isActive: Bool,
@@ -31,6 +33,7 @@ final class ChatRoom: Object, Identifiable {
         self.init()
         self.roomID = roomID
         self.createdAt = createdAt
+        self.mainUser = mainUser
         self.participant = participant
         self.lastMessageAt = lastMessageAt
         self.lastMessageContent = lastMessageContent
