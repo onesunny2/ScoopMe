@@ -45,34 +45,106 @@ final class ChatListRepository: ChatListDisplayable {
         let result = try await callRequest(value, type: ChatRoomListResponseDTO.self)
         let response = result.response.data
         
-        response.forEach {
-            
-            let opponent = $0.participants.filter { $0.userID != myUserID }.first
-            guard let opponent else { return }
+        for chatData in response {
+            let opponent = chatData.participants.filter { $0.userID != myUserID }.first
+            guard let opponent else { continue }
             
             let chatRoom = ChatRoom(
-                roomID: $0.roomID,
-                createdAt: $0.createdAt,
-                lastMessageAt: $0.updatedAt,
-                lastMessageContent: $0.lastChat?.content ?? "",
+                roomID: chatData.roomID,
+                createdAt: chatData.createdAt,
+                lastMessageAt: chatData.updatedAt,
+                lastMessageContent: chatData.lastChat?.content ?? "",
                 isActive: true,
                 unreadCount: nil
             )
             
-            let participant = Participant(
+            let isUserActive = await checkExistingUser(opponent.nick)
+            
+            let mainUser = await fetchMainUser()
+            chatRoom.mainUser = mainUser
+            
+            let participant: Participant = Participant(
                 userID: opponent.userID,
                 nickname: opponent.nick,
                 profileImage: opponent.profileImage ?? "",
-                isActive: true
+                isActive: isUserActive
             )
-            
-            chatRoom.participant.append(participant)
+            chatRoom.participant = participant
             
             do {
+                // 기존에 저장된 chatRoom 있는지 확인
+                let existingChatRoom = try chatDBRepository.fetch(roomID: chatData.roomID)
+                
+                if shouldUpdateNeeded(existing: existingChatRoom, new: chatRoom) {
+                    try chatDBRepository.create(chatRoom: chatRoom)
+                }
+                
+            } catch SCMRealmError.roomNotFound {
                 try chatDBRepository.create(chatRoom: chatRoom)
+                Log.info("✅ 새로운 채팅방 생성")
             } catch {
                 Log.error("❎ 채팅방 목록 로컬DB 저장 실패: \(error)")
             }
         }
+    }
+}
+
+extension ChatListRepository {
+    // 존재하는 유저인지 확인
+    private func checkExistingUser(_ nick: String) async -> Bool {
+        do {
+            let value = ChatURL.checkUserExisted(access: accessToken, nickname: nick)
+            let result = try await callRequest(value, type: UserInfoListResponseDTO.self)
+            let response = result.response.data
+            
+            return !response.isEmpty
+        } catch {
+            Log.error("❎ 해당 닉네임의 유저가 존재하지 않습니다: \(error)")
+            return false
+        }
+    }
+    
+    // 현재 내 프로필 확인
+    private func fetchMainUser() async -> MainUser {
+        do {
+            let value = ChatURL.fetchMainUser(access: accessToken)
+            let result = try await callRequest(value, type: MyInfoResponseDTO.self)
+            let response = result.response
+            
+            let user: MainUser = MainUser(
+                userID: response.user_id,
+                nickname: response.nick,
+                profileImage: response.profileImage
+            )
+            
+            return user
+        } catch {
+            Log.error("❎ 유저 정보 획득에 실패했습니다: \(error)")
+            let user = MainUser()
+            return user
+        }
+    }
+    
+    // 업데이트가 필요한지 chatRoom 확인
+    private func shouldUpdateNeeded(existing: ChatRoom, new: ChatRoom) -> Bool {
+        
+        if existing.lastMessageAt != new.lastMessageAt { return true }
+        if existing.lastMessageContent != new.lastMessageContent { return true }
+        
+        if let existingMainUser = existing.mainUser, let newMainUser = new.mainUser {
+            if existingMainUser.nickname != newMainUser.nickname || existingMainUser.profileImage != newMainUser.profileImage {
+                return true
+            }
+        }
+        
+        if let existingParticipant = existing.participant, let newParticipant = new.participant {
+            if existingParticipant.nickname != newParticipant.nickname || existingParticipant.profileImage != newParticipant.profileImage || existingParticipant.isActive != newParticipant.isActive {
+                return true
+            }
+        }
+        
+        if existing.isActive != new.isActive { return true }
+        
+        return false
     }
 }

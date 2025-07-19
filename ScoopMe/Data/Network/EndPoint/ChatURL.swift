@@ -13,6 +13,8 @@ enum ChatURL {
     case loadChatRoom(access: String)
     case postMessage(access: String, messageInfo: PostMessages)
     case getMessages(access: String, messageInfo: GetMessages)
+    case checkUserExisted(access: String, nickname: String)
+    case fetchMainUser(access: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -22,7 +24,7 @@ enum ChatURL {
         switch self {
         case .fetchChatRoom, .postMessage:
             return .post
-        case .loadChatRoom, .getMessages:
+        case .loadChatRoom, .getMessages, .checkUserExisted, .fetchMainUser:
             return .get
         }
     }
@@ -35,6 +37,10 @@ enum ChatURL {
             return "/v1/chats/\(info.roomID)"
         case let .getMessages(_, info):
             return "/v1/chats/\(info.roomID)"
+        case .checkUserExisted:
+            return "/v1/users/search"
+        case .fetchMainUser:
+            return "/v1/users/me/profile"
         }
     }
     
@@ -44,6 +50,10 @@ enum ChatURL {
             return [
                 "room_id": info.roomID,
                 "next": info.lastMessageDate
+            ]
+        case let .checkUserExisted(_, nickname):
+            return [
+                "nick": nickname
             ]
         default:
             return nil
@@ -87,6 +97,18 @@ enum ChatURL {
                 "Authorization": access
             ]
         case let .getMessages(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .checkUserExisted(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .fetchMainUser(access):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
