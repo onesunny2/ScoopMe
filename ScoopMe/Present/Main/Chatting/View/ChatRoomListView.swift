@@ -17,8 +17,8 @@ struct ChatRoomListView: View {
     @ObservedResults(
         ChatRoom.self,
         sortDescriptor: SortDescriptor(keyPath: "lastMessageAt", ascending: false)
-    ) var chatListItem
-    @State private var chatListItems: [ChatListItemEntity] = []
+    ) var chatListItems
+//    @State private var chatListItems: [ChatListItemEntity] = []
     @State private var opponentName: String = ""
     
     init(chatListRepository: ChatListDisplayable) {
@@ -35,7 +35,7 @@ struct ChatRoomListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await loadChatLists()
-                Log.debug("✅ 저장된 채팅 목록: \(chatListItem)")
+                Log.debug("✅ 저장된 채팅 목록")
             }
             .navigationDestination(for: ChatPath.self) { router in
                 switch router {
@@ -73,14 +73,13 @@ extension ChatRoomListView {
     
     private var chatLists: some View {
         LazyVStack(alignment: .center, spacing: 0) {
-            ForEach(chatListItems, id: \.userID) { item in
-                ChatRoomListCell(entity: item)
+            ForEach(chatListItems, id: \.roomID) { item in
+                ChatRoomListCell(room: item)
                     .padding(.vertical, 10)
                     .defaultHorizontalPadding()
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        Log.debug("⏭️ 채팅창 클릭")
-                        opponentName = item.username
+                        opponentName = item.participant?.nickname ?? ""
                         router.send(.push(
                             .chatRoom(
                                 roomID: item.roomID))

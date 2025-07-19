@@ -9,17 +9,17 @@ import SwiftUI
 
 struct ChatRoomListCell: View {
     
-    private let entity: ChatListItemEntity
+    private let room: ChatRoom
     
-    init(entity: ChatListItemEntity) {
-        self.entity = entity
+    init(room: ChatRoom) {
+        self.room = room
     }
     
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             NukeRequestImageCell(
                 imageHelper: DIContainer.shared.imageHelper,
-                url: entity.profileImageURL,
+                url: room.participant?.profileImage ?? "",
                 topLeading: 16,
                 bottomLeading: 16,
                 bottomTrailing: 16,
@@ -30,9 +30,9 @@ struct ChatRoomListCell: View {
             
             // 이름, 채팅내용
             VStack(alignment: .leading, spacing: 4) {
-                Text(entity.username)
+                Text(room.participant?.nickname ?? "")
                     .basicText(.PTTitle5, .scmGray100)
-                Text(entity.recentMessage)
+                Text(room.lastMessageContent)
                     .basicText(.PTBody6, .scmGray75)
                     .lineLimit(2)
             }
@@ -41,33 +41,19 @@ struct ChatRoomListCell: View {
             
             // 시간, 알림뱃지
             VStack(alignment: .trailing, spacing: 4) {
-                Text(entity.recentTime.isoStringToKoreanAMPM() ?? "")
+                Text(room.lastMessageAt.isoStringToKoreanAMPM() ?? "")
                     .basicText(.PTBody6, .scmGray75)
                 
-                if entity.messageCount != nil {
+                if room.unreadCount != nil {
                     Circle()
                         .fill(Color.scmBlackSprout)
                         .frame(width: 16, height: 16)
                         .overlay(alignment: .center) {
-                            Text(entity.messageCountString)
+                            Text("\(room.unreadCount)")
                                 .basicText(.PTBody6, .scmGray0)
                         }
                 }
             }
         }
     }
-}
-
-#Preview {
-    let entity: ChatListItemEntity = ChatListItemEntity(
-        userID: "",
-        roomID: "",
-        profileImageURL: "",
-        username: "이짜몽",
-        recentMessage: "왜 짜몽이는 항상 사람이 있어야 밥을 먹을까?",
-        recentTime: "오후 4:21",
-        messageCount: 2
-    )
-    
-    ChatRoomListCell(entity: entity)
 }

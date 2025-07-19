@@ -77,6 +77,8 @@ final class ChatListRepository: ChatListDisplayable {
                 
                 if shouldUpdateNeeded(existing: existingChatRoom, new: chatRoom) {
                     try chatDBRepository.create(chatRoom: chatRoom)
+                } else {
+                    Log.debug("🔗 이미 생성된 채팅방 존재")
                 }
                 
             } catch SCMRealmError.roomNotFound {
