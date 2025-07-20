@@ -18,7 +18,6 @@ struct ChatRoomListView: View {
         ChatRoom.self,
         sortDescriptor: SortDescriptor(keyPath: "lastMessageAt", ascending: false)
     ) var chatListItems
-//    @State private var chatListItems: [ChatListItemEntity] = []
     @State private var opponentName: String = ""
     
     init(chatListRepository: ChatListDisplayable) {
