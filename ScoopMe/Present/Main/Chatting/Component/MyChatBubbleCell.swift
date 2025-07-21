@@ -12,13 +12,13 @@ struct MyChatBubbleCell: View {
     
     private let sendDate: String
     private let message: String
-    private let sendStatus: MessageSendStatus
+    private let sendStatus: String
     private let onResendTapped: () -> Void
     
     init(
         sendDate: String,
         message: String,
-        sendStatus: MessageSendStatus,
+        sendStatus: String,
         onResendTapped: @escaping () -> Void
     ) {
         self.sendDate = sendDate
@@ -31,7 +31,7 @@ struct MyChatBubbleCell: View {
         HStack(alignment: .bottom, spacing: 4) {
             Spacer(minLength: 4)
             
-            if sendStatus == .failed {
+            if sendStatus == MessageSendStatus.failed.string {
                 Image(.arrowCounterclockwiseCircleFill)
                     .basicImage(width: 20, color: .scmGray45)
                     .asButton {

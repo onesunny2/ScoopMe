@@ -92,19 +92,17 @@ extension ChatRoomView {
     }
     
     @ViewBuilder
-    private func seperateSenderView(message: EachChatMessageEntity) -> some View {
-        if message.sender == .me {
-            MyChatBubbleCell(sendDate: message.sendDate, message: message.content, sendStatus: message.sendStatus) {
+    private func seperateSenderView(message: MessageRecord) -> some View {
+        if message.isMine {
+            MyChatBubbleCell(sendDate: message.createdAt, message: message.content, sendStatus: message.sendStatus) {
                 Task {
-                    resendMessage = message.content
-                    await resendMessageToServer()
+                    await resendMessageToServer(chatID: message.chatID)
                 }
             }
         } else {
             ReceivedChatBubbleCell(
-                profileImageURL: message.senderInfo?.profileURL ?? "",
-                senderName: message.senderInfo?.nickname ?? "알수없음",
-                sendDate: message.sendDate,
+                participant: filteredChatRoom?.participant ?? Participant(),
+                sendDate: message.createdAt,
                 message: message.content
             )
         }
