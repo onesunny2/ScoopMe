@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+enum MessageType: String {
+    case text
+    case photo
+    
+    var string: String {
+        return self.rawValue
+    }
+}

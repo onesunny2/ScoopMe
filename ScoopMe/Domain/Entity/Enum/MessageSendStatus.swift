@@ -7,8 +7,12 @@
 
 import Foundation
 
-enum MessageSendStatus {
+enum MessageSendStatus: String {
     case sending
     case success
     case failed
+    
+    var string: String {
+        return self.rawValue
+    }
 }
