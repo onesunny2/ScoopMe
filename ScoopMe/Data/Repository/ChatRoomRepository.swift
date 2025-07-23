@@ -63,32 +63,43 @@ final class ChatRoomRepository: ChatRoomDisplayable {
                 mediaType: (messageType == MessageType.text.string) ? nil : mediaType
             )
             
-            entities.append(entity)
+            try chatDBRepository.save(roomID: roomID, message)
         }
-        
-        return entities
     }
     
-    func postNewMessage(messageInfo: PostMessages) async throws -> EachChatMessageEntity {
+    // 서버 전송 전 임시메시지 RealmDB 저장
+    @MainActor
+    func saveTempMessage(roomID: String, message: MessageRecord) async throws {
+        try chatDBRepository.save(roomID: roomID, message)
+    }
+    
+    // realm의 메시지 상태 업데이트
+    @MainActor
+    func updateMessageStatus(roomID: String, chatID: String, status: String) async throws {
+        try chatDBRepository.updateMessageStatus(roomID: roomID, chatID: chatID, status: status)
+    }
+    
+    // 서버에 post 함과 동시에, 성공하면 realm에 저장 > 실패하면 view에서 임시로 message 생성해서 realm에 저장 후 성공하면 전환
+    @MainActor
+    func postNewMessage(roomID: String, messageInfo: PostMessages, temptID: String) async throws {
         
         let value = ChatURL.postMessage(access: accessToken, messageInfo: messageInfo)
         let result = try await callRequest(value, type: ChatResponseDTO.self)
         let response = result.response
         
-        let entity: EachChatMessageEntity = EachChatMessageEntity(
+        let messageType = MessageType.text.string
+        let mediaType = MediaType()
+        
+        let message = MessageRecord(
             chatID: response.chatID,
-            sender: .me,
-            senderInfo: SenderInfo(
-                userID: response.sender.userID,
-                nickname: response.sender.nick,
-                profileURL: response.sender.profileImage
-            ),
-            sendStatus: .success,
+            isMine: true,
             content: response.content,
-            files: response.files,
-            sendDate: response.createdAt
+            sendStatus: MessageSendStatus.success.string,
+            messageType: messageType,
+            createdAt: response.createdAt,
+            mediaType: (messageType == MessageType.text.string) ? nil : mediaType
         )
         
-        return entity
+        try chatDBRepository.replaceMessage(roomID: roomID, tempID: temptID, newMessage: message)
     }
 }

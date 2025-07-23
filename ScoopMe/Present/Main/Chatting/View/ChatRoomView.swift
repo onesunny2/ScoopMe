@@ -130,57 +130,61 @@ extension ChatRoomView {
         }
     }
     
-    // 입력한 메시지 서버에 post
+    // 입력한 메시지 서버에 post & DB 저장 과정
+    @MainActor
     private func postMessageToServer() async {
+        
+        let messageType = MessageType.text.string
+        let mediaType = MediaType()
+        
+        let tempMessage = MessageRecord(
+            chatID: UUID().uuidString,
+            isMine: true,
+            content: textMessage,
+            sendStatus: MessageSendStatus.sending.string,
+            messageType: messageType,
+            createdAt: Date().toKoreanDateString(),
+            mediaType: (messageType == MessageType.text.string) ? nil : mediaType
+        )
+        
         do {
+            try await chatRoomRepository.saveTempMessage(roomID: roomID, message: tempMessage)
+            
             let messageInfo: PostMessages = PostMessages(
                 roomID: roomID,
                 contents: textMessage,
                 files: []
             )
-            Log.debug("채팅방ID: \(roomID)")
-            let newMessage = try await chatRoomRepository.postNewMessage(messageInfo: messageInfo)
-            messages.append(newMessage)
-            
-            textMessage = ""
+            try await chatRoomRepository.postNewMessage(roomID: roomID, messageInfo: messageInfo, temptID: tempMessage.chatID)
         } catch {
-            // TODO: 실패하면 서버에 전송이 안되기 때문에 DB에 저장하면 안되고, 재전송 버튼 보여야 함
             Log.error("❎ 메시지 포스트 실패: \(error)")
-            // 전송이 실패해도 UI상 보여야 하기 때문에 하는 작업
-            let newMessage = EachChatMessageEntity(
-                chatID: "\(Date())",
-                sender: .me,
-                senderInfo: nil,
-                sendStatus: .failed,
-                content: textMessage,
-                files: [],
-                sendDate: Date().toISOString()
+            try? await chatRoomRepository.updateMessageStatus(
+                roomID: roomID,
+                chatID: tempMessage.chatID,
+                status: MessageSendStatus.failed.string
             )
-            messages.append(newMessage)
             
-            textMessage = ""
         }
+        
+        textMessage = ""
     }
     
     // 실패한 메시지 서버에 재전송
-    private func resendMessageToServer() async {
+    private func resendMessageToServer(chatID: String) async {
+        
+        guard let failedMessage = filteredChatRoom?.messages.first(where: { $0.chatID == chatID }) else {
+            Log.error("❎ 재전송 할 메시지가 존재하지 않습니다")
+            return
+        }
+        
         do {
             let messageInfo: PostMessages = PostMessages(
                 roomID: roomID,
-                contents: resendMessage,
+                contents: failedMessage.content,
                 files: []
             )
-            
-            let resendMessage = try await chatRoomRepository.postNewMessage(messageInfo: messageInfo)
-            
-            if let index = messages.firstIndex(where: {
-                $0.content == resendMessage.content
-            }) {
-                messages[index] = resendMessage
-            }
-            
+            try await chatRoomRepository.postNewMessage(roomID: roomID, messageInfo: messageInfo, temptID: chatID)
             Log.debug("🔗 메시지 재전송 성공")
-            
         } catch {
             Log.error("❎ 메시지 재전송 실패")
         }
