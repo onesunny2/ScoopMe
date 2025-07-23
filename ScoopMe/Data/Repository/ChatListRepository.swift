@@ -26,7 +26,10 @@ final class ChatListRepository: ChatListDisplayable {
         return UserdefaultsValues.savedUserID.stringValue
     }
     
-    init(chatDBRepo: SCMDataSource, loginTokenManager: LoginTokenManager) {
+    init(
+        chatDBRepo: SCMDataSource,
+        loginTokenManager: LoginTokenManager
+    ) {
         self.network = SCMNetworkImpl()
         self.chatDBRepository = chatDBRepo
         self.loginTokenManager = loginTokenManager
@@ -52,9 +55,12 @@ final class ChatListRepository: ChatListDisplayable {
             let chatRoom = ChatRoom(
                 roomID: chatData.roomID,
                 createdAt: chatData.createdAt,
+                mainUser: MainUser(),
+                participant: Participant(),
                 lastMessageAt: chatData.updatedAt,
                 lastMessageContent: chatData.lastChat?.content ?? "",
                 isActive: true,
+                messages: List<MessageRecord>(),
                 unreadCount: nil
             )
             
@@ -75,15 +81,12 @@ final class ChatListRepository: ChatListDisplayable {
                 // 기존에 저장된 chatRoom 있는지 확인
                 let existingChatRoom = try chatDBRepository.fetch(roomID: chatData.roomID)
                 
-                if shouldUpdateNeeded(existing: existingChatRoom, new: chatRoom) {
-                    try chatDBRepository.create(chatRoom: chatRoom)
-                } else {
-                    Log.debug("🔗 이미 생성된 채팅방 존재")
-                }
+                updateChatRoomInfo(roomID: chatData.roomID, existing: existingChatRoom, new: chatRoom)
                 
             } catch SCMRealmError.roomNotFound {
-                try chatDBRepository.create(chatRoom: chatRoom)
                 Log.info("✅ 새로운 채팅방 생성")
+                chatRoom.lastMessageAt = chatRoom.createdAt
+                try chatDBRepository.create(chatRoom: chatRoom)
             } catch {
                 Log.error("❎ 채팅방 목록 로컬DB 저장 실패: \(error)")
             }
@@ -93,6 +96,7 @@ final class ChatListRepository: ChatListDisplayable {
 
 extension ChatListRepository {
     // 존재하는 유저인지 확인
+    @MainActor
     private func checkExistingUser(_ nick: String) async -> Bool {
         do {
             let value = ChatURL.checkUserExisted(access: accessToken, nickname: nick)
@@ -107,6 +111,7 @@ extension ChatListRepository {
     }
     
     // 현재 내 프로필 확인
+    @MainActor
     private func fetchMainUser() async -> MainUser {
         do {
             let value = ChatURL.fetchMainUser(access: accessToken)
@@ -128,25 +133,42 @@ extension ChatListRepository {
     }
     
     // 업데이트가 필요한지 chatRoom 확인
-    private func shouldUpdateNeeded(existing: ChatRoom, new: ChatRoom) -> Bool {
+    private func updateChatRoomInfo(roomID: String, existing: ChatRoom, new: ChatRoom) {
         
-        if existing.lastMessageAt != new.lastMessageAt { return true }
-        if existing.lastMessageContent != new.lastMessageContent { return true }
+        if existing.lastMessageAt != new.lastMessageAt || existing.lastMessageContent != new.lastMessageContent {
+            do {
+                try chatDBRepository.updateMessageLastValues(roomID: roomID, lastMessageAt: new.lastMessageAt, lastMessageContent: new.lastMessageContent, isBoth: true)
+            } catch {
+                Log.error("❎ lastMessage 정보 업데이트에 실패했습니다: \(error)")
+            }
+        }
         
         if let existingMainUser = existing.mainUser, let newMainUser = new.mainUser {
             if existingMainUser.nickname != newMainUser.nickname || existingMainUser.profileImage != newMainUser.profileImage {
-                return true
+                do {
+                    try chatDBRepository.updateMainuser(roomID: roomID, user: new.mainUser ?? MainUser())
+                } catch {
+                    Log.error("❎ MainUser 정보 업데이트에 실패했습니다: \(error)")
+                }
             }
         }
         
         if let existingParticipant = existing.participant, let newParticipant = new.participant {
             if existingParticipant.nickname != newParticipant.nickname || existingParticipant.profileImage != newParticipant.profileImage || existingParticipant.isActive != newParticipant.isActive {
-                return true
+                do {
+                    try chatDBRepository.updateParticipant(roomID: roomID, participant: new.participant ?? Participant())
+                } catch {
+                    Log.error("❎ Participant 정보 업데이트에 실패했습니다: \(error)")
+                }
             }
         }
         
-        if existing.isActive != new.isActive { return true }
-        
-        return false
+        if existing.isActive != new.isActive {
+            do {
+                try chatDBRepository.updateChatroomActiveStatus(roomID: roomID, isActive: new.isActive)
+            } catch {
+                Log.error("❎ 채팅창 Active 상태 정보 업데이트에 실패했습니다: \(error)")
+            }
+        }
     }
 }
