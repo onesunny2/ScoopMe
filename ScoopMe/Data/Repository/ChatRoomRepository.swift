@@ -15,39 +15,52 @@ final class ChatRoomRepository: ChatRoomDisplayable {
     let network: SCMNetworkImpl
     let loginTokenManager: LoginTokenManager
     
+    private let chatDBRepository: SCMDataSource
+    
     private var accessToken: String {
         return loginTokenManager.fetchToken(.accessToken)
     }
     
-    init() {
+    init(
+        chatDBRepo: SCMDataSource,
+        loginTokenManager: LoginTokenManager
+    ) {
         self.network = SCMNetworkImpl()
-        self.loginTokenManager = LoginTokenManager()
+        self.chatDBRepository = chatDBRepo
+        self.loginTokenManager = loginTokenManager
     }
     
-    func getChatMessages(messageInfo: GetMessages) async throws -> [EachChatMessageEntity] {
+    func fetchChatRoom(roomID: String) -> ChatRoom? {
+        do {
+            return try chatDBRepository.fetch(roomID: roomID)
+        } catch {
+            return nil
+        }
+    }
+    
+    @MainActor
+    func getChatMessages(roomID: String, messageInfo: GetMessages) async throws {
         
         let value = ChatURL.getMessages(access: accessToken, messageInfo: messageInfo)
         let result = try await callRequest(value, type: ChatListResponseDTO.self)
         let response = result.response.data
         
-        var entities: [EachChatMessageEntity] = []
+        Log.debug("새로 추가해야하는 메시지: \(response)")
         
-        response.forEach {
-            
-            let myID = UserdefaultsValues.savedUserID.stringValue
-            
-            let entity = EachChatMessageEntity(
-                chatID: $0.chatID,
-                sender: ($0.sender.userID == myID) ? .me : .opponent,
-                senderInfo: SenderInfo(
-                    userID: $0.sender.userID,
-                    nickname: $0.sender.nick,
-                    profileURL: $0.sender.profileImage
-                ),
-                sendStatus: .success,
-                content: $0.content,
-                files: $0.files,
-                sendDate: $0.createdAt
+        let myID = UserdefaultsValues.savedUserID.stringValue
+        let messageType = MessageType.text.string
+        let mediaType = MediaType()
+        
+        for message in response {
+        
+            let message = MessageRecord(
+                chatID: message.chatID,
+                isMine: (message.sender.userID == myID) ? true : false,
+                content: message.content,
+                sendStatus: MessageSendStatus.success.string,
+                messageType: messageType,
+                createdAt: message.createdAt,
+                mediaType: (messageType == MessageType.text.string) ? nil : mediaType
             )
             
             entities.append(entity)

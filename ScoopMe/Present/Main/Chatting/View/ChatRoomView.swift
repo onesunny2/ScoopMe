@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
+import RealmSwift
 import SCMLogger
 
 struct ChatRoomView: View {
     
     @State private var textMessage: String = ""
-    @State private var resendMessage: String = ""
     @State private var sendStatus: Bool = false
     @FocusState private var focusBinding: Bool
-    
-    @State private var messages: [EachChatMessageEntity] = []
+
+    @ObservedResults(ChatRoom.self) var allChatRooms
+    private
+    var filteredChatRoom: ChatRoom? {
+        allChatRooms.first(where: { $0.roomID == roomID })
+    }
     
     private let chatRoomRepository: ChatRoomDisplayable
     private let roomID: String
@@ -84,8 +88,10 @@ extension ChatRoomView {
     // 중단 채팅내역
     private var messagesView: some View {
         LazyVStack(alignment: .center, spacing: 16) {
-            ForEach(messages, id: \.chatID) { message in
-                seperateSenderView(message: message)
+            if let chatRoom = filteredChatRoom {
+                ForEach(chatRoom.messages, id: \.chatID) { message in
+                    seperateSenderView(message: message)
+                }
             }
         }
         .padding(.top, 12)
@@ -112,11 +118,13 @@ extension ChatRoomView {
 // MARK: Action
 extension ChatRoomView {
     // message 호출
+    @MainActor
     private func getServerMessages() async {
         do {
-            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: "2025-05-06T05:13:54.357Z")
-            let messages = try await chatRoomRepository.getChatMessages(messageInfo: messageInfo)
-            self.messages = messages
+            let lastMessageAt = filteredChatRoom?.lastMessageAt
+            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: lastMessageAt ?? "")
+//            Log.debug("현재 GetMessgaes: \(messageInfo)")
+            try await chatRoomRepository.getChatMessages(roomID: roomID, messageInfo: messageInfo)
         } catch {
             Log.error("❎ 서버에서 메시지 로딩 실패: \(error)")
         }
