@@ -131,7 +131,7 @@ final class ChatDBRepository: SCMDataSource {
         }
     }
     
-    func deleteMessage(roomID: String, chatID: String, _ message: MessageRecord) throws {
+    func deleteMessage(roomID: String, chatID: String) throws {
         let chatRoom = try fetchChatRoom(roomID: roomID)
         
         guard let index = chatRoom.messages.firstIndex(where: { $0.chatID == chatID }) else {

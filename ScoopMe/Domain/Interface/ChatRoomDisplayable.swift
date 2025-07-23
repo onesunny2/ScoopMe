@@ -13,4 +13,5 @@ protocol ChatRoomDisplayable: ChatNetworkProvider {
     func saveTempMessage(roomID: String, message: MessageRecord) async throws
     func updateMessageStatus(roomID: String, chatID: String, status: String) async throws
     func postNewMessage(roomID: String, messageInfo: PostMessages, temptID: String) async throws
+    func deleteMessage(roomID: String, chatID: String) async throws
 }

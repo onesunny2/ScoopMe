@@ -102,4 +102,9 @@ final class ChatRoomRepository: ChatRoomDisplayable {
         
         try chatDBRepository.replaceMessage(roomID: roomID, tempID: temptID, newMessage: message)
     }
+    
+    @MainActor
+    func deleteMessage(roomID: String, chatID: String) async throws {
+        try chatDBRepository.deleteMessage(roomID: roomID, chatID: chatID)
+    }
 }

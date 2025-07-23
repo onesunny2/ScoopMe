@@ -36,5 +36,6 @@ final class MessageRecord: Object {
         self.messageType = messageType
         self.createdAt = createdAt
 //        self.readStatus = readStatus
+        self.mediaType = mediaType
     }
 }

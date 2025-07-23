@@ -20,7 +20,7 @@ protocol SCMDataSource: AnyObject {
     func updateChatroomActiveStatus(roomID: String, isActive: Bool) throws
     func updateMessageStatus(roomID: String, chatID: String, status: String) throws
     func replaceMessage(roomID: String, tempID: String, newMessage: MessageRecord) throws
-    func deleteMessage(roomID: String, chatID: String, _ message: MessageRecord) throws
+    func deleteMessage(roomID: String, chatID: String) throws
     func deleteAllData() throws
     func markAsRead(roomID: String) throws
 }

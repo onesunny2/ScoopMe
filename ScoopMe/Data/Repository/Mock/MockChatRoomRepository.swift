@@ -45,4 +45,8 @@ final class MockChatRoomRepository: ChatRoomDisplayable {
         let result = try await callRequest(value, type: ChatResponseDTO.self)
         let response = result.response
     }
+    
+    func deleteMessage(roomID: String, chatID: String) async throws {
+        
+    }
 }
