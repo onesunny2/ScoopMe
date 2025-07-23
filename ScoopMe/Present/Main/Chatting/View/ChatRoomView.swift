@@ -112,13 +112,21 @@ extension ChatRoomView {
                 Task {
                     await resendMessageToServer(chatID: message.chatID)
                 }
+            } onDeleteTapped: {
+                Task {
+                    await deleteMessageFromLocal(roomID: roomID, chatID: message.chatID)
+                }
             }
         } else if !message.isMine && message.sendStatus == MessageSendStatus.success.string {
             ReceivedChatBubbleCell(
                 participant: filteredChatRoom?.participant ?? Participant(),
                 sendDate: message.createdAt,
                 message: message.content
-            )
+            ) {
+                Task {
+                    await deleteMessageFromLocal(roomID: roomID, chatID: message.chatID)
+                }
+            }
         }
     }
     
@@ -132,6 +140,10 @@ extension ChatRoomView {
             ) {
                 Task {
                     await resendMessageToServer(chatID: message.chatID)
+                }
+            } onDeleteTapped: {
+                Task {
+                    await deleteMessageFromLocal(roomID: roomID, chatID: message.chatID)
                 }
             }
         }
@@ -210,6 +222,15 @@ extension ChatRoomView {
             Log.debug("🔗 메시지 재전송 성공")
         } catch {
             Log.error("❎ 메시지 재전송 실패")
+        }
+    }
+    
+    // 메시지 삭제
+    private func deleteMessageFromLocal(roomID: String, chatID: String) async {
+        do {
+            try await chatRoomRepository.deleteMessage(roomID: roomID, chatID: chatID)
+        } catch {
+            Log.error("❎ 메시지 삭제 실패")
         }
     }
 }

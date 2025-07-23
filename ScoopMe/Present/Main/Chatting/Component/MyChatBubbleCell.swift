@@ -14,17 +14,20 @@ struct MyChatBubbleCell: View {
     private let message: String
     private let sendStatus: String
     private let onResendTapped: () -> Void
+    private let onDeleteTapped: () -> Void
     
     init(
         sendDate: String,
         message: String,
         sendStatus: String,
-        onResendTapped: @escaping () -> Void
+        onResendTapped: @escaping () -> Void,
+        onDeleteTapped: @escaping () -> Void
     ) {
         self.sendDate = sendDate
         self.message = message
         self.sendStatus = sendStatus
         self.onResendTapped = onResendTapped
+        self.onDeleteTapped = onDeleteTapped
     }
     
     var body: some View {
@@ -48,6 +51,16 @@ struct MyChatBubbleCell: View {
                 .background {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.scmDeepSprout)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 10))
+                .contextMenu {
+                    Button {
+                        Log.debug("메시지 삭제하기 버튼 클릭")
+                        onDeleteTapped()
+                    } label: {
+                        Label("삭제하기", systemImage: "trash")
+                    }
+
                 }
         }
     }

@@ -6,17 +6,25 @@
 //
 
 import SwiftUI
+import SCMLogger
 
 struct ReceivedChatBubbleCell: View {
     
     private let participant: Participant
     private let sendDate: String
     private let message: String
+    private let onDeleteTapped: () -> Void
     
-    init(participant: Participant, sendDate: String, message: String) {
+    init(
+        participant: Participant,
+        sendDate: String,
+        message: String,
+        onDeleteTapped: @escaping () -> Void
+    ) {
         self.participant = participant
         self.sendDate = sendDate
         self.message = message
+        self.onDeleteTapped = onDeleteTapped
     }
     
     var body: some View {
@@ -55,6 +63,16 @@ extension ReceivedChatBubbleCell {
                     .background {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.scmGray15)
+                    }
+                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                    .contextMenu {
+                        Button {
+                            Log.debug("메시지 삭제하기 버튼 클릭")
+                            onDeleteTapped()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
+                        
                     }
                 
                 Text(sendDate.isoStringToKoreanAMPM() ?? "")
