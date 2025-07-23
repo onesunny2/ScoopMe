@@ -32,7 +32,7 @@ final class ChatRoomRepository: ChatRoomDisplayable {
     
     func fetchChatRoom(roomID: String) -> ChatRoom? {
         do {
-            return try chatDBRepository.fetch(roomID: roomID)
+            return try chatDBRepository.fetchChatRoom(roomID: roomID)
         } catch {
             return nil
         }

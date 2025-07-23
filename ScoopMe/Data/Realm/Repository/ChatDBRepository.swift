@@ -35,7 +35,7 @@ final class ChatDBRepository: SCMDataSource {
         }
     }
     
-    func fetch(roomID: String) throws -> ChatRoom {
+    func fetchChatRoom(roomID: String) throws -> ChatRoom {
         guard let chatRoom = realm.object(ofType: ChatRoom.self, forPrimaryKey: roomID) else {
             throw SCMRealmError.roomNotFound
         }
@@ -50,7 +50,7 @@ final class ChatDBRepository: SCMDataSource {
     
     func save(roomID: String, _ message: MessageRecord) throws {
 
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
 
         try realm.write {
             // 메시지가 realm에 아직 등록되지 않았다면 추가
@@ -69,11 +69,11 @@ final class ChatDBRepository: SCMDataSource {
             chatRoom.lastMessageContent = message.content
         }
 
-        Log.debug("✅ 메시지 저장 완료: \(message.chatID), 현재 메시지 수: \(chatRoom.messages.count)")
+//        Log.debug("✅ 메시지 저장 완료: \(message.chatID), 현재 메시지 수: \(chatRoom.messages.count)")
     }
     
     func updateMessageLastValues(roomID: String, lastMessageAt: String, lastMessageContent: String, isBoth: Bool) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         try realm.write {
             chatRoom.lastMessageAt = lastMessageAt
@@ -82,7 +82,7 @@ final class ChatDBRepository: SCMDataSource {
     }
     
     func updateMainuser(roomID: String, user: MainUser) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         try realm.write {
             chatRoom.mainUser = user
@@ -90,7 +90,7 @@ final class ChatDBRepository: SCMDataSource {
     }
     
     func updateParticipant(roomID: String, participant: Participant) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         try realm.write {
             chatRoom.participant = participant
@@ -98,7 +98,7 @@ final class ChatDBRepository: SCMDataSource {
     }
     
     func updateChatroomActiveStatus(roomID: String, isActive: Bool) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         try realm.write {
             chatRoom.isActive = isActive
@@ -132,7 +132,7 @@ final class ChatDBRepository: SCMDataSource {
     }
     
     func deleteMessage(roomID: String, chatID: String, _ message: MessageRecord) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         guard let index = chatRoom.messages.firstIndex(where: { $0.chatID == chatID }) else {
             throw SCMRealmError.cannotDeleteMessage
@@ -151,7 +151,7 @@ final class ChatDBRepository: SCMDataSource {
     
     // 채팅방 읽음처리
     func markAsRead(roomID: String) throws {
-        let chatRoom = try fetch(roomID: roomID)
+        let chatRoom = try fetchChatRoom(roomID: roomID)
         
         try realm.write {
             chatRoom.unreadCount = 0

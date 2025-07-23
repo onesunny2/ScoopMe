@@ -79,9 +79,13 @@ final class ChatListRepository: ChatListDisplayable {
             
             do {
                 // 기존에 저장된 chatRoom 있는지 확인
-                let existingChatRoom = try chatDBRepository.fetch(roomID: chatData.roomID)
+                let existingChatRoom = try chatDBRepository.fetchChatRoom(roomID: chatData.roomID)
                 
                 updateChatRoomInfo(roomID: chatData.roomID, existing: existingChatRoom, new: chatRoom)
+                
+                if existingChatRoom.messages.isEmpty {
+                    try chatDBRepository.updateMessageLastValues(roomID: chatData.roomID, lastMessageAt: chatData.createdAt, lastMessageContent: chatData.lastChat?.content ?? "", isBoth: false)
+                }
                 
             } catch SCMRealmError.roomNotFound {
                 Log.info("✅ 새로운 채팅방 생성")
