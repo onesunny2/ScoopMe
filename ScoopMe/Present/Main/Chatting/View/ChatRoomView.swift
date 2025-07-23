@@ -90,7 +90,11 @@ extension ChatRoomView {
         LazyVStack(alignment: .center, spacing: 16) {
             if let chatRoom = filteredChatRoom {
                 ForEach(chatRoom.messages, id: \.chatID) { message in
-                    seperateSenderView(message: message)
+                    seperateSuccessSenderView(message: message)
+                }
+                
+                ForEach(chatRoom.messages, id: \.chatID) { message in
+                    failedSenderView(message: message)
                 }
             }
         }
@@ -98,19 +102,38 @@ extension ChatRoomView {
     }
     
     @ViewBuilder
-    private func seperateSenderView(message: MessageRecord) -> some View {
-        if message.isMine {
-            MyChatBubbleCell(sendDate: message.createdAt, message: message.content, sendStatus: message.sendStatus) {
+    private func seperateSuccessSenderView(message: MessageRecord) -> some View {
+        if message.isMine && message.sendStatus == MessageSendStatus.success.string {
+            MyChatBubbleCell(
+                sendDate: message.createdAt,
+                message: message.content,
+                sendStatus: message.sendStatus
+            ) {
                 Task {
                     await resendMessageToServer(chatID: message.chatID)
                 }
             }
-        } else {
+        } else if !message.isMine && message.sendStatus == MessageSendStatus.success.string {
             ReceivedChatBubbleCell(
                 participant: filteredChatRoom?.participant ?? Participant(),
                 sendDate: message.createdAt,
                 message: message.content
             )
+        }
+    }
+    
+    @ViewBuilder
+    private func failedSenderView(message: MessageRecord) -> some View {
+        if message.isMine && message.sendStatus == MessageSendStatus.failed.string {
+            MyChatBubbleCell(
+                sendDate: message.createdAt,
+                message: message.content,
+                sendStatus: message.sendStatus
+            ) {
+                Task {
+                    await resendMessageToServer(chatID: message.chatID)
+                }
+            }
         }
     }
 }
