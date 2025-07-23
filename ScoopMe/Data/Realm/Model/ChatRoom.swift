@@ -16,18 +16,18 @@ final class ChatRoom: Object, Identifiable {
     @Persisted var lastMessageAt: String
     @Persisted var lastMessageContent: String
     @Persisted var isActive: Bool
-    @Persisted var messages = List<MessageRecord>()
+    @Persisted var messages: List<MessageRecord>
     @Persisted var unreadCount: Int?
     
     convenience init(
         roomID: String,
         createdAt: String,
-        mainUser: MainUser = MainUser(),
-        participant: Participant = Participant(),
+        mainUser: MainUser?,
+        participant: Participant?,
         lastMessageAt: String,
         lastMessageContent: String,
         isActive: Bool,
-        messages: List<MessageRecord> = List<MessageRecord>(),
+        messages: List<MessageRecord>,
         unreadCount: Int?
     ) {
         self.init()
