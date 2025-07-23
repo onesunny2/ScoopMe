@@ -41,7 +41,10 @@ final class DIContainer {
             chatDBRepo: self.chatDBRepository,
             loginTokenManager: self.loginTokenManager
         )
-        self.chatRoomRepository = ChatRoomRepository()
+        self.chatRoomRepository = ChatRoomRepository(
+            chatDBRepo: self.chatDBRepository,
+            loginTokenManager: self.loginTokenManager
+        )
     }
     
     /// SCMLogin
