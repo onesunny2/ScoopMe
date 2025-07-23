@@ -58,11 +58,25 @@ extension ChatRoomView {
     @ViewBuilder
     private var chatContainerView: some View {
         VStack(spacing: 0) {
-            ScrollView(.vertical, showsIndicators: false) {
-                messagesView
-                    .padding(.bottom, 12) // 마지막 메시지와 하단 뷰 사이 여백
+            ScrollViewReader { proxy in
+                ScrollView(.vertical, showsIndicators: false) {
+                    messagesView
+                        .padding(.bottom, 12)
+                        .id(StringLiterals.scrollID.text)
+                }
+                .defaultHorizontalPadding()
+                .onAppear {
+                    scrollToBottom(proxy: proxy)
+                }
+                .onChange(of: sendStatus) { newStatus in
+                    if newStatus {
+                        Task {
+                            try? await Task.sleep(for: .seconds(0.2))
+                            scrollToBottom(proxy: proxy)
+                        }
+                    }
+                }
             }
-            .defaultHorizontalPadding()
             
             // 하단 고정 영역
             bottomSendMessageView
@@ -152,6 +166,11 @@ extension ChatRoomView {
 
 // MARK: Action
 extension ChatRoomView {
+    
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        proxy.scrollTo(StringLiterals.scrollID.text, anchor: .bottom)
+    }
+    
     // message 호출
     @MainActor
     private func getServerMessages() async {
@@ -238,6 +257,7 @@ extension ChatRoomView {
 // MARK: StringLiterals
 private enum StringLiterals: String {
     case messagePlaceholder = "메시지 입력"
+    case scrollID = "bottom"
     
     var text: String {
         return self.rawValue
