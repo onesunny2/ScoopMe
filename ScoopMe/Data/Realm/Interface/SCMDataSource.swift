@@ -14,7 +14,13 @@ protocol SCMDataSource: AnyObject {
     func fetch(roomID: String) throws -> ChatRoom
     func fetchAllChatRooms() -> Results<ChatRoom>
     func save(roomID: String, _ message: MessageRecord) throws
-    func delete(roomID: String, chatID: String, _ message: MessageRecord) throws
+    func updateMessageLastValues(roomID: String, lastMessageAt: String, lastMessageContent: String, isBoth: Bool) throws
+    func updateMainuser(roomID: String, user: MainUser) throws
+    func updateParticipant(roomID: String, participant: Participant) throws
+    func updateChatroomActiveStatus(roomID: String, isActive: Bool) throws
+    func updateMessageStatus(roomID: String, chatID: String, status: String) throws
+    func replaceMessage(roomID: String, tempID: String, newMessage: MessageRecord) throws
+    func deleteMessage(roomID: String, chatID: String, _ message: MessageRecord) throws
     func deleteAllData() throws
     func markAsRead(roomID: String) throws
 }
