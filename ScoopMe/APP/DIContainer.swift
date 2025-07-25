@@ -36,6 +36,8 @@ final class DIContainer {
         
         self.paymentRepository = PaymentRepository()
         
+        self.socketChatManager = SocketChatManager(loginTokenManager: self.loginTokenManager)
+        
         self.chatDBRepository = ChatDBRepository.shared
         self.chatListRepository = ChatListRepository(
             chatDBRepo: self.chatDBRepository,
@@ -76,4 +78,7 @@ final class DIContainer {
     
     /// Realm
     private(set) var chatDBRepository: SCMDataSource
+    
+    /// Socket
+    private(set) var socketChatManager: SocketChatDataSource
 }
