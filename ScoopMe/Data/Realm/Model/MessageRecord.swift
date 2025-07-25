@@ -15,7 +15,7 @@ final class MessageRecord: Object {
     @Persisted var sendStatus: String
     @Persisted var messageType: String
     @Persisted var createdAt: String
-//    @Persisted var readStatus: ReadStatus
+    @Persisted var readStatus: ReadStatus
     @Persisted var mediaType: MediaType?
     
     convenience init(
@@ -25,7 +25,7 @@ final class MessageRecord: Object {
         sendStatus: String,
         messageType: String,
         createdAt: String,
-//        readStatus: ReadStatus,
+        readStatus: ReadStatus,
         mediaType: MediaType?
     ) {
         self.init()
@@ -35,7 +35,7 @@ final class MessageRecord: Object {
         self.sendStatus = sendStatus
         self.messageType = messageType
         self.createdAt = createdAt
-//        self.readStatus = readStatus
+        self.readStatus = readStatus
         self.mediaType = mediaType
     }
 }

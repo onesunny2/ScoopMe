@@ -13,6 +13,7 @@ final class ChatRoom: Object, Identifiable {
     @Persisted var createdAt: String
     @Persisted var mainUser: MainUser?
     @Persisted var participant: Participant?
+    @Persisted var lastReadMessageAt: String
     @Persisted var lastMessageAt: String
     @Persisted var lastMessageContent: String
     @Persisted var isActive: Bool
@@ -24,6 +25,7 @@ final class ChatRoom: Object, Identifiable {
         createdAt: String,
         mainUser: MainUser?,
         participant: Participant?,
+        lastReadMessageAt: String,
         lastMessageAt: String,
         lastMessageContent: String,
         isActive: Bool,
@@ -35,6 +37,7 @@ final class ChatRoom: Object, Identifiable {
         self.createdAt = createdAt
         self.mainUser = mainUser
         self.participant = participant
+        self.lastReadMessageAt = lastReadMessageAt
         self.lastMessageAt = lastMessageAt
         self.lastMessageContent = lastMessageContent
         self.isActive = isActive
