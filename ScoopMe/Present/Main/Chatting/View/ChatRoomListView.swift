@@ -41,6 +41,7 @@ struct ChatRoomListView: View {
                 case let .chatRoom(roomID):
                     ChatRoomView(
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
+                        socketChatManager: DIContainer.shared.socketChatManager,
                         roomID: roomID,
                         opponentName: $opponentName
                     )

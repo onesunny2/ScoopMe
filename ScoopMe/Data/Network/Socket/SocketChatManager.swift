@@ -16,6 +16,8 @@ final class SocketChatManager: SocketChatDataSource {
     private var socketManager: SocketManager?
     private var socket: SocketIOClient?
     
+    var onConnect: (() -> Void)?
+    
     init(loginTokenManager: LoginTokenManager) {
         self.loginTokenManager = loginTokenManager
     }
@@ -45,8 +47,10 @@ final class SocketChatManager: SocketChatDataSource {
         socket.connect()
         
         // 연결 성공 시 이벤트처리
-        socket.on(clientEvent: .connect) { data, ack in
+        socket.on(clientEvent: .connect) { [weak self] data, ack in
+            guard let self else { return }
             Log.debug("🔗 소켓연결", data, ack)
+            self.onConnect?()
         }
         
         // 연결 실패 시 이벤트처리
@@ -62,6 +66,7 @@ final class SocketChatManager: SocketChatDataSource {
     
     func disconnect() {
         socket?.disconnect()
+        onConnect = nil
     }
     
     func receiveMessage() {

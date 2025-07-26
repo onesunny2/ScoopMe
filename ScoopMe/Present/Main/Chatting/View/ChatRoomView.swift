@@ -22,11 +22,13 @@ struct ChatRoomView: View {
     }
     
     private let chatRoomRepository: ChatRoomDisplayable
+    private let socketChatManager: SocketChatDataSource
     private let roomID: String
     @Binding var opponentName: String
     
-    init(chatRoomRepository: ChatRoomDisplayable, roomID: String, opponentName: Binding<String>) {
+    init(chatRoomRepository: ChatRoomDisplayable, socketChatManager: SocketChatDataSource, roomID: String, opponentName: Binding<String>) {
         self.chatRoomRepository = chatRoomRepository
+        self.socketChatManager = socketChatManager
         self.roomID = roomID
         self._opponentName = opponentName
     }
@@ -46,7 +48,16 @@ struct ChatRoomView: View {
         .navigationBarTitleDisplayMode(.inline)
         .backButton(.scmBlackSprout)
         .task {
-            await getServerMessages()
+            socketChatManager.configure(roomID: roomID)
+            socketChatManager.onConnect = {
+                Task {
+                    await getServerMessages()
+                }
+            }
+            socketChatManager.connect()
+        }
+        .onDisappear {
+            socketChatManager.disconnect()
         }
     }
 }
@@ -265,5 +276,10 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    ChatRoomView(chatRoomRepository: DIContainer.shared.chatRoomRepository, roomID: "", opponentName: .constant("test"))
+    ChatRoomView(
+        chatRoomRepository: DIContainer.shared.chatRoomRepository,
+        socketChatManager: DIContainer.shared.socketChatManager,
+        roomID: "",
+        opponentName: .constant("test")
+    )
 }

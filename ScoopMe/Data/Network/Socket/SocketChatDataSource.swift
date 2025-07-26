@@ -8,6 +8,9 @@
 import Foundation
 
 protocol SocketChatDataSource: AnyObject {
+    
+    var onConnect: (() -> Void)? { get set }
+    
     func configure(roomID: String)
     func connect()
     func disconnect()
