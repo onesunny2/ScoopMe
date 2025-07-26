@@ -86,7 +86,7 @@ final class ChatRoomRepository: ChatRoomDisplayable {
         let value = ChatURL.postMessage(access: accessToken, messageInfo: messageInfo)
         let result = try await callRequest(value, type: ChatResponseDTO.self)
         let response = result.response
-        
+
         let messageType = MessageType.text.string
         let mediaType = MediaType()
         

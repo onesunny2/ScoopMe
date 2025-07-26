@@ -175,8 +175,8 @@ extension ChatRoomView {
     @MainActor
     private func getServerMessages() async {
         do {
-            let lastMessageAt = filteredChatRoom?.lastMessageAt
-            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: lastMessageAt ?? "")
+            let lastReadMessageAt = filteredChatRoom?.lastReadMessageAt
+            let messageInfo = GetMessages(roomID: roomID, lastMessageDate: lastReadMessageAt ?? "")
 //            Log.debug("현재 GetMessgaes: \(messageInfo)")
             try await chatRoomRepository.getChatMessages(roomID: roomID, messageInfo: messageInfo)
         } catch {
