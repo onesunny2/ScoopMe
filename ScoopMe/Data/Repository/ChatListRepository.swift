@@ -57,6 +57,7 @@ final class ChatListRepository: ChatListDisplayable {
                 createdAt: chatData.createdAt,
                 mainUser: MainUser(),
                 participant: Participant(),
+                lastReadMessageAt: chatData.createdAt,
                 lastMessageAt: chatData.updatedAt,
                 lastMessageContent: chatData.lastChat?.content ?? "",
                 isActive: true,
@@ -85,10 +86,12 @@ final class ChatListRepository: ChatListDisplayable {
                 
                 if existingChatRoom.messages.isEmpty {
                     try chatDBRepository.updateMessageLastValues(roomID: chatData.roomID, lastMessageAt: chatData.createdAt, lastMessageContent: chatData.lastChat?.content ?? "", isBoth: false)
+                    try chatDBRepository.updateMessageLastReadAt(roomID: chatData.roomID, lastReadMessageAt: chatData.createdAt)
                 }
                 
             } catch SCMRealmError.roomNotFound {
                 Log.info("✅ 새로운 채팅방 생성")
+                chatRoom.lastReadMessageAt = chatRoom.createdAt
                 chatRoom.lastMessageAt = chatRoom.createdAt
                 try chatDBRepository.create(chatRoom: chatRoom)
             } catch {
