@@ -15,17 +15,7 @@ final class ChatDBRepository: SCMDataSource {
     
     private let realm = try! Realm()
     
-    private init() {
-//        // 개발 중에는 기존 데이터 삭제하고 새로 시작
-//        var config = Realm.Configuration.defaultConfiguration
-//        //            config.deleteRealmIfMigrationNeeded = true  // 🔥 개발용
-//        
-//        if let fileURL = config.fileURL {
-//            Log.debug("✅ Realm 파일 경로: \(fileURL.path)")
-//        } else {
-//            Log.debug("❌ Realm 파일 경로를 찾을 수 없음")
-//        }
-    }
+    private init() { }
     
     func create(chatRoom: ChatRoom) throws {
         let newRoom = chatRoom
@@ -65,11 +55,20 @@ final class ChatDBRepository: SCMDataSource {
                 Log.debug("⚠️ 중복된 메시지를 append 시도함: \(message.chatID)")
             }
 
+            chatRoom.lastReadMessageAt = message.createdAt
             chatRoom.lastMessageAt = message.createdAt
             chatRoom.lastMessageContent = message.content
         }
 
 //        Log.debug("✅ 메시지 저장 완료: \(message.chatID), 현재 메시지 수: \(chatRoom.messages.count)")
+    }
+    
+    func updateMessageLastReadAt(roomID: String, lastReadMessageAt: String) throws {
+        let chatRoom = try fetchChatRoom(roomID: roomID)
+        
+        try realm.write {
+            chatRoom.lastReadMessageAt = lastReadMessageAt
+        }
     }
     
     func updateMessageLastValues(roomID: String, lastMessageAt: String, lastMessageContent: String, isBoth: Bool) throws {
@@ -126,6 +125,7 @@ final class ChatDBRepository: SCMDataSource {
             realm.add(newMessage, update: .modified)
             
             chatRoom.messages.append(newMessage)
+            chatRoom.lastReadMessageAt = newMessage.createdAt
             chatRoom.lastMessageAt = newMessage.createdAt
             chatRoom.lastMessageContent = newMessage.content
         }
