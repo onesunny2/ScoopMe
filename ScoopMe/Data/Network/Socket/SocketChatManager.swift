@@ -25,9 +25,9 @@ final class SocketChatManager: SocketChatDataSource {
     func configure(roomID: String) {
         self.roomID = roomID
         
-        let url = "http://" + Secret.baseURL + "/chats-\(roomID)"
+        let url = "http://" + Secret.baseURL
         let accessToken = loginTokenManager.fetchToken(.accessToken)
-        
+        Log.debug("소켓주소: \(url)")
         self.socketManager = SocketManager(
             socketURL: URL(string: url)!,
             config: [
@@ -36,7 +36,7 @@ final class SocketChatManager: SocketChatDataSource {
                 .extraHeaders(["Authorization": accessToken, "SeSACKey": Secret.apiKey])
             ]
         )
-        self.socket = socketManager?.defaultSocket
+        self.socket = socketManager?.socket(forNamespace: "/chats-\(roomID)")
     }
     
     func connect() {
@@ -44,12 +44,14 @@ final class SocketChatManager: SocketChatDataSource {
             Log.error("❌ Socket Configure가 호출되지 않았습니다")
             return
         }
+        
         socket.connect()
         
         // 연결 성공 시 이벤트처리
         socket.on(clientEvent: .connect) { [weak self] data, ack in
             guard let self else { return }
             Log.debug("🔗 소켓연결", data, ack)
+//            receiveMessage()
             self.onConnect?()
         }
         
@@ -69,26 +71,12 @@ final class SocketChatManager: SocketChatDataSource {
         onConnect = nil
     }
     
-    func receiveMessage() {
-        socket?.on("chat") { [weak self] data, ack in
-            guard let self else { return }
-            
+    func receiveMessage(completion: @escaping ([String: Any]) -> Void) {
+        socket?.off("chat")
+        socket?.on("chat") { data, ack in
             if let messageData = data.first as? [String: Any] {
-                Log.debug("메시지 수신: \(messageData)")
+                completion(messageData)
             }
-//            do {
-//                if let messageData = data.first as? [String: Any] {
-//                    Log.debug("메시지 수신: \(messageData)")
-//                }
-//            } catch {
-//                Log.error("❌ 메시지 수신 오류")
-//            }
         }
-    }
-    
-    func sendMessage(content: [String: Any]) {
-        Log.debug("메시지 전송: \(content)")
-        
-        socket?.emit("chat", content)
     }
 }

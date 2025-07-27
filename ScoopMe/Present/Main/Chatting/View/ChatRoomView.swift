@@ -31,6 +31,8 @@ struct ChatRoomView: View {
         self.socketChatManager = socketChatManager
         self.roomID = roomID
         self._opponentName = opponentName
+        
+        Log.debug("현재 채팅방 roomID: \(roomID)")
     }
     
     var body: some View {
@@ -51,6 +53,9 @@ struct ChatRoomView: View {
             socketChatManager.configure(roomID: roomID)
             socketChatManager.onConnect = {
                 Task {
+                    socketChatManager.receiveMessage { message in
+                        Log.debug("수신한 소켓 메시지: \(message)")
+                    }
                     await getServerMessages()
                 }
             }
