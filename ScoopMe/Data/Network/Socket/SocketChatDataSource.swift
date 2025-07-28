@@ -14,5 +14,5 @@ protocol SocketChatDataSource: AnyObject {
     func configure(roomID: String)
     func connect()
     func disconnect()
-    func receiveMessage(completion: @escaping ([String: Any]) -> Void)
+    func receiveMessage(completion: @escaping ([String: Any]) async throws -> Void)
 }

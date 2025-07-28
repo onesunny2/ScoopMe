@@ -51,7 +51,6 @@ final class SocketChatManager: SocketChatDataSource {
         socket.on(clientEvent: .connect) { [weak self] data, ack in
             guard let self else { return }
             Log.debug("🔗 소켓연결", data, ack)
-//            receiveMessage()
             self.onConnect?()
         }
         
@@ -71,11 +70,17 @@ final class SocketChatManager: SocketChatDataSource {
         onConnect = nil
     }
     
-    func receiveMessage(completion: @escaping ([String: Any]) -> Void) {
+    func receiveMessage(completion: @escaping ([String: Any]) async throws -> Void) {
         socket?.off("chat")
         socket?.on("chat") { data, ack in
             if let messageData = data.first as? [String: Any] {
-                completion(messageData)
+                Task {
+                    do {
+                        try await completion(messageData)
+                    } catch {
+                        Log.error("❌ 메시지 수신 실패: \(error)")
+                    }
+                }
             }
         }
     }
