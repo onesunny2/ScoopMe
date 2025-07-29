@@ -53,9 +53,7 @@ struct ChatRoomView: View {
             socketChatManager.configure(roomID: roomID)
             socketChatManager.onConnect = {
                 Task {
-                    socketChatManager.receiveMessage { message in
-                        Log.debug("수신한 소켓 메시지: \(message)")
-                    }
+                    await saveSocketMessageAtRealm()
                     await getServerMessages()
                 }
             }
@@ -218,7 +216,7 @@ extension ChatRoomView {
         )
         
         do {
-            try await chatRoomRepository.saveTempMessage(roomID: roomID, message: tempMessage)
+            try await chatRoomRepository.saveNewMessage(roomID: roomID, message: tempMessage)
             
             let messageInfo: PostMessages = PostMessages(
                 roomID: roomID,
@@ -266,6 +264,27 @@ extension ChatRoomView {
             try await chatRoomRepository.deleteMessage(roomID: roomID, chatID: chatID)
         } catch {
             Log.error("❎ 메시지 삭제 실패")
+        }
+    }
+    
+    // 소켓 통신으로 수신한 메시지 RealmDB에 저장
+    private func saveSocketMessageAtRealm() async {
+        socketChatManager.receiveMessage { message in
+            do {
+                let newMessage: MessageRecord = MessageRecord(
+                    chatID: message["chat_id"] as! String,
+                    isMine: false,
+                    content: message["content"] as! String,
+                    sendStatus: MessageSendStatus.success.string,
+                    messageType: MessageType.text.string,
+                    createdAt: message["createdAt"] as! String,
+                    mediaType: nil
+                )
+                
+                try await chatRoomRepository.saveNewMessage(roomID: roomID, message: newMessage)
+            } catch {
+                Log.error("❌ 소켓통신 메시지 저장 실패: \(error)")
+            }
         }
     }
 }
