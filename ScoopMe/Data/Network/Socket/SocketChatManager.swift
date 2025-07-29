@@ -67,6 +67,8 @@ final class SocketChatManager: SocketChatDataSource {
     
     func disconnect() {
         socket?.disconnect()
+        socket?.removeAllHandlers()
+        socket = nil
         onConnect = nil
     }
     
