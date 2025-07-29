@@ -32,7 +32,7 @@ final class MockChatRoomRepository: ChatRoomDisplayable {
         
     }
     
-    func saveTempMessage(roomID: String, message: MessageRecord) async throws {
+    func saveNewMessage(roomID: String, message: MessageRecord) async throws {
         
     }
     

@@ -69,7 +69,7 @@ final class ChatRoomRepository: ChatRoomDisplayable {
     
     // 서버 전송 전 임시메시지 RealmDB 저장
     @MainActor
-    func saveTempMessage(roomID: String, message: MessageRecord) async throws {
+    func saveNewMessage(roomID: String, message: MessageRecord) async throws {
         try chatDBRepository.save(roomID: roomID, message)
     }
     
