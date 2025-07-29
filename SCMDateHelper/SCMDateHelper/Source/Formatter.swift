@@ -1,0 +1,12 @@
+//
+//  Formatter.swift
+//  SCMDateHelper
+//
+//  Created by Lee Wonsun on 6/29/25.
+//
+
+import Foundation
+
+public enum Formatter {
+    static var dateFormatter = DateFormatter()
+}

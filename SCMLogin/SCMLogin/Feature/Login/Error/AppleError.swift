@@ -1,16 +1,16 @@
 //
 //  AppleError.swift
-//  ScoopMe
+//  SCMLogin
 //
-//  Created by Lee Wonsun on 5/13/25.
+//  Created by Lee Wonsun on 7/10/25.
 //
 
 import Foundation
 
-enum AppleError: LocalizedError {
+public enum AppleError: LocalizedError {
     case invalidCredentail
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .invalidCredentail:
             return "유효하지 않은 애플 인증 정보입니다."

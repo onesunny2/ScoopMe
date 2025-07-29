@@ -37,7 +37,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 애플로그인 결과: \(result.response)")
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -53,7 +54,8 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.kakaoLogin(oauth: token, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 카카오로그인 결과: \(result.response)")
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -69,7 +71,9 @@ public final class LoginManager: NSObject, UserServiceProtocol {
             let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
             let result = try await callRequest(value, type: LoginDTO.self)
             
-            Log.debug("✅ 이메일로그인 결과: \(result.response)")
+            // 저장되어 있는 userID랑 현재 로그인 할 userID 다르면 재저장
+            saveUserID(result.response.user_id)
+            Log.debug("✅ 현재 UserID: \(UserdefaultsValues.savedUserID.stringValue)")
             await setTokens(result: result)
             await onSuccess()
         } catch {
@@ -79,7 +83,7 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         }
     }
     
-    /// 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
+    // 디바이스토큰 달라질 시 update, 로그인 시 토큰 저장
     private func setTokens(result: HTTPResponse<LoginDTO>) async {
         
         loginTokenManager.saveLoginTokens(
@@ -89,5 +93,15 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         
         let deviceToken = deviceTokenManager.fetchToken(.deviceToken)
         await deviceTokenManager.updateDeviceToken(deviceToken)
+    }
+    
+    // 로그인 시 userID 저장
+    private func saveUserID(_ userID: String) {
+        let savedID = UserdefaultsValues.savedUserID.stringValue
+        
+        guard savedID == "" || savedID != userID else { return }
+        UserDefaults.standard.set(userID, forKey: UserdefaultsValues.savedUserID.key)
+        
+        Log.debug("로그인 시 userID 저장 완료: \(userID) vs \(UserdefaultsValues.savedUserID.stringValue)")
     }
 }

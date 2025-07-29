@@ -6,10 +6,8 @@
 //
 
 import Foundation
-import Combine
 import SCMCommunity
 import SCMImageRequest
-import SCMLogger
 import SCMLogin
 import SCMLocation
 import SCMScoopInfo
@@ -37,6 +35,18 @@ final class DIContainer {
         self.createPostRepository = CreatePostRepository()
         
         self.paymentRepository = PaymentRepository()
+        
+        self.socketChatManager = SocketChatManager(loginTokenManager: self.loginTokenManager)
+        
+        self.chatDBRepository = ChatDBRepository.shared
+        self.chatListRepository = ChatListRepository(
+            chatDBRepo: self.chatDBRepository,
+            loginTokenManager: self.loginTokenManager
+        )
+        self.chatRoomRepository = ChatRoomRepository(
+            chatDBRepo: self.chatDBRepository,
+            loginTokenManager: self.loginTokenManager
+        )
     }
     
     /// SCMLogin
@@ -61,4 +71,14 @@ final class DIContainer {
     
     /// SCMPayment
     private(set) var paymentRepository: PaymentDisplayable
+    
+    /// SCMChat
+    private(set) var chatListRepository: ChatListDisplayable
+    private(set) var chatRoomRepository: ChatRoomDisplayable
+    
+    /// Realm
+    private(set) var chatDBRepository: SCMDataSource
+    
+    /// Socket
+    private(set) var socketChatManager: SocketChatDataSource
 }

@@ -25,6 +25,10 @@ struct CommunityView: View {
     @State private var selectedFilter: TimelineFilter = .최신순
     @State private var posts: [CommunityPostEntity] = []
     
+    // 채팅창 호출 트리거
+    @State private var isMessageOpened: Bool = false
+    @State private var opponentName: String = ""
+    
     init(repository: CommunityPostDisplayable) {
         self.repository = repository
     }
@@ -58,6 +62,16 @@ struct CommunityView: View {
             .onChange(of: selectedFilter) { _ in
                 cursorID = nil
                 Task { await getCommunityPost() }
+            }
+            .fullScreenCover(isPresented: $isMessageOpened) {
+                NavigationStack {
+                    ChatRoomView(
+                        chatRoomRepository: DIContainer.shared.chatRoomRepository,
+                        socketChatManager: DIContainer.shared.socketChatManager,
+                        roomID: "686e299952829caed0c63f38",
+                        opponentName: $opponentName
+                    )
+                }
             }
         }
     }
@@ -127,13 +141,17 @@ extension CommunityView {
                         Rectangle()
                             .fill(.scmBrightSprout)
                             .frame(height: 1)
-                        CommunityPostCell(post: post)
-                            .padding(.vertical, 12)
-                            .onAppear {
-                                if (post.postID == posts.last?.postID) && cursorID != "0" {
-                                    Task { await getCommunityPostForPagination() }
-                                }
+                        CommunityPostCell(
+                            post: post,
+                            isMessageOpened: $isMessageOpened,
+                            opponentName: $opponentName
+                        )
+                        .padding(.vertical, 12)
+                        .onAppear {
+                            if (post.postID == posts.last?.postID) && cursorID != "0" {
+                                Task { await getCommunityPostForPagination() }
                             }
+                        }
                     }
                 }
                 .padding(.top, 6)

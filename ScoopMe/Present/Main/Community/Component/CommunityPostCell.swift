@@ -7,9 +7,14 @@
 
 import SwiftUI
 import SCMCommunity
+import SCMLogger
+import SCMLogin
 import SCMImageRequest
 
 struct CommunityPostCell: View {
+    
+    @Binding var isMessageOpened: Bool
+    @Binding var opponentName: String
     
     private let imageHelper: ImageHelper
     private var firstWidth: CGFloat {
@@ -20,9 +25,11 @@ struct CommunityPostCell: View {
     }
     let post: CommunityPostEntity
     
-    init(post: CommunityPostEntity) {
+    init(post: CommunityPostEntity, isMessageOpened: Binding<Bool>, opponentName: Binding<String>) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
+        self._isMessageOpened = isMessageOpened
+        self._opponentName = opponentName
     }
     
     var body: some View {
@@ -59,6 +66,21 @@ extension CommunityPostCell {
             }
             
             Spacer()
+            
+            if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
+                Image(.messageFill)
+                    .basicImage(width: 16, color: .scmGray15)
+                    .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
+                    .asButton {
+                        opponentName = post.creator.nickname
+                        Log.debug("🔗 상대방이름: \(opponentName)")
+                        
+                        Task {
+                            try? await Task.sleep(for: .seconds(0.1))
+                            isMessageOpened = true
+                        }
+                    }
+            }
         }
         .frame(height: 32)
     }
@@ -209,6 +231,6 @@ extension CommunityPostCell {
         storeInfo: store
     )
     
-    CommunityPostCell(post: entity)
+    CommunityPostCell(post: entity, isMessageOpened: .constant(false), opponentName: .constant("test"))
         .defaultHorizontalPadding()
 }
