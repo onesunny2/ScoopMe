@@ -25,21 +25,16 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         let notifiOption: UNAuthorizationOptions = [.alert, .badge, .sound]
         
         UNUserNotificationCenter.current().requestAuthorization(options: notifiOption) { granted, error in
-            
+            if granted {
+                Log.debug("알림 권한 허용됨")
+            } else {
+                Log.debug("알림 권한 거부됨")
+            }
         }
         
         application.registerForRemoteNotifications()
         
         Messaging.messaging().delegate = self
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                Log.debug("디바이스 토큰 수신 실패", "error: \(error)")
-                return
-            } else if let token = token {
-                Log.debug("디바이스 토큰 수신 성공", "token: \(token)")
-            }
-            
-        }
         
         return true
     }
@@ -48,19 +43,44 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // APNs 토큰 수신 성공 시
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    // 앱이 포그라운드에 있을 때 알림 처리
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
-        let deviceTokenString = deviceToken.reduce("", { $0 + String(format: "%02X", $1) })
-        let savedToken = deviceTokenManager.fetchToken(.deviceToken)
-        guard !savedToken.isEmpty else {
-            deviceTokenManager.saveDeviceToken(deviceTokenString)
-            Log.debug("첫 디바이스토큰 저장 완료", "token: \(deviceTokenString)")
-            return
-        }
+        let userInfo = notification.request.content.userInfo
+        let notificationID = notification.request.identifier
+        let timestamp = Date().timeIntervalSince1970
         
-        guard deviceTokenString != savedToken else { return }
-        deviceTokenManager.saveDeviceToken(deviceTokenString)
-        deviceTokenManager.setDeviceTokenStatus(true)
-        Log.debug("new 디바이스토큰 교체 완료", "token: \(deviceTokenString)")
+        Log.debug("foreground push 알림 수신", "timestamp: \(timestamp), notificationID: \(notificationID)", "userInfo: \(userInfo)")
+        
+//        if let message = userInfo["chat"] as? String {
+//            completionHandler([.banner, .sound, .badge])
+//        } else {
+//            completionHandler([])
+//        }
+        
+        completionHandler([.banner, .badge, .list, .sound])
+    }
+    
+    // 알림 탭 했을 때 처리
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        Log.debug("알림 탭", "userInfo: \(userInfo)")
+        
+        if let roomID = userInfo["room_id"] as? String {
+            NotificationCenter.default.post(
+                name: .navigateToChatRoom,
+                object: nil,
+                userInfo: ["room_id": roomID]
+            )
+            
+            // 시스템에 처리 끝났음을 알리는 알림
+            completionHandler()
+            
+        } else { completionHandler() }
     }
     
     // APNs 토큰 수신 실패
@@ -73,6 +93,20 @@ extension AppDelegate: MessagingDelegate {
     
     // 토큰 갱신 모니터링
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        Log.debug("✅ firebase registration token: \(String(describing: fcmToken))")
+        
+        guard let fcmToken else { return }
+        Log.debug("✅ firebase registration token: \(fcmToken)")
+        let savedToken = deviceTokenManager.fetchToken(.deviceToken)
+        
+        guard !savedToken.isEmpty else {
+            deviceTokenManager.saveDeviceToken(fcmToken)
+            Log.debug("첫 디바이스토큰 저장 완료", "token: \(fcmToken)")
+            return
+        }
+        
+        guard fcmToken != savedToken else { return }
+        deviceTokenManager.saveDeviceToken(fcmToken)
+        deviceTokenManager.setDeviceTokenStatus(true)
+        Log.debug("new 디바이스토큰 교체 완료", "token: \(fcmToken)")
     }
 }
