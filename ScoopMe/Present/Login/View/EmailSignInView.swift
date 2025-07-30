@@ -15,6 +15,7 @@ struct EmailSignInView: View {
     private let router = SCMRouter<LoginPath>.shared
     private let loginManager = DIContainer.shared.loginManager
     private let loginTokenManager = DIContainer.shared.loginTokenManager
+    private let deviceTokenManagere = DIContainer.shared.deviceTokenManager
     
     @State private var email: String = ""
     @State private var password: String = ""
@@ -93,7 +94,11 @@ struct EmailSignInView: View {
             )
             .asButton {
                 Task {
-                    await loginManager.postEmailLogin(email, password) {
+                    let deviceToken = deviceTokenManagere.fetchToken(.deviceToken)
+                    
+                    await loginManager.postEmailLogin(email, password, deviceToken) {
+                        // 디바이스 토큰 달라졌으면 업데이트 해야함
+                        await deviceTokenManagere.updateDeviceToken(deviceToken)
                         await switchToMainView()
                     }
                 }

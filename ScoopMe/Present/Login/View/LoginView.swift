@@ -16,6 +16,8 @@ struct LoginView: View {
     @StateObject private var router = SCMRouter<LoginPath>.shared
     @StateObject private var loginManager = DIContainer.shared.loginManager
     
+    private let deviceTokenManagere = DIContainer.shared.deviceTokenManager
+    
     @State private var showProgressView: Bool = false
     private var horizontalPadding: CGFloat = 40
     
@@ -101,7 +103,10 @@ struct LoginView: View {
                 case .kakao:
                     Task {
                         let data = try await KakaoLoginManager.shared.kakaoLogin()
-                        await loginManager.postKakaoLogin(oauth: data) {
+                        let deviceToken = deviceTokenManagere.fetchToken(.deviceToken)
+                        
+                        await loginManager.postKakaoLogin(oauth: data, deviceToken) {
+                            await deviceTokenManagere.updateDeviceToken(deviceToken)
                             // 로그인 성공 시 화면 이동
                             await switchToMainView()
                         }
@@ -155,7 +160,10 @@ extension LoginView {
                     Log.debug("애플로그인 토큰: \(stringToken)")
                     
                     Task {
-                        await loginManager.postAppleLogin(id: stringToken) {
+                        let deviceToken = deviceTokenManagere.fetchToken(.deviceToken)
+                        
+                        await loginManager.postAppleLogin(id: stringToken, deviceToken) {
+                            await deviceTokenManagere.updateDeviceToken(deviceToken)
                             await switchToMainView()
                         }
                     }
