@@ -16,7 +16,6 @@
 		438527802E32010F006D9BCD /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 4385277F2E32010F006D9BCD /* SocketIO */; };
 		438527832E32012F006D9BCD /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 438527822E32012F006D9BCD /* RealmSwift */; };
 		438527862E320148006D9BCD /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 438527852E320148006D9BCD /* Nuke */; };
-		438527882E320148006D9BCD /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 438527872E320148006D9BCD /* NukeUI */; };
 		4385278A2E320148006D9BCD /* NukeVideo in Frameworks */ = {isa = PBXBuildFile; productRef = 438527892E320148006D9BCD /* NukeVideo */; };
 		4385278D2E320160006D9BCD /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 4385278C2E320160006D9BCD /* iamport-ios */; };
 		438527902E3208FC006D9BCD /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 4385278F2E3208FC006D9BCD /* FirebaseMessaging */; };
@@ -104,7 +103,6 @@
 			files = (
 				438527902E3208FC006D9BCD /* FirebaseMessaging in Frameworks */,
 				4385278D2E320160006D9BCD /* iamport-ios in Frameworks */,
-				438527882E320148006D9BCD /* NukeUI in Frameworks */,
 				43B03AAF2DE980AC0057AD45 /* SCMCommunity.framework in Frameworks */,
 				438527932E3209A3006D9BCD /* SDWebImageSwiftUI in Frameworks */,
 				43E014B62DD21A2B0016391C /* OSLog.framework in Frameworks */,
