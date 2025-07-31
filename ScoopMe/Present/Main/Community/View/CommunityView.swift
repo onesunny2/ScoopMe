@@ -68,6 +68,7 @@ struct CommunityView: View {
                     ChatRoomView(
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
                         socketChatManager: DIContainer.shared.socketChatManager,
+                        notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
                         roomID: "686e299952829caed0c63f38",
                         opponentName: $opponentName
                     )
