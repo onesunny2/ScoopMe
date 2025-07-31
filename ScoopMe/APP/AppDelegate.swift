@@ -15,6 +15,9 @@ import SCMLogin
 final class AppDelegate: NSObject, UIApplicationDelegate {
     
     private let deviceTokenManager = DIContainer.shared.deviceTokenManager
+    private let notificationBadgeManager = DIContainer.shared.notificationBadgeManager
+    
+    private var notificationIDs = Set<String>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
@@ -53,13 +56,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let notificationID = notification.request.identifier
         let timestamp = Date().timeIntervalSince1970
         
-        Log.debug("foreground push 알림 수신", "timestamp: \(timestamp), notificationID: \(notificationID)", "userInfo: \(userInfo)")
+        guard !notificationIDs.contains(notificationID) else {
+            completionHandler([])
+            return
+        }
         
-//        if let message = userInfo["chat"] as? String {
-//            completionHandler([.banner, .sound, .badge])
-//        } else {
-//            completionHandler([])
-//        }
+        notificationIDs.insert(notificationID)
+        
+        Log.debug("foreground push 알림 수신", "timestamp: \(timestamp), notificationID: \(notificationID)", "userInfo: \(userInfo)")
+
+        guard let roomID = userInfo["room_id"] as? String else { return }
+        notificationBadgeManager.addBadgeCount(roomID: roomID)
         
         completionHandler([.banner, .badge, .list, .sound])
     }
@@ -109,4 +116,10 @@ extension AppDelegate: MessagingDelegate {
         deviceTokenManager.setDeviceTokenStatus(true)
         Log.debug("new 디바이스토큰 교체 완료", "token: \(fcmToken)")
     }
+}
+
+
+// MARK: NotificationCenter Name
+extension Notification.Name {
+    static let navigateToChatRoom = Notification.Name("navigateToChatRoom")
 }
