@@ -44,12 +44,12 @@ struct ChatRoomListCell: View {
                 Text(room.lastMessageAt.isoStringToKoreanAMPM() ?? "")
                     .basicText(.PTBody6, .scmGray75)
                 
-                if room.unreadCount != nil {
+                if let unreadCount = room.unreadCount {
                     Circle()
                         .fill(Color.scmBlackSprout)
-                        .frame(width: 16, height: 16)
+                        .frame(width: 20, height: 20)
                         .overlay(alignment: .center) {
-                            Text("\(room.unreadCount)")
+                            Text("\(unreadCount)")
                                 .basicText(.PTBody6, .scmGray0)
                         }
                 }
