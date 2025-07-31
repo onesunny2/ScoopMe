@@ -96,7 +96,10 @@ final class ChatDBRepository: SCMDataSource {
     func clearMessageCount(roomID: String) {
         do {
             let chatRoom = try fetchChatRoom(roomID: roomID)
-            chatRoom.unreadCount = nil
+            
+            try realm.write {
+                chatRoom.unreadCount = nil
+            }
         } catch {
             Log.error("읽지않은 메시지 리셋 오류: \(error)")
         }

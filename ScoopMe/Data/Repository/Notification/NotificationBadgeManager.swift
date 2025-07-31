@@ -19,6 +19,7 @@ final class NotificationBadgeManager: BadgeService {
         chatDBRepository.addMessageCount(roomID: roomID)
     }
     
+    @MainActor
     func clearBadgeCount(roomID: String) async {
         chatDBRepository.clearMessageCount(roomID: roomID)
     }
