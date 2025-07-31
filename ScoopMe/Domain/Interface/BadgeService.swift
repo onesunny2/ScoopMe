@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+protocol BadgeService: AnyObject {
+    func addBadgeCount(roomID: String)
+    func clearBadgeCount(roomID: String) async
+}
