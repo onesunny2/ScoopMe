@@ -24,20 +24,20 @@ struct ChatRoomView: View {
     private let chatRoomRepository: ChatRoomDisplayable
     private let socketChatManager: SocketChatDataSource
     private let notificationBadgeManager: BadgeService
-    private let roomID: String
+    @Binding var roomID: String
     @Binding var opponentName: String
     
     init(
         chatRoomRepository: ChatRoomDisplayable,
         socketChatManager: SocketChatDataSource,
         notificationBadgeManager: BadgeService,
-        roomID: String,
+        roomID: Binding<String>,
         opponentName: Binding<String>
     ) {
         self.chatRoomRepository = chatRoomRepository
         self.socketChatManager = socketChatManager
         self.notificationBadgeManager = notificationBadgeManager
-        self.roomID = roomID
+        self._roomID = roomID
         self._opponentName = opponentName
         
         Log.debug("현재 채팅방 roomID: \(roomID)")
@@ -315,7 +315,7 @@ private enum StringLiterals: String {
         chatRoomRepository: DIContainer.shared.chatRoomRepository,
         socketChatManager: DIContainer.shared.socketChatManager,
         notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
-        roomID: "",
+        roomID: .constant("test"),
         opponentName: .constant("test")
     )
 }
