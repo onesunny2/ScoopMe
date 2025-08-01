@@ -49,6 +49,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         Messaging.messaging().apnsToken = deviceToken
     }
     
+    // 앱이 백그라운드에 있을 때 알림 처리
+    func application(_ application: UIApplication, didreceivedRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard let message = userInfo["room_id"] as? String else { return }
+        Log.debug("background push 알림 수신: \(message)")
+        
+        completionHandler(.newData)
+    }
+    
     // 앱이 포그라운드에 있을 때 알림 처리
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
