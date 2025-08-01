@@ -14,6 +14,10 @@ import SCMLogin
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
     
+    private var chatRoomTracker: ChatRoomTracker {
+        return ChatRoomTracker.shared
+    }
+    
     private let deviceTokenManager = DIContainer.shared.deviceTokenManager
     private let notificationBadgeManager = DIContainer.shared.notificationBadgeManager
     
@@ -74,8 +78,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         Log.debug("foreground push 알림 수신", "timestamp: \(timestamp), notificationID: \(notificationID)", "userInfo: \(userInfo)")
 
         guard let roomID = userInfo["room_id"] as? String else { return }
-        notificationBadgeManager.addBadgeCount(roomID: roomID)
         
+        if chatRoomTracker.isInChatRoom(room: roomID) {
+            completionHandler([])
+            return
+        }
+        
+        notificationBadgeManager.addBadgeCount(roomID: roomID)
         completionHandler([.banner, .badge, .list, .sound])
     }
     

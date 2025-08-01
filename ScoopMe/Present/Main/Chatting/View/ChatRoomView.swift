@@ -11,6 +11,8 @@ import SCMLogger
 
 struct ChatRoomView: View {
     
+    @EnvironmentObject private var chatRoomTracker: ChatRoomTracker
+    
     @State private var textMessage: String = ""
     @State private var sendStatus: Bool = false
     @FocusState private var focusBinding: Bool
@@ -70,7 +72,11 @@ struct ChatRoomView: View {
             }
             socketChatManager.connect()
         }
+        .onAppear {
+            chatRoomTracker.enterChatRoom(room: roomID)
+        }
         .onDisappear {
+            chatRoomTracker.leaveChatRoom()
             socketChatManager.disconnect()
         }
     }
