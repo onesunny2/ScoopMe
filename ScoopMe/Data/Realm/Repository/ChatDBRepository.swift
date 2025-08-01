@@ -75,19 +75,16 @@ final class ChatDBRepository: SCMDataSource {
             
         } catch SCMRealmError.roomNotFound {
             Log.info("✅ 새로운 채팅방 생성")
-//            let newChatRoom = ChatRoom(
-//                roomID: <#T##String#>,
-//                createdAt: <#T##String#>,
-//                mainUser: <#T##MainUser?#>,
-//                participant: <#T##Participant?#>,
-//                lastReadMessageAt: <#T##String#>,
-//                lastMessageAt: <#T##String#>,
-//                lastMessageContent: <#T##String#>,
-//                isActive: <#T##Bool#>,
-//                messages: <#T##List<MessageRecord>#>,
-//                unreadCount: <#T##Int?#>
-//            )
+            let newChatRoom = ChatRoom()
             
+            newChatRoom.roomID = roomID
+            newChatRoom.unreadCount = 1
+            
+            do {
+                try create(chatRoom: newChatRoom)
+            } catch {
+                Log.error("newChatRoom의 메시지 알림이 왔을 때 create에 문제가 생겼습니다: \(error)")
+            }
         } catch {
             Log.error("메시지 카운트 업데이트 오류: \(error)")
         }
