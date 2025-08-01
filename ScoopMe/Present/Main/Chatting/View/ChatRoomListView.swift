@@ -19,6 +19,7 @@ struct ChatRoomListView: View {
         sortDescriptor: SortDescriptor(keyPath: "lastMessageAt", ascending: false)
     ) var chatListItems
     @State private var opponentName: String = ""
+    @State private var roomID: String = ""
     
     init(chatListRepository: ChatListDisplayable) {
         self.chatListRepository = chatListRepository
@@ -38,12 +39,12 @@ struct ChatRoomListView: View {
             }
             .navigationDestination(for: ChatPath.self) { router in
                 switch router {
-                case let .chatRoom(roomID):
+                case .chatRoom:
                     ChatRoomView(
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
                         socketChatManager: DIContainer.shared.socketChatManager,
                         notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
-                        roomID: roomID,
+                        roomID: $roomID,
                         opponentName: $opponentName
                     )
                     .toolbar(.hidden, for: .tabBar)
@@ -81,10 +82,8 @@ extension ChatRoomListView {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         opponentName = item.participant?.nickname ?? ""
-                        router.send(.push(
-                            .chatRoom(
-                                roomID: item.roomID))
-                        )
+                        roomID = item.roomID
+                        router.send(.push(.chatRoom))
                     }
             }
         }

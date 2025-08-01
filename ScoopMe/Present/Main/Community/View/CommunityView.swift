@@ -11,7 +11,8 @@ import SCMLogger
 
 struct CommunityView: View {
     
-    private var repository: CommunityPostDisplayable
+    private let repository: CommunityPostDisplayable
+    private let chatListRepository: ChatListDisplayable
     
     @State private var debounceTask: Task<Void, Never>?  // 잦은 호출방지
     
@@ -27,10 +28,13 @@ struct CommunityView: View {
     
     // 채팅창 호출 트리거
     @State private var isMessageOpened: Bool = false
+    @State private var roomID: String = ""
     @State private var opponentName: String = ""
+    @State private var opponentID: String = ""
     
-    init(repository: CommunityPostDisplayable) {
+    init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
+        self.chatListRepository = chatListRepository
     }
     
     var body: some View {
@@ -69,7 +73,7 @@ struct CommunityView: View {
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
                         socketChatManager: DIContainer.shared.socketChatManager,
                         notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
-                        roomID: "686e299952829caed0c63f38",
+                        roomID: $roomID,
                         opponentName: $opponentName
                     )
                 }
@@ -143,10 +147,20 @@ extension CommunityView {
                             .fill(.scmBrightSprout)
                             .frame(height: 1)
                         CommunityPostCell(
-                            post: post,
-                            isMessageOpened: $isMessageOpened,
-                            opponentName: $opponentName
-                        )
+                            post: post
+                        ) { creator in
+                            opponentID = creator.id
+                            opponentName = creator.nickname
+                            Log.debug("🔗 상대방이름: \(opponentName)", "상대방ID: \(opponentID)")
+                            
+                            Task {
+                                let success = await fetchRoomID()
+                                
+                                if success {
+                                    isMessageOpened = true
+                                }
+                            }
+                        }
                         .padding(.vertical, 12)
                         .onAppear {
                             if (post.postID == posts.last?.postID) && cursorID != "0" {
@@ -228,6 +242,23 @@ extension CommunityView {
             }
         }
     }
+    
+    // 채팅창 진입 시 roomID 체크
+    private func fetchRoomID() async -> Bool {
+        do {
+            let fetchedRoomID = try await chatListRepository.getChatroomID(opponent: opponentID)
+            
+            await MainActor.run {
+                self.roomID = fetchedRoomID
+            }
+            Log.debug("✅ 조회된 roomID: \(self.roomID)")
+            
+            return !fetchedRoomID.isEmpty
+        } catch {
+            Log.error("❌ roomID 조회에 실패했습니다: \(error)")
+            return false
+        }
+    }
 }
 
 // MARK: StringLiterals
@@ -244,6 +275,6 @@ private enum StringLiterals: String {
 }
 
 #Preview {
-    CommunityView(repository: DIContainer.shared.communityPostRepository)
+    CommunityView(repository: DIContainer.shared.communityPostRepository, chatListRepository: DIContainer.shared.chatListRepository)
 }
  
