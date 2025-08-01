@@ -12,6 +12,7 @@ import SCMLogger
 struct ChatRoomView: View {
     
     @EnvironmentObject private var chatRoomTracker: ChatRoomTracker
+    @Environment(\.scenePhase) private var scenePhase
     
     @State private var textMessage: String = ""
     @State private var sendStatus: Bool = false
@@ -59,18 +60,18 @@ struct ChatRoomView: View {
         .navigationTitle(opponentName)
         .navigationBarTitleDisplayMode(.inline)
         .backButton(.scmBlackSprout)
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                connectSocket()
+            } else {
+                socketChatManager.disconnect()
+            }
+        }
         .task {
             await notificationBadgeManager.clearBadgeCount(roomID: roomID)
         }
         .task {
-            socketChatManager.configure(roomID: roomID)
-            socketChatManager.onConnect = {
-                Task {
-                    await saveSocketMessageAtRealm()
-                    await getServerMessages()
-                }
-            }
-            socketChatManager.connect()
+            connectSocket()
         }
         .onAppear {
             chatRoomTracker.enterChatRoom(room: roomID)
@@ -282,6 +283,18 @@ extension ChatRoomView {
         } catch {
             Log.error("❎ 메시지 삭제 실패")
         }
+    }
+    
+    // 소켓 연결
+    private func connectSocket() {
+        socketChatManager.configure(roomID: roomID)
+        socketChatManager.onConnect = {
+            Task {
+                await saveSocketMessageAtRealm()
+                await getServerMessages()
+            }
+        }
+        socketChatManager.connect()
     }
     
     // 소켓 통신으로 수신한 메시지 RealmDB에 저장
