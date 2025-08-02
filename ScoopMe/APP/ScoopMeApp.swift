@@ -19,6 +19,8 @@ struct ScoopMeApp: App {
     
     @StateObject private var mainFlowSwitcher = SCMSwitcher<MainFlow>.shared
     @StateObject private var tabFlowSwitcher = SCMSwitcher<TabFlow>.shared
+    @StateObject private var chatRouter = SCMRouter<ChatPath>.shared
+    
     @StateObject private var chatRoomTracker = ChatRoomTracker.shared
     
     init() {
@@ -35,6 +37,7 @@ struct ScoopMeApp: App {
             ContentView()
                 .environmentObject(mainFlowSwitcher)
                 .environmentObject(tabFlowSwitcher)
+                .environmentObject(chatRouter)
                 .environmentObject(chatRoomTracker)
                 .onOpenURL { url in
                     _ = KakaoLoginConfiguration.handleKakaoCallback(url)
@@ -43,6 +46,24 @@ struct ScoopMeApp: App {
                 .onChange(of: scenePhase) { newPhase in
                     chatRoomTracker.updateAppState(newPhase == .active)
                 }
+                .onReceive(
+                    NotificationCenter.default.publisher(
+                        for: .navigateToChatRoom
+                    )
+                ) { notification in
+                    if let aps = notification.userInfo?["aps"] as? [String: Any], let alert = aps["alert"] as? [String: Any], let roomID = notification.userInfo?["room_id"] as? String {
+                        
+                        let opponentName = alert["subtitle"] as? String ?? ""
+                        
+                        navigateToChatRoom(room: roomID, opponent: opponentName)
+                    }
+                }
         }
+    }
+    
+    private func navigateToChatRoom(room id: String, opponent name: String) {
+        // 채팅탭으로 가서, 해당 채팅방으로 보내는 로직
+        tabFlowSwitcher.switchTo(.chat)
+        chatRouter.send(.push(.chatRoom(roomID: id, opponentName: name)))
     }
 }
