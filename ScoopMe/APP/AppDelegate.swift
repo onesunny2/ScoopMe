@@ -94,17 +94,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         Log.debug("알림 탭", "userInfo: \(userInfo)")
         
-        if let roomID = userInfo["room_id"] as? String {
-            NotificationCenter.default.post(
-                name: .navigateToChatRoom,
-                object: nil,
-                userInfo: ["room_id": roomID]
-            )
-            
-            // 시스템에 처리 끝났음을 알리는 알림
-            completionHandler()
-            
-        } else { completionHandler() }
+        // ✅ 전체 userInfo를 그대로 전달 (aps 정보 포함)
+        NotificationCenter.default.post(
+            name: .navigateToChatRoom,
+            object: nil,
+            userInfo: userInfo // 전체 userInfo
+        )
+        
+        completionHandler()
     }
     
     // APNs 토큰 수신 실패
