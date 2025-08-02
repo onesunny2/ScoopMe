@@ -39,13 +39,13 @@ struct ChatRoomListView: View {
             }
             .navigationDestination(for: ChatPath.self) { router in
                 switch router {
-                case .chatRoom:
+                case let .chatRoom(roomID, opponentName):
                     ChatRoomView(
                         chatRoomRepository: DIContainer.shared.chatRoomRepository,
                         socketChatManager: DIContainer.shared.socketChatManager,
                         notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
-                        roomID: $roomID,
-                        opponentName: $opponentName
+                        roomID: .constant(roomID),
+                        opponentName: .constant(opponentName)
                     )
                     .toolbar(.hidden, for: .tabBar)
                 }
@@ -83,7 +83,7 @@ extension ChatRoomListView {
                     .onTapGesture {
                         opponentName = item.participant?.nickname ?? ""
                         roomID = item.roomID
-                        router.send(.push(.chatRoom))
+                        router.send(.push(.chatRoom(roomID: roomID, opponentName: opponentName)))
                     }
             }
         }

@@ -8,5 +8,5 @@
 import SwiftUI
 
 enum ChatPath: Hashable {
-    case chatRoom
+    case chatRoom(roomID: String, opponentName: String)
 }
