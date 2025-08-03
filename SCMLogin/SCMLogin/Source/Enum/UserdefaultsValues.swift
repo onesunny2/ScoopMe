@@ -9,10 +9,12 @@ import Foundation
 
 public enum UserdefaultsValues {
     case savedUserID
+    case autoLoginStatus
     
     var key: String {
         switch self {
         case .savedUserID: return "userIDKey"
+        case .autoLoginStatus: return "autoLoginStatus"
         }
     }
     
@@ -20,6 +22,15 @@ public enum UserdefaultsValues {
         switch self {
         case .savedUserID:
             return UserDefaults.standard.string(forKey: self.key) ?? ""
+        default: return ""
+        }
+    }
+    
+    public var boolValue: Bool {
+        switch self {
+        case .autoLoginStatus:
+            return UserDefaults.standard.bool(forKey: self.key)
+        default: return false
         }
     }
 }
