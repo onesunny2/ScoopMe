@@ -8,6 +8,7 @@
 import SwiftUI
 import UserNotifications
 import iamport_ios
+import SCMLogger
 import SCMLogin
 
 @main
@@ -55,12 +56,23 @@ struct ScoopMeApp: App {
                         
                         let opponentName = alert["subtitle"] as? String ?? ""
                         
-                        navigateToChatRoom(room: roomID, opponent: opponentName)
+                        if scenePhase == .active {
+                            Log.debug("foreground에서 알림 클릭")
+                            navigateToChatRoom(room: roomID, opponent: opponentName)
+                        } else {
+                            // TODO: 자동로그인 + 토큰세션 만료 여부 확인
+                            Log.debug("background에서 알림 클릭")
+                            navigateToChatRoom(room: roomID, opponent: opponentName)
+                        }
                     }
                 }
         }
     }
     
+    // background, foreground 상태에 따라 다르게 작동하도록 해야 함
+    // foreground: chat 탭으로 화면 switch 해서 채팅방으로 넘어가게 하기
+    // background: launch 화면에서 인디케이터 돌리면서 현재 자동로그인 + 토큰 세션 만료되지 않았으면 foreground와 동일하게
+        // 만약 자동로그인 아니거나 세션 만료되었으면 로그인 화면으로 돌리기
     private func navigateToChatRoom(room id: String, opponent name: String) {
         // 채팅탭으로 가서, 해당 채팅방으로 보내는 로직
         tabFlowSwitcher.switchTo(.chat)
