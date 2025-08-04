@@ -44,7 +44,8 @@ struct MainTabView: View {
                 .tag(3)
                 
                 ProfileView(
-                    imageHelper: DIContainer.shared.imageHelper
+                    imageHelper: DIContainer.shared.imageHelper,
+                    loginManager: DIContainer.shared.loginManager
                 )
                 .tabImage(Image(.profileFill))
                 .tag(4)
