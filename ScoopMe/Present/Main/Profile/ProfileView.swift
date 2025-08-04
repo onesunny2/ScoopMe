@@ -60,6 +60,7 @@ struct ProfileView: View {
                 isPresented: $logoutFailed,
                 title: StringLiterals.logoutFailedTitle.string,
                 message: StringLiterals.logoutFailedContent.string,
+                buttonTitle: StringLiterals.retryButtonTitle.string,
                 multiAction: {
                     Task { await checkLogoutStatus() }
             })
@@ -132,6 +133,7 @@ private enum StringLiterals: String {
     case logoutSuccessContent = "로그인 화면으로 돌아갑니다"
     case logoutFailedTitle = "로그아웃 실패"
     case logoutFailedContent = "로그아웃에 실패했습니다"
+    case retryButtonTitle = "재시도"
     
     var string: String {
         return self.rawValue

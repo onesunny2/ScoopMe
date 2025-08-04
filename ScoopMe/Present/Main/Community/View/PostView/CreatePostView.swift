@@ -85,7 +85,9 @@ struct CreatePostView: View {
                     isPresented: $showAlert,
                     title: StringLiterals.alertTitle.text,
                     message: StringLiterals.alertMessage.text,
-                    multiAction: { dismiss() })
+                    buttonTitle: nil,
+                    multiAction: { dismiss()
+                    })
             }
             .overlay(alignment: .center) {
                 if showToastMessage {

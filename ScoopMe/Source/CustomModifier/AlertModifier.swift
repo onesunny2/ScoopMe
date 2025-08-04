@@ -45,13 +45,14 @@ struct AlertMultiModifier: ViewModifier {
     @Binding var showAlert: Bool
     let title: String
     let message: String
+    let buttonTitle: String?
     let multiOkayAction: () -> ()
     
     func body(content: Content) -> some View {
         content
             .alert(title, isPresented: $showAlert) {
                 Button("취소", role: .none) { }
-                Button("확인", role: .cancel) { multiOkayAction() }
+                Button(buttonTitle ?? "확인", role: .cancel) { multiOkayAction() }
             } message: {
                 Text(message)
             }
@@ -75,8 +76,9 @@ extension View {
         isPresented: Binding<Bool>,
         title: String,
         message: String,
+        buttonTitle: String?,
         multiAction: @escaping () -> ()
     ) -> some View {
-        modifier(AlertMultiModifier(showAlert: isPresented, title: title, message: message, multiOkayAction: multiAction))
+        modifier(AlertMultiModifier(showAlert: isPresented, title: title, message: message, buttonTitle: buttonTitle, multiOkayAction: multiAction))
     }
 }
