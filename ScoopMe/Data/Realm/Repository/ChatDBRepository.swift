@@ -63,6 +63,45 @@ final class ChatDBRepository: SCMDataSource {
 //        Log.debug("✅ 메시지 저장 완료: \(message.chatID), 현재 메시지 수: \(chatRoom.messages.count)")
     }
     
+    func addMessageCount(roomID: String) {
+        
+        do {
+            let chatRoom = try fetchChatRoom(roomID: roomID)
+            let previousCount = chatRoom.unreadCount ?? 0
+            
+            try realm.write {
+                chatRoom.unreadCount = previousCount + 1
+            }
+            
+        } catch SCMRealmError.roomNotFound {
+            Log.info("✅ 새로운 채팅방 생성")
+            let newChatRoom = ChatRoom()
+            
+            newChatRoom.roomID = roomID
+            newChatRoom.unreadCount = 1
+            
+            do {
+                try create(chatRoom: newChatRoom)
+            } catch {
+                Log.error("newChatRoom의 메시지 알림이 왔을 때 create에 문제가 생겼습니다: \(error)")
+            }
+        } catch {
+            Log.error("메시지 카운트 업데이트 오류: \(error)")
+        }
+    }
+    
+    func clearMessageCount(roomID: String) {
+        do {
+            let chatRoom = try fetchChatRoom(roomID: roomID)
+            
+            try realm.write {
+                chatRoom.unreadCount = nil
+            }
+        } catch {
+            Log.error("읽지않은 메시지 리셋 오류: \(error)")
+        }
+    }
+    
     func updateMessageLastReadAt(roomID: String, lastReadMessageAt: String) throws {
         let chatRoom = try fetchChatRoom(roomID: roomID)
         

@@ -14,6 +14,8 @@ protocol SCMDataSource: AnyObject {
     func fetchChatRoom(roomID: String) throws -> ChatRoom
     func fetchAllChatRooms() -> Results<ChatRoom>
     func save(roomID: String, _ message: MessageRecord) throws
+    func addMessageCount(roomID: String)
+    func clearMessageCount(roomID: String)
     func updateMessageLastReadAt(roomID: String, lastReadMessageAt: String) throws
     func updateMessageLastValues(roomID: String, lastMessageAt: String, lastMessageContent: String, isBoth: Bool) throws
     func updateMainuser(roomID: String, user: MainUser) throws

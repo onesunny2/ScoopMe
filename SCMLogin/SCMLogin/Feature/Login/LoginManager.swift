@@ -32,9 +32,13 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     let network: SCMNetworkImpl
     
     @MainActor
-    public func postAppleLogin(id token: String, onSuccess: @escaping () async -> ()) async {
+    public func postAppleLogin(
+        id token: String,
+        _ deviceToken: String?,
+        onSuccess: @escaping () async -> ()
+    ) async {
         do {
-            let value = LoginURL.appleLogin(id: token, device: nil, nick: "sunny")
+            let value = LoginURL.appleLogin(id: token, device: deviceToken, nick: "sunny")
             let result = try await callRequest(value, type: LoginDTO.self)
             
             saveUserID(result.response.user_id)
@@ -49,9 +53,13 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postKakaoLogin(oauth token: String, onSuccess: @escaping () async -> ()) async {
+    public func postKakaoLogin(
+        oauth token: String,
+        _ deviceToken: String?,
+        onSuccess: @escaping () async -> ()
+    ) async {
         do {
-            let value = LoginURL.kakaoLogin(oauth: token, device: nil)
+            let value = LoginURL.kakaoLogin(oauth: token, device: deviceToken)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             saveUserID(result.response.user_id)
@@ -66,9 +74,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     }
     
     @MainActor
-    public func postEmailLogin(_ email: String, _ password: String, onSuccess: @escaping () async -> ()) async {
+    public func postEmailLogin(
+        _ email: String,
+        _ password: String,
+        _ deviceToken: String?,
+        onSuccess: @escaping () async -> ()
+    ) async {
         do {
-            let value = LoginURL.emailLogin(email: email, pw: password, device: nil)
+            let value = LoginURL.emailLogin(email: email, pw: password, device: deviceToken)
             let result = try await callRequest(value, type: LoginDTO.self)
             
             // 저장되어 있는 userID랑 현재 로그인 할 userID 다르면 재저장

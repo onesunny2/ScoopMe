@@ -13,9 +13,6 @@ import SCMImageRequest
 
 struct CommunityPostCell: View {
     
-    @Binding var isMessageOpened: Bool
-    @Binding var opponentName: String
-    
     private let imageHelper: ImageHelper
     private var firstWidth: CGFloat {
         return UIScreen.main.bounds.size.width - 40
@@ -23,13 +20,17 @@ struct CommunityPostCell: View {
     private var secondWidth: CGFloat {
         return (UIScreen.main.bounds.size.width - 44) / 2
     }
-    let post: CommunityPostEntity
+    private let post: CommunityPostEntity
     
-    init(post: CommunityPostEntity, isMessageOpened: Binding<Bool>, opponentName: Binding<String>) {
+    private var tappedMessage: ((Creator) -> Void)?
+    
+    init(
+        post: CommunityPostEntity,
+        tappedMessage: ((Creator) -> Void)?
+    ) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
-        self._isMessageOpened = isMessageOpened
-        self._opponentName = opponentName
+        self.tappedMessage = tappedMessage
     }
     
     var body: some View {
@@ -72,13 +73,7 @@ extension CommunityPostCell {
                     .basicImage(width: 16, color: .scmGray15)
                     .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
                     .asButton {
-                        opponentName = post.creator.nickname
-                        Log.debug("🔗 상대방이름: \(opponentName)")
-                        
-                        Task {
-                            try? await Task.sleep(for: .seconds(0.1))
-                            isMessageOpened = true
-                        }
+                        tappedMessage?(post.creator)
                     }
             }
         }
@@ -231,6 +226,9 @@ extension CommunityPostCell {
         storeInfo: store
     )
     
-    CommunityPostCell(post: entity, isMessageOpened: .constant(false), opponentName: .constant("test"))
+    CommunityPostCell(
+        post: entity,
+        tappedMessage: nil
+    )
         .defaultHorizontalPadding()
 }

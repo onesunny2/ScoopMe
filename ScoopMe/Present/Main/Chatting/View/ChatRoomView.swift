@@ -11,6 +11,9 @@ import SCMLogger
 
 struct ChatRoomView: View {
     
+    @EnvironmentObject private var chatRoomTracker: ChatRoomTracker
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State private var textMessage: String = ""
     @State private var sendStatus: Bool = false
     @FocusState private var focusBinding: Bool
@@ -23,13 +26,21 @@ struct ChatRoomView: View {
     
     private let chatRoomRepository: ChatRoomDisplayable
     private let socketChatManager: SocketChatDataSource
-    private let roomID: String
+    private let notificationBadgeManager: BadgeService
+    @Binding var roomID: String
     @Binding var opponentName: String
     
-    init(chatRoomRepository: ChatRoomDisplayable, socketChatManager: SocketChatDataSource, roomID: String, opponentName: Binding<String>) {
+    init(
+        chatRoomRepository: ChatRoomDisplayable,
+        socketChatManager: SocketChatDataSource,
+        notificationBadgeManager: BadgeService,
+        roomID: Binding<String>,
+        opponentName: Binding<String>
+    ) {
         self.chatRoomRepository = chatRoomRepository
         self.socketChatManager = socketChatManager
-        self.roomID = roomID
+        self.notificationBadgeManager = notificationBadgeManager
+        self._roomID = roomID
         self._opponentName = opponentName
         
         Log.debug("현재 채팅방 roomID: \(roomID)")
@@ -49,17 +60,24 @@ struct ChatRoomView: View {
         .navigationTitle(opponentName)
         .navigationBarTitleDisplayMode(.inline)
         .backButton(.scmBlackSprout)
-        .task {
-            socketChatManager.configure(roomID: roomID)
-            socketChatManager.onConnect = {
-                Task {
-                    await saveSocketMessageAtRealm()
-                    await getServerMessages()
-                }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                connectSocket()
+            } else {
+                socketChatManager.disconnect()
             }
-            socketChatManager.connect()
+        }
+        .task {
+            await notificationBadgeManager.clearBadgeCount(roomID: roomID)
+        }
+        .task {
+            connectSocket()
+        }
+        .onAppear {
+            chatRoomTracker.enterChatRoom(room: roomID)
         }
         .onDisappear {
+            chatRoomTracker.leaveChatRoom()
             socketChatManager.disconnect()
         }
     }
@@ -267,6 +285,18 @@ extension ChatRoomView {
         }
     }
     
+    // 소켓 연결
+    private func connectSocket() {
+        socketChatManager.configure(roomID: roomID)
+        socketChatManager.onConnect = {
+            Task {
+                await saveSocketMessageAtRealm()
+                await getServerMessages()
+            }
+        }
+        socketChatManager.connect()
+    }
+    
     // 소켓 통신으로 수신한 메시지 RealmDB에 저장
     private func saveSocketMessageAtRealm() async {
         socketChatManager.receiveMessage { message in
@@ -303,7 +333,8 @@ private enum StringLiterals: String {
     ChatRoomView(
         chatRoomRepository: DIContainer.shared.chatRoomRepository,
         socketChatManager: DIContainer.shared.socketChatManager,
-        roomID: "",
+        notificationBadgeManager: DIContainer.shared.notificationBadgeManager,
+        roomID: .constant("test"),
         opponentName: .constant("test")
     )
 }

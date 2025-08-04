@@ -47,6 +47,8 @@ final class DIContainer {
             chatDBRepo: self.chatDBRepository,
             loginTokenManager: self.loginTokenManager
         )
+        
+        self.notificationBadgeManager = NotificationBadgeManager(chatDBRepository: self.chatDBRepository)
     }
     
     /// SCMLogin
@@ -81,4 +83,7 @@ final class DIContainer {
     
     /// Socket
     private(set) var socketChatManager: SocketChatDataSource
+    
+    /// notification
+    private(set) var notificationBadgeManager: BadgeService
 }

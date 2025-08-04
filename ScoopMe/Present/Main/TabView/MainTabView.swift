@@ -35,7 +35,8 @@ struct MainTabView: View {
                     .tag(2)
                 
                 CommunityView(
-                    repository: DIContainer.shared.communityPostRepository
+                    repository: DIContainer.shared.communityPostRepository,
+                    chatListRepository: DIContainer.shared.chatListRepository
                 )
                     .tabImage(Image(.communityFill))
                     .tag(3)
