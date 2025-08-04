@@ -24,26 +24,30 @@ struct MainTabView: View {
                 .tabImage(Image(.homeFill))
                 .tag(0)
                 
-                OrderView(paymentRepository: DIContainer.shared.paymentRepository)
-                    .tabImage(Image(.orderFill))
-                    .tag(1)
+                OrderView(
+                    paymentRepository: DIContainer.shared.paymentRepository
+                )
+                .tabImage(Image(.orderFill))
+                .tag(1)
                 
                 ChatRoomListView(
                     chatListRepository: DIContainer.shared.chatListRepository
                 )
-                    .tabImage(Image(.tabMessageFill))
-                    .tag(2)
+                .tabImage(Image(.tabMessageFill))
+                .tag(2)
                 
                 CommunityView(
                     repository: DIContainer.shared.communityPostRepository,
                     chatListRepository: DIContainer.shared.chatListRepository
                 )
-                    .tabImage(Image(.communityFill))
-                    .tag(3)
+                .tabImage(Image(.communityFill))
+                .tag(3)
                 
-                ProfileView()
-                    .tabImage(Image(.profileFill))
-                    .tag(4)
+                ProfileView(
+                    imageHelper: DIContainer.shared.imageHelper
+                )
+                .tabImage(Image(.profileFill))
+                .tag(4)
             }
             .toolbarBackground(.scmGray0, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
