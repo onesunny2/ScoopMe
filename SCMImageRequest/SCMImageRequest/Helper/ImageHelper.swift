@@ -14,14 +14,53 @@ import SCMLogin
 
 public final class ImageHelper {
     
-    static public let shared = ImageHelper()
-    public init() {
-        self.tokenManager = LoginTokenManager()
-    }
+    private var pipeline = ImagePipeline.shared
+    
+    static public let shared = ImageHelper(cacheStragies: [.MemoryCache, .AggressiveDiskCache])
+    static public let imagePrefetcher = ImagePrefetcher(destination: .diskCache)
     
     private let tokenManager: LoginTokenManager
     
-    public func createImageRequest(image url: String) -> ImageRequest? {
+    init(
+        isDecompressionEnabled: Bool = true,
+        isTaskCoalescingEnabled: Bool = true,
+        isResumableDataEnabled: Bool = true,
+        isRateLimiterEnabled: Bool = true,
+        isProgressiveDecodingEnabled: Bool = true,
+        cacheStragies: [CacheStrategy]) {
+            
+            self.tokenManager = LoginTokenManager()
+            
+            var configuration = ImagePipeline.shared.configuration
+            configuration.isDecompressionEnabled = isDecompressionEnabled
+            configuration.isTaskCoalescingEnabled = isTaskCoalescingEnabled
+            configuration.isResumableDataEnabled = isResumableDataEnabled
+            configuration.isRateLimiterEnabled = isRateLimiterEnabled
+            
+            configuration.isProgressiveDecodingEnabled = isProgressiveDecodingEnabled
+            configuration.isStoringPreviewsInMemoryCache = isProgressiveDecodingEnabled
+            
+            guard !cacheStragies.isEmpty else { return }
+            
+            configuration.imageCache = cacheStragies.contains(.MemoryCache) ? ImageCache.shared : nil
+            
+            let dataLoadConfiguration = DataLoader.defaultConfiguration
+            dataLoadConfiguration.urlCache = cacheStragies.contains(.HTTPDiskCache) ? DataLoader.sharedUrlCache : nil
+            configuration.dataLoader = DataLoader(configuration: dataLoadConfiguration)
+            configuration.dataCache = cacheStragies.contains(.AggressiveDiskCache) ? try? DataCache(name: "com.scoopme.dataCache") : nil
+            
+            self.pipeline = ImagePipeline(configuration: configuration)
+        }
+    
+    private init() {
+        self.tokenManager = LoginTokenManager()
+    }
+    
+    public func createImageRequest(
+        image url: String,
+        imageSize: ImageSize = .medium,
+        processors: [ImageProcessing] = []
+    ) -> ImageRequest? {
         do {
             let accessToken = tokenManager.fetchToken(.accessToken)
             
@@ -45,6 +84,14 @@ public final class ImageHelper {
             var imageRequest = ImageRequest(urlRequest: urlRequest)
             
             imageRequest.priority = .normal
+            
+            var finalProcessors: [ImageProcessing] = []
+            if let size = imageSize.cgSize {
+                finalProcessors.append(ImageProcessors.Resize(size: size))
+            }
+            
+            finalProcessors.append(contentsOf: processors)
+            imageRequest.processors = finalProcessors
             
             return imageRequest
             
