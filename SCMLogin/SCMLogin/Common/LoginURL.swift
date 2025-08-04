@@ -16,6 +16,7 @@ public enum LoginURL {
     case appleLogin(id: String, device: String?, nick: String?)
     case refreshToken(access: String, refresh: String)
     case updateDeviceToken(device: String, access: String)
+    case logout(access: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -41,6 +42,7 @@ public enum LoginURL {
         case .appleLogin: "/v1/users/login/apple"
         case .refreshToken: "/v1/auth/refresh"
         case .updateDeviceToken: "/v1/users/deviceToken"
+        case .logout: "/v1/users/logout"
         }
     }
     
@@ -89,6 +91,13 @@ public enum LoginURL {
                 "Authorization": access
             ]
         case let .updateDeviceToken(_, access):
+            return [
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .logout(access):
             return [
                 "accept": "application/json",
                 "Content-Type": "application/json",

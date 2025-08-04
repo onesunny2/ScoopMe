@@ -8,7 +8,7 @@
 import Foundation
 import SCMNetwork
 
-protocol UserServiceProtocol: NetworkServiceProtocol {
+protocol UserServiceProtocol: NetworkServiceProtocol, NetworkEmptyProtocol {
     
     var alertTitle: String { get set }
     var alertMessage: String { get set }
