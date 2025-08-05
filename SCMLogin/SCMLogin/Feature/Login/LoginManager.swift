@@ -16,11 +16,14 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     @Published public var alertMessage: String = ""
     
     public var alertTitle: String = "로그인 실패"
+    private let accessToken: String
     
     public override init() {
         self.loginTokenManager = LoginTokenManager()
         self.deviceTokenManager = DeviceTokenManager()
         self.network = SCMNetworkImpl()
+        
+        self.accessToken = self.deviceTokenManager.fetchToken(.accessToken)
     }
     
     deinit {
@@ -116,5 +119,19 @@ public final class LoginManager: NSObject, UserServiceProtocol {
         UserDefaults.standard.set(userID, forKey: UserdefaultsValues.savedUserID.key)
         
         Log.debug("로그인 시 userID 저장 완료: \(userID) vs \(UserdefaultsValues.savedUserID.stringValue)")
+    }
+    
+    // 로그아웃
+    public func logout() async -> Bool {
+        do {
+            let value = LoginURL.logout(access: accessToken)
+            let result = try await callEmptyRequest(value)
+            
+            Log.debug("✅ 로그아웃 성공: \(result.statusCode.description)")
+            return true
+        } catch {
+            Log.debug("❎ 로그아웃 실패: \(error)")
+            return false
+        }
     }
 }

@@ -28,6 +28,8 @@ struct NukeRequestImageCell: View {
                     image
                         .resizable()
                         .aspectRatio(contentMode: contentMode)
+                        .transition(.identity)
+                        .animation(nil, value: state.image)
                 } else if (state.error) != nil {
                     unevenRectangle
                         .fill(.scmBrightForsythia)

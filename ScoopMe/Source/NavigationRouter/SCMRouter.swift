@@ -43,6 +43,10 @@ extension SCMRouter where SCMRouter == SCMRouter<ChatPath> {
     static let shared = SCMRouter()
 }
 
+extension SCMRouter where SCMRouter == SCMRouter<ProfilePath> {
+    static let shared = SCMRouter()
+}
+
 extension SCMRouter {
     enum Action {
         case push(P)
