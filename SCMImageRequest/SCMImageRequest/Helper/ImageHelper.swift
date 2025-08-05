@@ -16,7 +16,7 @@ public final class ImageHelper {
     
     private var pipeline = ImagePipeline.shared
     
-    static public let shared = ImageHelper(cacheStragies: [.MemoryCache, .AggressiveDiskCache])
+    static public let shared = ImageHelper(cacheStrategies: [.MemoryCache, .AggressiveDiskCache])
     static public let imagePrefetcher = ImagePrefetcher(destination: .diskCache)
     
     private let tokenManager: LoginTokenManager
@@ -27,30 +27,57 @@ public final class ImageHelper {
         isResumableDataEnabled: Bool = true,
         isRateLimiterEnabled: Bool = true,
         isProgressiveDecodingEnabled: Bool = true,
-        cacheStragies: [CacheStrategy]) {
-            
-            self.tokenManager = LoginTokenManager()
-            
-            var configuration = ImagePipeline.shared.configuration
-            configuration.isDecompressionEnabled = isDecompressionEnabled
-            configuration.isTaskCoalescingEnabled = isTaskCoalescingEnabled
-            configuration.isResumableDataEnabled = isResumableDataEnabled
-            configuration.isRateLimiterEnabled = isRateLimiterEnabled
-            
-            configuration.isProgressiveDecodingEnabled = isProgressiveDecodingEnabled
-            configuration.isStoringPreviewsInMemoryCache = isProgressiveDecodingEnabled
-            
-            guard !cacheStragies.isEmpty else { return }
-            
-            configuration.imageCache = cacheStragies.contains(.MemoryCache) ? ImageCache.shared : nil
-            
-            let dataLoadConfiguration = DataLoader.defaultConfiguration
-            dataLoadConfiguration.urlCache = cacheStragies.contains(.HTTPDiskCache) ? DataLoader.sharedUrlCache : nil
-            configuration.dataLoader = DataLoader(configuration: dataLoadConfiguration)
-            configuration.dataCache = cacheStragies.contains(.AggressiveDiskCache) ? try? DataCache(name: "com.scoopme.dataCache") : nil
-            
-            self.pipeline = ImagePipeline(configuration: configuration)
+        cacheStrategies: [CacheStrategy],
+        memoryCacheLimit: Int = 100 * 1024 * 1024,
+        diskCacheLimit: Int = 200 * 1024 * 1024,
+        httpCacheMemoryLimit: Int = 50 * 1024 * 1024,
+        httpCacheDiskLimit: Int = 150 * 1024 * 1024
+    ) {
+        
+        self.tokenManager = LoginTokenManager()
+        
+        var configuration = ImagePipeline.shared.configuration
+        configuration.isDecompressionEnabled = isDecompressionEnabled
+        configuration.isTaskCoalescingEnabled = isTaskCoalescingEnabled
+        configuration.isResumableDataEnabled = isResumableDataEnabled
+        configuration.isRateLimiterEnabled = isRateLimiterEnabled
+        
+        configuration.isProgressiveDecodingEnabled = isProgressiveDecodingEnabled
+        configuration.isStoringPreviewsInMemoryCache = isProgressiveDecodingEnabled
+        
+        guard !cacheStrategies.isEmpty else { return }
+        
+        // 메모리 캐시 설정
+        if cacheStrategies.contains(.MemoryCache) {
+            let imageCache = ImageCache()
+            imageCache.costLimit = memoryCacheLimit
+            imageCache.countLimit = 1000 // 최대 1000개 이미지
+            configuration.imageCache = imageCache
         }
+        
+        // HTTP 캐시 및 디스크 캐시 설정
+        let dataLoadConfiguration = DataLoader.defaultConfiguration
+        
+        if cacheStrategies.contains(.HTTPDiskCache) {
+            let urlCache = URLCache(
+                memoryCapacity: httpCacheMemoryLimit,
+                diskCapacity: httpCacheDiskLimit,
+                directory: nil
+            )
+            dataLoadConfiguration.urlCache = urlCache
+        }
+        
+        configuration.dataLoader = DataLoader(configuration: dataLoadConfiguration)
+        
+        // Aggressive 디스크 캐시 설정
+        if cacheStrategies.contains(.AggressiveDiskCache) {
+            let dataCache = try? DataCache(name: "com.scoopme.dataCache")
+            dataCache?.sizeLimit = diskCacheLimit
+            configuration.dataCache = dataCache
+        }
+        
+        self.pipeline = ImagePipeline(configuration: configuration)
+    }
     
     private init() {
         self.tokenManager = LoginTokenManager()
