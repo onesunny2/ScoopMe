@@ -125,9 +125,9 @@ public final class LoginManager: NSObject, UserServiceProtocol {
     public func logout() async -> Bool {
         do {
             let value = LoginURL.logout(access: accessToken)
-            let _ = try await callEmptyRequest(value)
+            let result = try await callEmptyRequest(value)
             
-            Log.debug("✅ 로그아웃 성공")
+            Log.debug("✅ 로그아웃 성공: \(result.statusCode.description)")
             return true
         } catch {
             Log.debug("❎ 로그아웃 실패: \(error)")
