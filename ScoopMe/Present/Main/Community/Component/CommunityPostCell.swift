@@ -68,14 +68,29 @@ extension CommunityPostCell {
             
             Spacer()
             
-            if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
-                Image(.messageFill)
-                    .basicImage(width: 16, color: .scmGray15)
-                    .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
-                    .asButton {
+            Menu {
+                if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
+                    Button(StringLiterals.chat.string) {
                         tappedMessage?(post.creator)
                     }
+                }
+                
+                Button(StringLiterals.delete.string) {
+                    Log.debug("🔗 삭제하기 버튼 탭탭")
+                }
+            } label: {
+                Image(.ellipsis)
+                    .basicImage(width: 16, color: .scmGray90)
             }
+      
+//            if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
+//                Image(.messageFill)
+//                    .basicImage(width: 16, color: .scmGray15)
+//                    .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
+//                    .asButton {
+//                        tappedMessage?(post.creator)
+//                    }
+//            }
         }
         .frame(height: 32)
     }
@@ -193,6 +208,16 @@ extension CommunityPostCell {
                 imageUrl: post.storeInfo.image
             )
         )
+    }
+}
+
+// MARK: StringLiterals
+private enum StringLiterals: String {
+    case delete = "삭제하기"
+    case chat = "채팅하기"
+    
+    var string: String {
+        return self.rawValue
     }
 }
 
