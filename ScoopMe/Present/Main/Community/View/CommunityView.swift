@@ -32,6 +32,9 @@ struct CommunityView: View {
     @State private var opponentName: String = ""
     @State private var opponentID: String = ""
     
+    @State private var isPostDeleted: Bool = false
+    @State private var deletePostID: String = ""
+    
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
         self.chatListRepository = chatListRepository
@@ -78,6 +81,15 @@ struct CommunityView: View {
                     )
                 }
             }
+            .showAlert(
+                isPresented: $isPostDeleted,
+                title: "삭제",
+                message: "해당 포스트를 삭제하시겠습니까?",
+                buttonTitle: nil) {
+                    Task {
+                        await deletePost(postID: deletePostID)
+                    }
+                }
         }
     }
 }
@@ -146,21 +158,26 @@ extension CommunityView {
                         Rectangle()
                             .fill(.scmBrightSprout)
                             .frame(height: 1)
+                        
                         CommunityPostCell(
-                            post: post
-                        ) { creator in
-                            opponentID = creator.id
-                            opponentName = creator.nickname
-                            Log.debug("🔗 상대방이름: \(opponentName)", "상대방ID: \(opponentID)")
-                            
-                            Task {
-                                let success = await fetchRoomID()
+                            post: post,
+                            tappedMessage: { creator in
+                                opponentID = creator.id
+                                opponentName = creator.nickname
+                                Log.debug("🔗 상대방이름: \(opponentName)", "상대방ID: \(opponentID)")
                                 
-                                if success {
-                                    isMessageOpened = true
+                                Task {
+                                    let success = await fetchRoomID()
+                                    
+                                    if success {
+                                        isMessageOpened = true
+                                    }
                                 }
-                            }
-                        }
+                            },
+                            tappedDelete: { postID in
+                                isPostDeleted = true
+                                deletePostID = postID
+                            })
                         .padding(.vertical, 12)
                         .onAppear {
                             if (post.postID == posts.last?.postID) && cursorID != "0" {
@@ -259,6 +276,22 @@ extension CommunityView {
             return false
         }
     }
+    
+    // 포스트 삭제
+    private func deletePost(postID: String) async {
+        do {
+            try await repository.deleteCommunityPost(postID: postID)
+            
+            guard let index = posts.firstIndex(where: {
+                $0.postID == postID
+            }) else { return }
+            
+            posts.remove(at: index)  // 해당 포스트 삭제!
+            
+        } catch {
+            Log.error("❌ 포스트 삭제 실패: \(error)")
+        }
+    }
 }
 
 // MARK: StringLiterals
@@ -277,4 +310,4 @@ private enum StringLiterals: String {
 #Preview {
     CommunityView(repository: DIContainer.shared.communityPostRepository, chatListRepository: DIContainer.shared.chatListRepository)
 }
- 
+
