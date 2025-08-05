@@ -19,6 +19,10 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
     public let loginTokenManager: LoginTokenManager
     public let network: SCMNetworkImpl
     
+    private var accessToken: String {
+        return loginTokenManager.fetchToken(.accessToken)
+    }
+    
     public init() {
         self.locationManager = LocationManager()
         self.loginTokenManager = LoginTokenManager()
@@ -31,7 +35,6 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         next: String? = nil
     ) async throws -> postForPagination {
         
-        let accessToken = loginTokenManager.fetchToken(.accessToken)
         let geolocationPost = GeolocationPost(
             latitude: "\(locationManager.currentLocation.coordinate.latitude)",
             longitude: "\(locationManager.currentLocation.coordinate.longitude)",
@@ -89,6 +92,13 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         Log.debug("🔗 현재 포스트리스트: \(entities)", "🔗 다음커서: \(nextCursor)")
         
         return (entities, nextCursor)
+    }
+    
+    public func deleteCommunityPost(postID: String) async throws {
+        let value = CommunityURL.deleteCommunityPost(access: accessToken, postID: postID)
+        let result = try await callEmptyRequest(value)
+        
+        Log.debug("✅ 삭제 완료: \(result.statusCode.description)")
     }
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {

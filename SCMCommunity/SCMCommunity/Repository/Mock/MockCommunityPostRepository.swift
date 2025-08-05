@@ -186,6 +186,10 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
         ], "")
     }
     
+    public func deleteCommunityPost(postID: String) async throws {
+        
+    }
+    
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
     }

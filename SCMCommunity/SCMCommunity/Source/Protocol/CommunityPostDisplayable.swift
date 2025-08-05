@@ -18,9 +18,11 @@ public protocol CommunityPostDisplayable: AnyObject {
     var network: SCMNetworkImpl { get }
     
     func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination
+    func deleteCommunityPost(postID: String) async throws
     func postStoreLikeStatus(store id: String, like status: Bool) async throws
     
     func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T>
+    func callEmptyRequest(_ value: CommunityURL) async throws -> HTTPResponse<EmptyResponse>
     func checkRefreshToken(complete: @escaping () async throws -> ()) async
 }
 
@@ -39,6 +41,20 @@ extension CommunityPostDisplayable {
             .addHeaders(value.headers)
         
         return try await network.fetchData(request, T.self)
+    }
+    
+    public func callEmptyRequest(_ value: CommunityURL) async throws -> HTTPResponse<EmptyResponse> {
+        let request = HTTPRequest(
+            scheme: .http,
+            method: value.method,
+            successCodes: [200] // 200 OK
+        )
+            .addBaseURL(value.baseURL)
+            .addPath(value.path)
+            .addJSONBody(value.jsonBody)
+            .addHeaders(value.headers)
+        
+        return try await network.fetchEmptyData(request)
     }
     
     public func checkRefreshToken(complete: @escaping () async throws -> ()) async {

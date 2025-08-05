@@ -12,6 +12,7 @@ public enum CommunityURL {
     case fileUpload(access: String, files: [FileData])
     case postUpload(access: String, value: PostContent)
     case getCommunityPost(access: String, value: GeolocationPost)
+    case deleteCommunityPost(access: String, postID: String)
     
     var baseURL: String {
         return Secret.baseURL
@@ -21,6 +22,8 @@ public enum CommunityURL {
         switch self {
         case .getCommunityPost:
             return .get
+        case .deleteCommunityPost:
+            return .delete
         default:
             return .post
         }
@@ -31,6 +34,8 @@ public enum CommunityURL {
         case .fileUpload: "/v1/posts/files"
         case .postUpload: "/v1/posts"
         case .getCommunityPost: "/v1/posts/geolocation"
+        case let .deleteCommunityPost(_, postID):
+            "/v1/posts/\(postID)"
         }
     }
     
@@ -102,6 +107,12 @@ public enum CommunityURL {
                 "Authorization": access
             ]
         case let .getCommunityPost(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .deleteCommunityPost(access, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
