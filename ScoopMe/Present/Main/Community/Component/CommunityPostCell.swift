@@ -178,9 +178,8 @@ extension CommunityPostCell {
                         .basicText(.PTTitle3, .scmGray90)
                 }
             }
-            
-            Text(post.postContent)
-                .basicText(.PTBody6, .scmGray60)
+        
+            ExpandableTextView(text: post.postContent)
             
             storeInfoView
         }
