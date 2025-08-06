@@ -185,14 +185,24 @@ extension CommunityPostCell {
                 
                 HStack(alignment: .center, spacing: 2) {
                     Image(.likeFill)
-                        .basicImage(width: 20, color: .scmBrightForsythia)
+                        .basicImage(width: 30, color: .scmBrightForsythia)
                     Text("\(post.likeCount)개")
                         .basicText(.PTTitle3, .scmGray90)
                 }
                 
+                HStack(alignment: .center) {
+                    Image(.message)
+                        .basicImage(width: 22, color: .scmGray90)
+                    Text("\(post.comments.count)")
+                        .basicText(.PTTitle3, .scmGray90)
+                }
+                .asButton {
+                    Log.debug("🔗 댓글 아이콘 탭탭")
+                }
+                
                 HStack(alignment: .center, spacing: 2) {
                     Image(.distance)
-                        .basicImage(width: 20, color: .scmBlackSprout)
+                        .basicImage(width: 28, color: .scmBlackSprout)
                     Text("\(post.distance)m")
                         .basicText(.PTTitle3, .scmGray90)
                 }
