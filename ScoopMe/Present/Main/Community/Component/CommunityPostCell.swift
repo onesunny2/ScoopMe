@@ -24,16 +24,19 @@ struct CommunityPostCell: View {
     
     private var tappedMessage: ((Creator) -> Void)?
     private var tappedDelete: ((String) -> Void)?
+    private var tappedEdit: ((String) -> Void)?
     
     init(
         post: CommunityPostEntity,
         tappedMessage: ((Creator) -> Void)?,
-        tappedDelete: ((String) -> Void)?
+        tappedDelete: ((String) -> Void)?,
+        tappedEdit: ((String) -> Void)?
     ) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
         self.tappedMessage = tappedMessage
         self.tappedDelete = tappedDelete
+        self.tappedEdit = tappedEdit
     }
     
     var body: some View {
@@ -75,10 +78,10 @@ extension CommunityPostCell {
                 if post.creator.id == UserdefaultsValues.savedUserID.stringValue {
                     Button(StringLiterals.edit.string) {
                         Log.debug("🔗 수정하기 버튼 탭탭")
+                        tappedEdit?(post.postContent)
                     }
                     
                     Button(StringLiterals.delete.string) {
-                        Log.debug("🔗 삭제하기 버튼 탭탭")
                         tappedDelete?(post.postID)
                     }
                 }

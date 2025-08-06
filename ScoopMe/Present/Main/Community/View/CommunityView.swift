@@ -32,8 +32,11 @@ struct CommunityView: View {
     @State private var opponentName: String = ""
     @State private var opponentID: String = ""
     
+    // 게시글 수정, 삭제
     @State private var isPostDeleted: Bool = false
     @State private var deletePostID: String = ""
+    @State private var isPostEdited: Bool = false
+    @State private var editPostID: String = ""
     
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
@@ -80,6 +83,11 @@ struct CommunityView: View {
                         opponentName: $opponentName
                     )
                 }
+            }
+            .sheet(isPresented: $isPostEdited) {
+                EditPostContentView()
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
             .showAlert(
                 isPresented: $isPostDeleted,
@@ -177,6 +185,9 @@ extension CommunityView {
                             tappedDelete: { postID in
                                 isPostDeleted = true
                                 deletePostID = postID
+                            },
+                            tappedEdit: { content in
+                                isPostEdited = true
                             })
                         .padding(.vertical, 12)
                         .onAppear {
