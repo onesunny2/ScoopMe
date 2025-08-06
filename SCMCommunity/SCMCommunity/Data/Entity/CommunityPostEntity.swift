@@ -10,8 +10,8 @@ import Foundation
 public struct CommunityPostEntity: Hashable {
     public let creator: Creator
     public let postID: String
-    public let postTitle: String
-    public let postContent: String
+    public var postTitle: String
+    public var postContent: String
     public let distance: Int
     public var likeCount: Int
     public var likeStatus: Bool

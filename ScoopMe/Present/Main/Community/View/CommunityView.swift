@@ -87,9 +87,21 @@ struct CommunityView: View {
                 }
             }
             .sheet(isPresented: $isPostEdited) {
-                EditPostContentView(post: $editPost)
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
+                EditPostContentView(
+                    post: $editPost,
+                    isEditCompleted: $isEditCompleted,
+                    iseditFailed: $isEditFailed
+                ) { newPost in
+                    Task {
+                        await editPost(postID: editPost?.postID ?? "", content: newPost)
+                    }
+                } tappedResave: { newPost in
+                    Task {
+                        await editPost(postID: editPost?.postID ?? "", content: newPost)
+                    }
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             }
             .showAlert(
                 isPresented: $isPostDeleted,
@@ -304,6 +316,27 @@ extension CommunityView {
             
         } catch {
             Log.error("❌ 포스트 삭제 실패: \(error)")
+            isEditFailed = true
+        }
+    }
+    
+    // 포스트 수정
+    private func editPost(
+        postID: String,
+        content: EditContent
+    ) async {
+        do {
+            try await repository.editContents(postID: postID, content: content)
+            
+            // 여기서 수정한 게시글 데이터 업데이트 해줘야 함!
+            guard let index = posts.firstIndex(where: { $0.postID == postID }) else { return }
+            posts[index].postTitle = content.title
+            posts[index].postContent = content.content
+            
+            isEditCompleted = true
+        } catch {
+            Log.error("❌ 포스트 수정 실패: \(error)")
+            isEditFailed = true
         }
     }
 }
@@ -314,7 +347,7 @@ private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case timelineTitle = "포스트"
     case distance = "범위"
-    case noResults = "조건에 맞는 포스트가 없습니다 :<"
+    case noResults = "조건에 맞는 포스트가 없습니다"
     
     var text: String {
         return self.rawValue
