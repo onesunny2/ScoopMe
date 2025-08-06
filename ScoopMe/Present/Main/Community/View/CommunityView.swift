@@ -36,7 +36,7 @@ struct CommunityView: View {
     @State private var isPostDeleted: Bool = false
     @State private var deletePostID: String = ""
     @State private var isPostEdited: Bool = false
-    @State private var editPostID: String = ""
+    @State private var editPost: CommunityPostEntity? = nil
     
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
@@ -85,7 +85,7 @@ struct CommunityView: View {
                 }
             }
             .sheet(isPresented: $isPostEdited) {
-                EditPostContentView()
+                EditPostContentView(post: $editPost)
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
@@ -186,8 +186,9 @@ extension CommunityView {
                                 isPostDeleted = true
                                 deletePostID = postID
                             },
-                            tappedEdit: { content in
+                            tappedEdit: { post in
                                 isPostEdited = true
+                                editPost = post
                             })
                         .padding(.vertical, 12)
                         .onAppear {
