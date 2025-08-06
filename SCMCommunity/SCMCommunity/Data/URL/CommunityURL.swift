@@ -13,6 +13,7 @@ public enum CommunityURL {
     case postUpload(access: String, value: PostContent)
     case getCommunityPost(access: String, value: GeolocationPost)
     case deleteCommunityPost(access: String, postID: String)
+    case editCommunityPost(access: String, postID: String, content: EditContent)
     
     var baseURL: String {
         return Secret.baseURL
@@ -24,6 +25,8 @@ public enum CommunityURL {
             return .get
         case .deleteCommunityPost:
             return .delete
+        case .editCommunityPost:
+            return .put
         default:
             return .post
         }
@@ -35,6 +38,8 @@ public enum CommunityURL {
         case .postUpload: "/v1/posts"
         case .getCommunityPost: "/v1/posts/geolocation"
         case let .deleteCommunityPost(_, postID):
+            "/v1/posts/\(postID)"
+        case let .editCommunityPost(_, postID, _):
             "/v1/posts/\(postID)"
         }
     }
@@ -66,6 +71,11 @@ public enum CommunityURL {
                 "latitude": value.latitude,
                 "longitude": value.longitude,
                 "files": value.files
+            ]
+        case let .editCommunityPost(_, _, content):
+            return [
+                "title": content.title,
+                "content": content.content
             ]
         default: return nil
         }
@@ -113,6 +123,12 @@ public enum CommunityURL {
                 "Authorization": access
             ]
         case let .deleteCommunityPost(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .editCommunityPost(access, _, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
