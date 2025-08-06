@@ -190,6 +190,10 @@ public final class MockCommunityPostRepository: CommunityPostDisplayable {
         
     }
     
+    public func editContents(postID: String, content: EditContent) async throws {
+        
+    }
+    
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
     }

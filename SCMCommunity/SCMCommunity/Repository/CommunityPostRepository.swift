@@ -101,6 +101,17 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         Log.debug("✅ 삭제 완료: \(result.statusCode.description)")
     }
     
+    public func editContents(
+        postID: String,
+        content: EditContent
+    ) async throws {
+        
+        let value = CommunityURL.editCommunityPost(access: accessToken, postID: postID, content: content)
+        _ = try await callRequest(value, type: PostResponseDTO.self)
+        
+        Log.debug("✅ 포스트 수정 성공")
+    }
+    
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
     }

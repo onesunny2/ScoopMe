@@ -19,6 +19,7 @@ public protocol CommunityPostDisplayable: AnyObject {
     
     func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination
     func deleteCommunityPost(postID: String) async throws
+    func editContents(postID: String, content: EditContent) async throws
     func postStoreLikeStatus(store id: String, like status: Bool) async throws
     
     func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T>
