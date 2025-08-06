@@ -70,6 +70,7 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
             let distance = locationManager.currentLocation.intDistanceInM(from: storeLocation)
             let files = response.files.map { Secret.baseURL + "/v1" + $0 }
             let createdDate = Date.from(iso8601String: response.createdAt)
+            let comments = try await getPostComment(postID: response.postId)
             
             let entity: CommunityPostEntity = CommunityPostEntity(
                 creator: creator,
@@ -81,7 +82,8 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
                 likeStatus: response.isLike,
                 mediaFiles: files,
                 uploadTime: createdDate?.timeAgoFromNow() ?? "",
-                storeInfo: storeInfo
+                storeInfo: storeInfo,
+                comments: comments
             )
             
             entities.append(entity)
@@ -114,5 +116,14 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
     
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
+    }
+}
+
+extension CommunityPostRepository {
+    private func getPostComment(postID: String) async throws -> [CommentResponseDTO] {
+        let value = CommunityURL.getPostDetail(access: accessToken, postID: postID)
+        let result = try await callRequest(value, type: PostResponseDTO.self)
+        
+        return result.response.comments
     }
 }
