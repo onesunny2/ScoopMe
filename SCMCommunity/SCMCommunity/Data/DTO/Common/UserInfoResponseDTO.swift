@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserInfoResponseDTO: Codable {
+public struct UserInfoResponseDTO: Hashable, Codable {
     let userId: String
     let nick: String
     let profileImage: String?

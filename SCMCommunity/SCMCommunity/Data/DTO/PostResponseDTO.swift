@@ -31,7 +31,7 @@ struct PostResponseDTO: Codable {
     }
 }
 
-struct CommentResponseDTO: Codable {
+public struct CommentResponseDTO: Hashable, Codable {
     let commentId: String
     let content: String
     let createdAt: String
@@ -44,7 +44,7 @@ struct CommentResponseDTO: Codable {
     }
 }
 
-struct ReplyDTO: Codable {
+public struct ReplyDTO: Hashable, Codable {
     let commentId: String
     let content: String
     let createdAt: String

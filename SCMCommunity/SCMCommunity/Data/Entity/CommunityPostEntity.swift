@@ -18,6 +18,7 @@ public struct CommunityPostEntity: Hashable {
     public let mediaFiles: [String]?
     public let uploadTime: String
     public let storeInfo: StoreInfo
+    public let comments: [CommentResponseDTO]
     
     public init(
         creator: Creator,
@@ -29,7 +30,8 @@ public struct CommunityPostEntity: Hashable {
         likeStatus: Bool,
         mediaFiles: [String]?,
         uploadTime: String,
-        storeInfo: StoreInfo
+        storeInfo: StoreInfo,
+        comments: [CommentResponseDTO]
     ) {
         self.creator = creator
         self.postID = postID
@@ -41,6 +43,7 @@ public struct CommunityPostEntity: Hashable {
         self.mediaFiles = mediaFiles
         self.uploadTime = uploadTime
         self.storeInfo = storeInfo
+        self.comments = comments
     }
 }
 

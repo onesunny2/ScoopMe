@@ -14,6 +14,8 @@ public enum CommunityURL {
     case getCommunityPost(access: String, value: GeolocationPost)
     case deleteCommunityPost(access: String, postID: String)
     case editCommunityPost(access: String, postID: String, content: EditContent)
+    case getPostDetail(access: String, postID: String)
+    case postComment(access: String, postID: String, comment: PostComment)
     
     var baseURL: String {
         return Secret.baseURL
@@ -21,7 +23,7 @@ public enum CommunityURL {
     
     var method: HTTPMethods {
         switch self {
-        case .getCommunityPost:
+        case .getCommunityPost, .getPostDetail:
             return .get
         case .deleteCommunityPost:
             return .delete
@@ -41,6 +43,10 @@ public enum CommunityURL {
             "/v1/posts/\(postID)"
         case let .editCommunityPost(_, postID, _):
             "/v1/posts/\(postID)"
+        case let .getPostDetail(_, postID):
+            "/v1/posts/\(postID)"
+        case let .postComment(_, postID, _):
+            "/v1/posts/\(postID)/comments"
         }
     }
     
@@ -76,6 +82,11 @@ public enum CommunityURL {
             return [
                 "title": content.title,
                 "content": content.content
+            ]
+        case let .postComment(_, _, comment):
+            return [
+                "parent_comment_id": comment.parentID,
+                "content": comment.content
             ]
         default: return nil
         }
@@ -129,6 +140,18 @@ public enum CommunityURL {
                 "Authorization": access
             ]
         case let .editCommunityPost(access, _, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .getPostDetail(access, _):
+            return [
+                "Content-Type": "application/json",
+                "SeSACKey": Secret.apiKey,
+                "Authorization": access
+            ]
+        case let .postComment(access, _, _):
             return [
                 "Content-Type": "application/json",
                 "SeSACKey": Secret.apiKey,
