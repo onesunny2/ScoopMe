@@ -37,6 +37,8 @@ struct CommunityView: View {
     @State private var deletePostID: String = ""
     @State private var isPostEdited: Bool = false
     @State private var editPost: CommunityPostEntity? = nil
+    @State private var isEditCompleted: Bool = false
+    @State private var isEditFailed: Bool = false
     
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
