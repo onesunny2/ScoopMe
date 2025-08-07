@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PostComment {
-    let parentID: String?
-    let content: String
+    public let parentID: String?
+    public let content: String
     
     public init(
         parentID: String?,
