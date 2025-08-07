@@ -107,6 +107,14 @@ struct CommunityView: View {
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $tappedComments) {
+                PostCommentView(
+                    imageHelper: DIContainer.shared.imageHelper,
+                    comments: postComments
+                )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
             .showAlert(
                 isPresented: $isPostDeleted,
                 title: "삭제",
