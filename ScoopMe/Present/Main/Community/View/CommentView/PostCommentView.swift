@@ -77,9 +77,10 @@ struct PostCommentView: View {
                 CommentCell(
                     imageHelper: imageHelper,
                     comment: comment,
-                    canReply: true,
-                    isEditing: $isEditing
-                )
+                    canReply: true
+                ) {
+                    isEditing = true
+                }
                 .padding(.vertical, 10)
             }
         }

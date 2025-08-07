@@ -18,8 +18,9 @@ struct CommentCell: View {
     private let imageHelper: ImageHelper
     private let comment: CommentResponseDTO
     private let canReply: Bool
+    private var tappedEdit: (() -> Void)?
     
-    @Binding var isEditing: Bool
+    @State private var isEditing: Bool = false
     
     private let profileSize: CGFloat = 50
     
@@ -27,12 +28,12 @@ struct CommentCell: View {
         imageHelper: ImageHelper,
         comment: CommentResponseDTO,
         canReply: Bool,
-        isEditing: Binding<Bool>
+        tappedEdit: (() -> Void)?
     ) {
         self.imageHelper = imageHelper
         self.comment = comment
         self.canReply = canReply
-        self._isEditing = isEditing
+        self.tappedEdit = tappedEdit
     }
     
     var body: some View {
@@ -107,6 +108,7 @@ struct CommentCell: View {
                     .basicText(.PTTitle6, .scmBlackSprout)
                     .asButton {
                         Log.debug("🔗 수정 탭탭")
+                        tappedEdit?()
                         isEditing = true
                         editingText = comment.content
                     }
@@ -152,6 +154,6 @@ private enum StringLiterals: String {
         imageHelper: DIContainer.shared.imageHelper,
         comment: comment,
         canReply: false,
-        isEditing: .constant(true)
+        tappedEdit: nil
     )
 }
