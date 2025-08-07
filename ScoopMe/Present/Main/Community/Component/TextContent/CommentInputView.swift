@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import SCMCommunity
 import SCMLogger
 
 struct CommentInputView: View {
     
     @Binding var textMessage: String
-    @Binding var sendStatus: Bool
+//    @Binding var sendStatus: Bool
     var focusBinding: FocusState<Bool>.Binding
+    var parentID: String?
+    var tappedUpload: ((PostComment) -> Void)?
     
     @State private var textHeight: CGFloat = 0
     
@@ -83,12 +86,10 @@ struct CommentInputView: View {
                             .basicImage(width: 25, color: textMessage.isEmpty ? .scmGray60 : .scmGray90)
                     }
                     .asButton({
-                        Log.debug("🔗 메시지 전송버튼 클릭")
+                        Log.debug("🔗 댓글 업로드 버튼 클릭")
                         
-                        if !textMessage.isEmpty {
-                            sendStatus = true
-                        }
-                        
+                        let comment = PostComment(parentID: parentID, content: textMessage)
+                        tappedUpload?(comment)
                     }, disabled: textMessage.isEmpty)
             }
             .padding(.vertical, 12)

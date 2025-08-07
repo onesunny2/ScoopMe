@@ -43,6 +43,7 @@ struct CommunityView: View {
     // 댓글
     @State private var tappedComments: Bool = false
     @State private var postComments: [CommentResponseDTO] = []
+    @State private var selectedPostID: String = ""
     
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
@@ -109,8 +110,10 @@ struct CommunityView: View {
             }
             .sheet(isPresented: $tappedComments) {
                 PostCommentView(
+                    commentRepository: DIContainer.shared.commentRepository,
                     imageHelper: DIContainer.shared.imageHelper,
-                    comments: postComments
+                    postID: $selectedPostID,
+                    comments: $postComments
                 )
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
@@ -218,7 +221,9 @@ extension CommunityView {
                             },
                             tappedComment: { post in
                                 tappedComments = true
+                                selectedPostID = post.postID
                                 postComments = post.comments
+                                Log.debug("댓글 달 게시물 id: \(post.postID)")
                             })
                         .padding(.vertical, 12)
                         .onAppear {

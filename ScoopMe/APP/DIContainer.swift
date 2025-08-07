@@ -33,6 +33,7 @@ final class DIContainer {
         
         self.communityPostRepository = CommunityPostRepository()
         self.createPostRepository = CreatePostRepository()
+        self.commentRepository = CommentRepository()
         
         self.paymentRepository = PaymentRepository()
         
@@ -70,6 +71,7 @@ final class DIContainer {
     /// SCMCommunity
     private(set) var communityPostRepository: CommunityPostDisplayable
     private(set) var createPostRepository: CreatePostDisplayable
+    private(set) var commentRepository: CommentDisplayable
     
     /// SCMPayment
     private(set) var paymentRepository: PaymentDisplayable

@@ -20,22 +20,19 @@ struct CommentCell: View {
     private let canReply: Bool
     
     @Binding var isEditing: Bool
-    @Binding var sendStatus: Bool
     
-    private let profileSize: CGFloat = 60
+    private let profileSize: CGFloat = 50
     
     init(
         imageHelper: ImageHelper,
         comment: CommentResponseDTO,
         canReply: Bool,
-        isEditing: Binding<Bool>,
-        sendStatus: Binding<Bool>
+        isEditing: Binding<Bool>
     ) {
         self.imageHelper = imageHelper
         self.comment = comment
         self.canReply = canReply
         self._isEditing = isEditing
-        self._sendStatus = sendStatus
     }
     
     var body: some View {
@@ -69,9 +66,9 @@ struct CommentCell: View {
         VStack(alignment: .leading, spacing: isEditing ? 0 : 8) {
             HStack(alignment: .center, spacing: 4) {
                 Text(comment.creator.nick)
-                    .basicText(.PTTitle7, .scmGray100)
+                    .basicText(.PTTitle3, .scmGray100)
                 Text(comment.createdAt.toRelativeTime())
-                    .basicText(.PTBody7, .scmGray60)
+                    .basicText(.PTTitle5, .scmGray60)
             }
             
             commentText
@@ -82,13 +79,12 @@ struct CommentCell: View {
     private var commentText: some View {
         if !isEditing {
             Text(comment.content)
-                .basicText(.PTBody7, .scmGray100)
+                .basicText(.PTTitle5, .scmGray100)
         }
         
         if isEditing {
             CommentInputView(
                 textMessage: $editingText,
-                sendStatus: $sendStatus,
                 focusBinding: $focusBinding
             )
         }
@@ -156,7 +152,6 @@ private enum StringLiterals: String {
         imageHelper: DIContainer.shared.imageHelper,
         comment: comment,
         canReply: false,
-        isEditing: .constant(true),
-        sendStatus: .constant(false)
+        isEditing: .constant(true)
     )
 }
