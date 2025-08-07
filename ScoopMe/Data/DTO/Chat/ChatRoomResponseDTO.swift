@@ -11,7 +11,7 @@ struct ChatRoomResponseDTO: Codable {
     let roomID: String
     let createdAt: String
     let updatedAt: String
-    let participants: [UserInfoResponseDTO]
+    let participants: [UserInfoResponseCoreDTO]
     let lastChat: ChatResponseDTO?
 
     enum CodingKeys: String, CodingKey {

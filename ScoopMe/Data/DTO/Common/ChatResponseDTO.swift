@@ -13,7 +13,7 @@ struct ChatResponseDTO: Codable {
     let content: String
     let createdAt: String
     let updatedAt: String
-    let sender: UserInfoResponseDTO
+    let sender: UserInfoResponseCoreDTO
     let files: [String]
 
     enum CodingKeys: String, CodingKey {
