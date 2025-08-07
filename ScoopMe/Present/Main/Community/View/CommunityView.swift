@@ -40,6 +40,10 @@ struct CommunityView: View {
     @State private var isEditCompleted: Bool = false
     @State private var isEditFailed: Bool = false
     
+    // 댓글
+    @State private var tappedComments: Bool = false
+    @State private var postComments: [CommentResponseDTO] = []
+    
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
         self.chatListRepository = chatListRepository
@@ -203,6 +207,10 @@ extension CommunityView {
                             tappedEdit: { post in
                                 isPostEdited = true
                                 editPost = post
+                            },
+                            tappedComment: { post in
+                                tappedComments = true
+                                postComments = post.comments
                             })
                         .padding(.vertical, 12)
                         .onAppear {
