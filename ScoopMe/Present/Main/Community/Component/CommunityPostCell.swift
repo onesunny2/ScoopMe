@@ -20,23 +20,26 @@ struct CommunityPostCell: View {
     private var secondWidth: CGFloat {
         return (UIScreen.main.bounds.size.width - 44) / 2
     }
-    private let post: CommunityPostEntity
+    private var post: CommunityPostEntity
     
     private var tappedMessage: ((Creator) -> Void)?
     private var tappedDelete: ((String) -> Void)?
     private var tappedEdit: ((CommunityPostEntity) -> Void)?
+    private var tappedComment: ((CommunityPostEntity) -> Void)?
     
     init(
         post: CommunityPostEntity,
         tappedMessage: ((Creator) -> Void)?,
         tappedDelete: ((String) -> Void)?,
-        tappedEdit: ((CommunityPostEntity) -> Void)?
+        tappedEdit: ((CommunityPostEntity) -> Void)?,
+        tappedComment: ((CommunityPostEntity) -> Void)?
     ) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
         self.tappedMessage = tappedMessage
         self.tappedDelete = tappedDelete
         self.tappedEdit = tappedEdit
+        self.tappedComment = tappedComment
     }
     
     var body: some View {
@@ -198,6 +201,7 @@ extension CommunityPostCell {
                 }
                 .asButton {
                     Log.debug("🔗 댓글 아이콘 탭탭")
+                    tappedComment?(post)
                 }
                 
                 HStack(alignment: .center, spacing: 2) {
