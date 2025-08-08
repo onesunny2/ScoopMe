@@ -24,6 +24,8 @@ struct PostCommentView: View {
     
     @State private var parentID: String? = nil
     @State private var failedUpload: Bool = false
+    @State private var failedEdit: Bool = false
+    @State private var willEditComment: CommentInfo? = nil
     
     init(
         commentRepository: CommentDisplayable,
@@ -58,6 +60,19 @@ struct PostCommentView: View {
                 await postNewComment(postID: postID, content: content)
             }
         }
+        .showAlert(
+            isPresented: $failedEdit,
+            title: StringLiterals.uploadFailedTitle.string,
+            message: StringLiterals.editFailedMessage.string,
+            buttonTitle: StringLiterals.uploadFailedButton.string
+        ) {
+            // 댓글 수정 재시도
+            Task {
+                guard let comment = willEditComment else { return }
+                await editComment(comment: comment)
+                isEditing = false
+            }
+        }
     }
     
     @ViewBuilder
@@ -76,11 +91,20 @@ struct PostCommentView: View {
             ForEach(comments, id: \.commentId) { comment in
                 CommentCell(
                     imageHelper: imageHelper,
+                    postID: $postID,
                     comment: comment,
-                    canReply: true
-                ) {
-                    isEditing = true
-                }
+                    canReply: true,
+                    tappedEdit: {
+                        isEditing = true
+                    },
+                    sendEditComment: { info in
+                        Task {
+                            willEditComment = info
+                            await editComment( comment: info)
+                            isEditing = false
+                        }
+                    }
+                )
                 .padding(.vertical, 10)
             }
         }
@@ -130,6 +154,21 @@ extension PostCommentView {
             failedUpload = true
         }
     }
+    
+    // 댓글 수정
+    private func editComment(comment: CommentInfo) async {
+        do {
+            let editedComment = try await commentRepository.editComment(comment: comment)
+            
+            guard let index = comments.firstIndex(where: { $0.commentId == comment.commentID }) else { return }
+            
+            comments[index] = editedComment
+            isEditing = false
+        } catch {
+            Log.error("❌ 댓글 수정 실패: \(error)")
+            failedEdit = true
+        }
+    }
 }
 
 // MARK: StringLiterals
@@ -138,6 +177,9 @@ private enum StringLiterals: String {
     case uploadFailedTitle = "실패"
     case uploadFailedMessage = "댓글 등록에 실패했습니다"
     case uploadFailedButton = "재시도"
+    case editFailedMessage = "댓글 수정에 실패했습니다"
+    case emptyTextTitle = "경고"
+    case emptyTextMessage = "댓글은 1자 이상 작성해주세요"
     
     var string: String {
         return self.rawValue

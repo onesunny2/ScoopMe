@@ -16,9 +16,11 @@ struct CommentCell: View {
     @FocusState private var focusBinding: Bool
     
     private let imageHelper: ImageHelper
+    @Binding var postID: String
     private let comment: CommentResponseDTO
     private let canReply: Bool
     private var tappedEdit: (() -> Void)?
+    private var sendEditComment: ((CommentInfo) -> Void)?
     
     @State private var isEditing: Bool = false
     
@@ -26,14 +28,18 @@ struct CommentCell: View {
     
     init(
         imageHelper: ImageHelper,
+        postID: Binding<String>,
         comment: CommentResponseDTO,
         canReply: Bool,
-        tappedEdit: (() -> Void)?
+        tappedEdit: (() -> Void)?,
+        sendEditComment: ((CommentInfo) -> Void)?
     ) {
         self.imageHelper = imageHelper
+        self._postID = postID
         self.comment = comment
         self.canReply = canReply
         self.tappedEdit = tappedEdit
+        self.sendEditComment = sendEditComment
     }
     
     var body: some View {
@@ -44,7 +50,7 @@ struct CommentCell: View {
         HStack(alignment: .top, spacing: 6) {
             profileImage
             
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: isEditing ? 8 : 16) {
                 commentInfo
                 commentButtons
             }
@@ -86,18 +92,38 @@ struct CommentCell: View {
         if isEditing {
             CommentInputView(
                 textMessage: $editingText,
-                focusBinding: $focusBinding
-            )
+                focusBinding: $focusBinding,
+                sendEditComment:  {
+                    // 수정된 댓글 정보 보내기
+                    let info = CommentInfo(
+                        postID: postID,
+                        commentID: comment.commentId,
+                        content: editingText
+                    )
+                    sendEditComment?(info)
+                    Task {
+                        try? await Task.sleep(for: .seconds(0.3))
+                        isEditing = false
+                    }
+                    
+                })
         }
     }
     
     private var commentButtons: some View {
         HStack(alignment: .center, spacing: 10) {
-            if canReply {
+            if canReply && !isEditing {
                 Text(StringLiterals.reply.string)
                     .basicText(.PTTitle6, .scmGray90)
                     .asButton {
                         Log.debug("🔗 답글달기 탭탭")
+                    }
+            } else if isEditing {
+                Text(StringLiterals.cancelReply.string)
+                    .basicText(.PTTitle6, .scmGray90)
+                    .asButton {
+                        Log.debug("🔗 수정취소 탭탭")
+                        isEditing = false
                     }
             }
             
@@ -128,6 +154,7 @@ private enum StringLiterals: String {
     case reply = "답글 달기"
     case edit = "수정"
     case delete = "삭제"
+    case cancelReply = "수정 취소"
     
     var string: String {
         return self.rawValue
@@ -152,8 +179,10 @@ private enum StringLiterals: String {
     
     CommentCell(
         imageHelper: DIContainer.shared.imageHelper,
+        postID: .constant(""),
         comment: comment,
         canReply: false,
-        tappedEdit: nil
+        tappedEdit: nil,
+        sendEditComment: nil
     )
 }

@@ -16,6 +16,7 @@ struct CommentInputView: View {
     var focusBinding: FocusState<Bool>.Binding
     var parentID: String?
     var tappedUpload: ((PostComment) -> Void)?
+    var sendEditComment: (() -> Void)?
     
     @State private var textHeight: CGFloat = 0
     
@@ -90,6 +91,8 @@ struct CommentInputView: View {
                         
                         let comment = PostComment(parentID: parentID, content: textMessage)
                         tappedUpload?(comment)
+                        
+                        sendEditComment?()
                     }, disabled: textMessage.isEmpty)
             }
             .padding(.vertical, 12)
