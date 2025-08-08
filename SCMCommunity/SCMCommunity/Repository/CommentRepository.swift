@@ -47,7 +47,11 @@ public final class CommentRepository: CommentDisplayable {
         return result.response
     }
     
-    public func deleteComment(postID: String, commentID: String) async throws {
+    public func deleteComment(comment: CommentInfo) async throws {
         
+        let value = CommentURL.deleteComment(access: accessToken, comment: comment)
+        let result = try await callEmptyRequest(value)
+        
+        Log.debug("✅ 댓글 삭제 성공: \(result.statusCode)")
     }
 }

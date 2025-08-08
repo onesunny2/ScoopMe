@@ -15,7 +15,7 @@ public protocol CommentDisplayable: AnyObject {
     
     func postComment(postID: String, content: PostComment) async throws -> CommentResponseDTO
     func editComment(comment: CommentInfo) async throws -> CommentResponseDTO
-    func deleteComment(postID: String, commentID: String) async throws
+    func deleteComment(comment: CommentInfo) async throws
     
     func callRequest<T: Decodable>(_ value: CommentURL, type: T.Type) async throws -> HTTPResponse<T>
     func callEmptyRequest(_ value: CommentURL) async throws -> HTTPResponse<EmptyResponse>
