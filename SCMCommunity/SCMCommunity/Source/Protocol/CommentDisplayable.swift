@@ -14,7 +14,7 @@ public protocol CommentDisplayable: AnyObject {
     var network: SCMNetworkImpl { get }
     
     func postComment(postID: String, content: PostComment) async throws -> CommentResponseDTO
-    func editComment(postID: String, content: CommentInfo) async throws
+    func editComment(comment: CommentInfo) async throws -> CommentResponseDTO
     func deleteComment(postID: String, commentID: String) async throws
     
     func callRequest<T: Decodable>(_ value: CommentURL, type: T.Type) async throws -> HTTPResponse<T>
