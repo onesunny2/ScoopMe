@@ -21,6 +21,7 @@ struct CommentCell: View {
     private let canReply: Bool
     private var tappedEdit: (() -> Void)?
     private var sendEditComment: ((CommentInfo) -> Void)?
+    private var tappedDelete: ((CommentInfo) -> Void)?
     
     @State private var isEditing: Bool = false
     
@@ -32,7 +33,8 @@ struct CommentCell: View {
         comment: CommentResponseDTO,
         canReply: Bool,
         tappedEdit: (() -> Void)?,
-        sendEditComment: ((CommentInfo) -> Void)?
+        sendEditComment: ((CommentInfo) -> Void)?,
+        tappedDelete: ((CommentInfo) -> Void)?
     ) {
         self.imageHelper = imageHelper
         self._postID = postID
@@ -40,6 +42,7 @@ struct CommentCell: View {
         self.canReply = canReply
         self.tappedEdit = tappedEdit
         self.sendEditComment = sendEditComment
+        self.tappedDelete = tappedDelete
     }
     
     var body: some View {
@@ -143,6 +146,12 @@ struct CommentCell: View {
                     .basicText(.PTTitle6, .scmBlackSprout)
                     .asButton {
                         Log.debug("🔗 삭제 탭탭")
+                        let willDeleteComment = CommentInfo(
+                            postID: postID,
+                            commentID: comment.commentId,
+                            content: nil
+                        )
+                        tappedDelete?(willDeleteComment)
                     }
             }
         }
@@ -183,6 +192,7 @@ private enum StringLiterals: String {
         comment: comment,
         canReply: false,
         tappedEdit: nil,
-        sendEditComment: nil
+        sendEditComment: nil,
+        tappedDelete: nil
     )
 }

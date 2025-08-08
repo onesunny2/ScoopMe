@@ -24,8 +24,11 @@ struct PostCommentView: View {
     
     @State private var parentID: String? = nil
     @State private var failedUpload: Bool = false
+    @State private var failedDelete: Bool = false
     @State private var failedEdit: Bool = false
     @State private var willEditComment: CommentInfo? = nil
+    @State private var isDeleted: Bool = false
+    @State private var willDeleteComment: CommentInfo? = nil
     
     init(
         commentRepository: CommentDisplayable,
@@ -73,6 +76,16 @@ struct PostCommentView: View {
                 isEditing = false
             }
         }
+        .showAlert(
+            isPresented: $isDeleted,
+            title: StringLiterals.deleteTitle.string,
+            message: StringLiterals.deleteMessage.string,
+            buttonTitle: nil) {
+                Task {
+                    guard let comment = willDeleteComment else { return }
+                    await deleteComment(comment: comment)
+                }
+            }
     }
     
     @ViewBuilder
@@ -103,6 +116,10 @@ struct PostCommentView: View {
                             await editComment( comment: info)
                             isEditing = false
                         }
+                    },
+                    tappedDelete: { info in
+                        willDeleteComment = info
+                        isDeleted = true
                     }
                 )
                 .padding(.vertical, 10)
@@ -135,6 +152,8 @@ struct PostCommentView: View {
                 }
             }
             .defaultHorizontalPadding()
+            .background(.scmGray45)
+            .ignoresSafeArea(.container, edges: .bottom)
         }
     }
 }
@@ -169,6 +188,20 @@ extension PostCommentView {
             failedEdit = true
         }
     }
+    
+    // 댓글 삭제
+    private func deleteComment(comment: CommentInfo) async {
+        do {
+            try await commentRepository.deleteComment(comment: comment)
+            
+            guard let index = comments.firstIndex(where: { $0.commentId == comment.commentID }) else { return }
+            
+            comments.remove(at: index)
+            
+        } catch {
+            Log.error("❌ 댓글 삭제 실패: \(error)")
+        }
+    }
 }
 
 // MARK: StringLiterals
@@ -178,8 +211,8 @@ private enum StringLiterals: String {
     case uploadFailedMessage = "댓글 등록에 실패했습니다"
     case uploadFailedButton = "재시도"
     case editFailedMessage = "댓글 수정에 실패했습니다"
-    case emptyTextTitle = "경고"
-    case emptyTextMessage = "댓글은 1자 이상 작성해주세요"
+    case deleteTitle = "삭제"
+    case deleteMessage = "이 댓글을 삭제하시겠습니까?"
     
     var string: String {
         return self.rawValue
