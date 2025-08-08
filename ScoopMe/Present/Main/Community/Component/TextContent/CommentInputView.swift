@@ -12,7 +12,6 @@ import SCMLogger
 struct CommentInputView: View {
     
     @Binding var textMessage: String
-//    @Binding var sendStatus: Bool
     var focusBinding: FocusState<Bool>.Binding
     var parentID: String?
     var tappedUpload: ((PostComment) -> Void)?
@@ -53,7 +52,7 @@ struct CommentInputView: View {
                     .frame(height: dynamicHeight)
                     .background(
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(Color.scmGray30)
+                            .fill(Color.scmGray15)
                     )
                     .focused(focusBinding)
                     .background(
@@ -80,7 +79,7 @@ struct CommentInputView: View {
                 
                 // 전송 버튼
                 Circle()
-                    .fill(textMessage.isEmpty ? Color.scmGray30 : Color.scmBrightForsythia)
+                    .fill(textMessage.isEmpty ? Color.scmGray15 : Color.scmBrightForsythia)
                     .frame(width: 40)
                     .overlay(alignment: .center) {
                         Image(.arrowUp)
