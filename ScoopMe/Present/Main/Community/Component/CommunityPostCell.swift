@@ -20,17 +20,26 @@ struct CommunityPostCell: View {
     private var secondWidth: CGFloat {
         return (UIScreen.main.bounds.size.width - 44) / 2
     }
-    private let post: CommunityPostEntity
+    private var post: CommunityPostEntity
     
     private var tappedMessage: ((Creator) -> Void)?
+    private var tappedDelete: ((String) -> Void)?
+    private var tappedEdit: ((CommunityPostEntity) -> Void)?
+    private var tappedComment: ((CommunityPostEntity) -> Void)?
     
     init(
         post: CommunityPostEntity,
-        tappedMessage: ((Creator) -> Void)?
+        tappedMessage: ((Creator) -> Void)?,
+        tappedDelete: ((String) -> Void)?,
+        tappedEdit: ((CommunityPostEntity) -> Void)?,
+        tappedComment: ((CommunityPostEntity) -> Void)?
     ) {
         self.imageHelper = DIContainer.shared.imageHelper
         self.post = post
         self.tappedMessage = tappedMessage
+        self.tappedDelete = tappedDelete
+        self.tappedEdit = tappedEdit
+        self.tappedComment = tappedComment
     }
     
     var body: some View {
@@ -68,13 +77,26 @@ extension CommunityPostCell {
             
             Spacer()
             
-            if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
-                Image(.messageFill)
-                    .basicImage(width: 16, color: .scmGray15)
-                    .strokeRoundBackground(.scmBrightForsythia, .scmGray30, 1, 8)
-                    .asButton {
+            Menu {
+                if post.creator.id == UserdefaultsValues.savedUserID.stringValue {
+                    Button(StringLiterals.edit.string) {
+                        Log.debug("🔗 수정하기 버튼 탭탭")
+                        tappedEdit?(post)
+                    }
+                    
+                    Button(StringLiterals.delete.string) {
+                        tappedDelete?(post.postID)
+                    }
+                }
+                
+                if post.creator.id != UserdefaultsValues.savedUserID.stringValue {
+                    Button(StringLiterals.chat.string) {
                         tappedMessage?(post.creator)
                     }
+                }
+            } label: {
+                Image(.ellipsis)
+                    .basicImage(width: 16, color: .scmGray90)
             }
         }
         .frame(height: 32)
@@ -166,21 +188,31 @@ extension CommunityPostCell {
                 
                 HStack(alignment: .center, spacing: 2) {
                     Image(.likeFill)
-                        .basicImage(width: 20, color: .scmBrightForsythia)
+                        .basicImage(width: 30, color: .scmBrightForsythia)
                     Text("\(post.likeCount)개")
                         .basicText(.PTTitle3, .scmGray90)
                 }
                 
+                HStack(alignment: .center) {
+                    Image(.message)
+                        .basicImage(width: 22, color: .scmGray90)
+                    Text("\(post.comments.count)")
+                        .basicText(.PTTitle3, .scmGray90)
+                }
+                .asButton {
+                    Log.debug("🔗 댓글 아이콘 탭탭")
+                    tappedComment?(post)
+                }
+                
                 HStack(alignment: .center, spacing: 2) {
                     Image(.distance)
-                        .basicImage(width: 20, color: .scmBlackSprout)
+                        .basicImage(width: 28, color: .scmBlackSprout)
                     Text("\(post.distance)m")
                         .basicText(.PTTitle3, .scmGray90)
                 }
             }
-            
-            Text(post.postContent)
-                .basicText(.PTBody6, .scmGray60)
+        
+            ExpandableTextView(text: post.postContent)
             
             storeInfoView
         }
@@ -197,38 +229,13 @@ extension CommunityPostCell {
     }
 }
 
-#Preview {
+// MARK: StringLiterals
+private enum StringLiterals: String {
+    case delete = "삭제하기"
+    case edit = "수정하기"
+    case chat = "채팅하기"
     
-    let creator = Creator(
-        id: "65c9aa6932b0964405117d97",
-        nickname: "이원선",
-        profileImage: Secret.baseURL + "/v1/data/stores/cafe_main_1730000000000.jpg"
-    )
-    
-    let store = StoreInfo(
-        id: "670bcd66539a670e42b2a3d8",
-        category: "커피",
-        name: "츄르르르",
-        image: Secret.baseURL + "/v1/data/stores/cafe_main_1730000000000.jpg",
-        address: "짜몽시 고양동 숨숨리0130, 730호"
-    )
-    
-    let entity = CommunityPostEntity(
-        creator: creator,
-        postID: "670bcd66539a670e42b2a3d8",
-        postTitle: "츄르 가득한 오후, 숨숨리에서",
-        postContent: "좁은 골목 끝에 숨어있던 작은 츄하우스. 새싹처럼 피어나는 비릿한 츄르 스틱. 아아 목욕은 하기 싫지만, 목욕하고 주는 츄르가 너무 맛있어. 추억의 그 츄르가 떠오르게 하는 츄르르르로 어서오세요 :3",
-        distance: 222,
-        likeCount: 22,
-        likeStatus: false,
-        mediaFiles: [Secret.baseURL + "/v1/data/stores/cafe_main_1730000000000.jpg"],
-        uploadTime: "1시간 전",
-        storeInfo: store
-    )
-    
-    CommunityPostCell(
-        post: entity,
-        tappedMessage: nil
-    )
-        .defaultHorizontalPadding()
+    var string: String {
+        return self.rawValue
+    }
 }

@@ -32,6 +32,19 @@ struct CommunityView: View {
     @State private var opponentName: String = ""
     @State private var opponentID: String = ""
     
+    // 게시글 수정, 삭제
+    @State private var isPostDeleted: Bool = false
+    @State private var deletePostID: String = ""
+    @State private var isPostEdited: Bool = false
+    @State private var editPost: CommunityPostEntity? = nil
+    @State private var isEditCompleted: Bool = false
+    @State private var isEditFailed: Bool = false
+    
+    // 댓글
+    @State private var tappedComments: Bool = false
+    @State private var postComments: [CommentResponseDTO] = []
+    @State private var selectedPostID: String = ""
+    
     init(repository: CommunityPostDisplayable, chatListRepository: ChatListDisplayable) {
         self.repository = repository
         self.chatListRepository = chatListRepository
@@ -78,6 +91,42 @@ struct CommunityView: View {
                     )
                 }
             }
+            .sheet(isPresented: $isPostEdited) {
+                EditPostContentView(
+                    post: $editPost,
+                    isEditCompleted: $isEditCompleted,
+                    iseditFailed: $isEditFailed
+                ) { newPost in
+                    Task {
+                        await editPost(postID: editPost?.postID ?? "", content: newPost)
+                    }
+                } tappedResave: { newPost in
+                    Task {
+                        await editPost(postID: editPost?.postID ?? "", content: newPost)
+                    }
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $tappedComments) {
+                PostCommentView(
+                    commentRepository: DIContainer.shared.commentRepository,
+                    imageHelper: DIContainer.shared.imageHelper,
+                    postID: $selectedPostID,
+                    comments: $postComments
+                )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
+            .showAlert(
+                isPresented: $isPostDeleted,
+                title: "삭제",
+                message: "해당 포스트를 삭제하시겠습니까?",
+                buttonTitle: nil) {
+                    Task {
+                        await deletePost(postID: deletePostID)
+                    }
+                }
         }
     }
 }
@@ -146,21 +195,36 @@ extension CommunityView {
                         Rectangle()
                             .fill(.scmBrightSprout)
                             .frame(height: 1)
+                        
                         CommunityPostCell(
-                            post: post
-                        ) { creator in
-                            opponentID = creator.id
-                            opponentName = creator.nickname
-                            Log.debug("🔗 상대방이름: \(opponentName)", "상대방ID: \(opponentID)")
-                            
-                            Task {
-                                let success = await fetchRoomID()
+                            post: post,
+                            tappedMessage: { creator in
+                                opponentID = creator.id
+                                opponentName = creator.nickname
+                                Log.debug("🔗 상대방이름: \(opponentName)", "상대방ID: \(opponentID)")
                                 
-                                if success {
-                                    isMessageOpened = true
+                                Task {
+                                    let success = await fetchRoomID()
+                                    
+                                    if success {
+                                        isMessageOpened = true
+                                    }
                                 }
-                            }
-                        }
+                            },
+                            tappedDelete: { postID in
+                                isPostDeleted = true
+                                deletePostID = postID
+                            },
+                            tappedEdit: { post in
+                                isPostEdited = true
+                                editPost = post
+                            },
+                            tappedComment: { post in
+                                tappedComments = true
+                                selectedPostID = post.postID
+                                postComments = post.comments
+                                Log.debug("댓글 달 게시물 id: \(post.postID)")
+                            })
                         .padding(.vertical, 12)
                         .onAppear {
                             if (post.postID == posts.last?.postID) && cursorID != "0" {
@@ -259,6 +323,43 @@ extension CommunityView {
             return false
         }
     }
+    
+    // 포스트 삭제
+    private func deletePost(postID: String) async {
+        do {
+            try await repository.deleteCommunityPost(postID: postID)
+            
+            guard let index = posts.firstIndex(where: {
+                $0.postID == postID
+            }) else { return }
+            
+            posts.remove(at: index)  // 해당 포스트 삭제!
+            
+        } catch {
+            Log.error("❌ 포스트 삭제 실패: \(error)")
+            isEditFailed = true
+        }
+    }
+    
+    // 포스트 수정
+    private func editPost(
+        postID: String,
+        content: EditContent
+    ) async {
+        do {
+            try await repository.editContents(postID: postID, content: content)
+            
+            // 여기서 수정한 게시글 데이터 업데이트 해줘야 함!
+            guard let index = posts.firstIndex(where: { $0.postID == postID }) else { return }
+            posts[index].postTitle = content.title
+            posts[index].postContent = content.content
+            
+            isEditCompleted = true
+        } catch {
+            Log.error("❌ 포스트 수정 실패: \(error)")
+            isEditFailed = true
+        }
+    }
 }
 
 // MARK: StringLiterals
@@ -267,7 +368,7 @@ private enum StringLiterals: String {
     case placeholder = "검색어를 입력해주세요."
     case timelineTitle = "포스트"
     case distance = "범위"
-    case noResults = "조건에 맞는 포스트가 없습니다 :<"
+    case noResults = "조건에 맞는 포스트가 없습니다"
     
     var text: String {
         return self.rawValue
@@ -277,4 +378,4 @@ private enum StringLiterals: String {
 #Preview {
     CommunityView(repository: DIContainer.shared.communityPostRepository, chatListRepository: DIContainer.shared.chatListRepository)
 }
- 
+

@@ -19,6 +19,10 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
     public let loginTokenManager: LoginTokenManager
     public let network: SCMNetworkImpl
     
+    private var accessToken: String {
+        return loginTokenManager.fetchToken(.accessToken)
+    }
+    
     public init() {
         self.locationManager = LocationManager()
         self.loginTokenManager = LoginTokenManager()
@@ -31,7 +35,6 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         next: String? = nil
     ) async throws -> postForPagination {
         
-        let accessToken = loginTokenManager.fetchToken(.accessToken)
         let geolocationPost = GeolocationPost(
             latitude: "\(locationManager.currentLocation.coordinate.latitude)",
             longitude: "\(locationManager.currentLocation.coordinate.longitude)",
@@ -67,6 +70,7 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
             let distance = locationManager.currentLocation.intDistanceInM(from: storeLocation)
             let files = response.files.map { Secret.baseURL + "/v1" + $0 }
             let createdDate = Date.from(iso8601String: response.createdAt)
+            let comments = try await getPostComment(postID: response.postId)
             
             let entity: CommunityPostEntity = CommunityPostEntity(
                 creator: creator,
@@ -78,7 +82,8 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
                 likeStatus: response.isLike,
                 mediaFiles: files,
                 uploadTime: createdDate?.timeAgoFromNow() ?? "",
-                storeInfo: storeInfo
+                storeInfo: storeInfo,
+                comments: comments
             )
             
             entities.append(entity)
@@ -91,7 +96,34 @@ public final class CommunityPostRepository: CommunityPostDisplayable {
         return (entities, nextCursor)
     }
     
+    public func deleteCommunityPost(postID: String) async throws {
+        let value = CommunityURL.deleteCommunityPost(access: accessToken, postID: postID)
+        let result = try await callEmptyRequest(value)
+        
+        Log.debug("✅ 삭제 완료: \(result.statusCode.description)")
+    }
+    
+    public func editContents(
+        postID: String,
+        content: EditContent
+    ) async throws {
+        
+        let value = CommunityURL.editCommunityPost(access: accessToken, postID: postID, content: content)
+        _ = try await callRequest(value, type: PostResponseDTO.self)
+        
+        Log.debug("✅ 포스트 수정 성공")
+    }
+    
     public func postStoreLikeStatus(store id: String, like status: Bool) async throws {
         
+    }
+}
+
+extension CommunityPostRepository {
+    private func getPostComment(postID: String) async throws -> [CommentResponseDTO] {
+        let value = CommunityURL.getPostDetail(access: accessToken, postID: postID)
+        let result = try await callRequest(value, type: PostResponseDTO.self)
+        
+        return result.response.comments
     }
 }

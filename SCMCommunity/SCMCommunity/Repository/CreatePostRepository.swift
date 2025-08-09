@@ -15,6 +15,10 @@ public final class CreatePostRepository: CreatePostDisplayable {
     public let loginTokenManager: LoginTokenManager
     public let network: SCMNetworkImpl
     
+    private var accessToken: String {
+        return loginTokenManager.fetchToken(.accessToken)
+    }
+    
     public init() {
         self.loginTokenManager = LoginTokenManager()
         self.network = SCMNetworkImpl()
@@ -22,7 +26,6 @@ public final class CreatePostRepository: CreatePostDisplayable {
     
     public func postFiles(_ files: [FileData]) async throws -> PostFilesEntity {
         
-        let accessToken = loginTokenManager.fetchToken(.accessToken)
         let value = CommunityURL.fileUpload(access: accessToken, files: files)
         let result = try await callMultipartRequest(value, type: FileResponseDTO.self)
         
@@ -35,7 +38,6 @@ public final class CreatePostRepository: CreatePostDisplayable {
     
     public func postContents(_ content: PostContent) async throws {
         
-        let accessToken = loginTokenManager.fetchToken(.accessToken)
         let value = CommunityURL.postUpload(access: accessToken, value: content)
         let result = try await callRequest(value, type: PostResponseDTO.self)
         

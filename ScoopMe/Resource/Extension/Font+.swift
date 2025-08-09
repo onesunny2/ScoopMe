@@ -35,6 +35,7 @@ extension Font {
     static let PTBody4: Font = .custom(Name.pretendardM.text, size: 12)
     static let PTBody5: Font = .custom(Name.pretendardR.text, size: 14)
     static let PTBody6: Font = .custom(Name.pretendardR.text, size: 12)
+    static let PTBody7: Font = .custom(Name.pretendardR.text, size: 18)
     
     static let PTCaption1: Font = .custom(Name.pretendardSB.text, size: 12)
     static let PTCaption2: Font = .custom(Name.pretendardSB.text, size: 10)

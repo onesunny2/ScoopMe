@@ -31,28 +31,54 @@ struct PostResponseDTO: Codable {
     }
 }
 
-struct CommentResponseDTO: Codable {
-    let commentId: String
-    let content: String
-    let createdAt: String
-    let creator: UserInfoResponseDTO
-    let replies: [ReplyDTO]
+public struct CommentResponseDTO: Hashable, Codable {
+    public let commentId: String
+    public let content: String
+    public let createdAt: String
+    public let creator: UserInfoResponseDTO
+    public var replies: [ReplyDTO]?
 
     enum CodingKeys: String, CodingKey {
         case commentId = "comment_id"
         case content, createdAt, creator, replies
     }
+    
+    public init(
+        commentId: String,
+        content: String,
+        createdAt: String,
+        creator: UserInfoResponseDTO,
+        replies: [ReplyDTO]?
+    ) {
+        self.commentId = commentId
+        self.content = content
+        self.createdAt = createdAt
+        self.creator = creator
+        self.replies = replies
+    }
 }
 
-struct ReplyDTO: Codable {
-    let commentId: String
-    let content: String
-    let createdAt: String
-    let creator: UserInfoResponseDTO
+public struct ReplyDTO: Hashable, Codable {
+    public let commentId: String
+    public var content: String
+    public let createdAt: String
+    public let creator: UserInfoResponseDTO
 
     enum CodingKeys: String, CodingKey {
         case commentId = "comment_id"
         case content, createdAt, creator
+    }
+    
+    public init(
+        commentId: String,
+        content: String,
+        createdAt: String,
+        creator: UserInfoResponseDTO
+    ) {
+        self.commentId = commentId
+        self.content = content
+        self.createdAt = createdAt
+        self.creator = creator
     }
 }
 

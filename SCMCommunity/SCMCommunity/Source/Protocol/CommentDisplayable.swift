@@ -1,35 +1,30 @@
 //
-//  CommunityPostDisplayable.swift
+//  CommentDisplayable.swift
 //  SCMCommunity
 //
-//  Created by Lee Wonsun on 5/30/25.
+//  Created by Lee Wonsun on 8/7/25.
 //
 
 import Foundation
-import SCMLocation
 import SCMLogin
 import SCMNetwork
 
-public protocol CommunityPostDisplayable: AnyObject {
-    typealias postForPagination = (data: [CommunityPostEntity], next: String)
-    
-    var locationManager: LocationManager { get }
+public protocol CommentDisplayable: AnyObject {
     var loginTokenManager: LoginTokenManager { get }
     var network: SCMNetworkImpl { get }
     
-    func getCommunityPost(max distance: Int, orderBy: TimelineFilter, next: String?) async throws -> postForPagination
-    func deleteCommunityPost(postID: String) async throws
-    func editContents(postID: String, content: EditContent) async throws
-    func postStoreLikeStatus(store id: String, like status: Bool) async throws
+    func postComment(postID: String, content: PostComment) async throws -> CommentResponseDTO
+    func editComment(comment: CommentInfo) async throws -> CommentResponseDTO
+    func deleteComment(comment: CommentInfo) async throws
     
-    func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T>
-    func callEmptyRequest(_ value: CommunityURL) async throws -> HTTPResponse<EmptyResponse>
+    func callRequest<T: Decodable>(_ value: CommentURL, type: T.Type) async throws -> HTTPResponse<T>
+    func callEmptyRequest(_ value: CommentURL) async throws -> HTTPResponse<EmptyResponse>
     func checkRefreshToken(complete: @escaping () async throws -> ()) async
 }
 
-extension CommunityPostDisplayable {
+extension CommentDisplayable {
     
-    public func callRequest<T: Decodable>(_ value: CommunityURL, type: T.Type) async throws -> HTTPResponse<T> {
+    public func callRequest<T: Decodable>(_ value: CommentURL, type: T.Type) async throws -> HTTPResponse<T> {
         let request = HTTPRequest(
             scheme: .http,
             method: value.method,
@@ -44,7 +39,7 @@ extension CommunityPostDisplayable {
         return try await network.fetchData(request, T.self)
     }
     
-    public func callEmptyRequest(_ value: CommunityURL) async throws -> HTTPResponse<EmptyResponse> {
+    public func callEmptyRequest(_ value: CommentURL) async throws -> HTTPResponse<EmptyResponse> {
         let request = HTTPRequest(
             scheme: .http,
             method: value.method,
