@@ -17,36 +17,73 @@ struct CommentCell: View {
     
     private let imageHelper: ImageHelper
     @Binding var postID: String
-    private let comment: CommentResponseDTO
+    @Binding var comment: CommentResponseDTO
     private let canReply: Bool
     private var tappedEdit: (() -> Void)?
     private var sendEditComment: ((CommentInfo) -> Void)?
     private var tappedDelete: ((CommentInfo) -> Void)?
+    private var tappedReply: ((Bool) -> Void)?
     
     @State private var isEditing: Bool = false
+    @State private var isReply: Bool = false
     
     private let profileSize: CGFloat = 50
     
     init(
         imageHelper: ImageHelper,
         postID: Binding<String>,
-        comment: CommentResponseDTO,
+        comment: Binding<CommentResponseDTO>,
         canReply: Bool,
         tappedEdit: (() -> Void)?,
         sendEditComment: ((CommentInfo) -> Void)?,
-        tappedDelete: ((CommentInfo) -> Void)?
+        tappedDelete: ((CommentInfo) -> Void)?,
+        tappedReply: ((Bool) -> Void)?
     ) {
         self.imageHelper = imageHelper
         self._postID = postID
-        self.comment = comment
+        self._comment = comment
         self.canReply = canReply
         self.tappedEdit = tappedEdit
         self.sendEditComment = sendEditComment
         self.tappedDelete = tappedDelete
+        self.tappedReply = tappedReply
     }
     
     var body: some View {
-        commentView
+        contentView
+    }
+    
+    private var contentView: some View {
+        VStack(alignment: .trailing) {
+            commentView
+            
+            // 대댓글
+            if let replies = comment.replies {
+                VStack(spacing: 8) {
+                    ForEach(replies, id: \.commentId) { reply in
+                        ReplyCommentCell(
+                            commentRepository: DIContainer.shared.commentRepository,
+                            imageHelper: imageHelper,
+                            postID: $postID,
+                            parentID: comment.commentId,
+                            reply: reply,
+                            sendEditedReply: { editedReply in
+                                guard let replies = comment.replies, let index = replies.firstIndex(where: { $0.commentId == editedReply.commentId }) else { return }
+                                
+                                comment.replies?[index] = editedReply
+                            },
+                            completeDeleted: {
+                                guard let replies = comment.replies, let index = replies.firstIndex(of: reply) else { return }
+                                
+                                comment.replies?.remove(at: index)
+                            }
+                        )
+                    }
+                }
+                .padding(.leading, 56)
+                .padding(.top, 16)
+            }
+        }
     }
     
     private var commentView: some View {
@@ -116,13 +153,15 @@ struct CommentCell: View {
     private var commentButtons: some View {
         HStack(alignment: .center, spacing: 10) {
             if canReply && !isEditing {
-                Text(StringLiterals.reply.string)
-                    .basicText(.PTTitle6, .scmGray90)
+                Text(isReply ? StringLiterals.cancelReply.string :  StringLiterals.reply.string)
+                    .basicText(.PTTitle6, isReply ? .scmBlackSprout : .scmGray90)
                     .asButton {
                         Log.debug("🔗 답글달기 탭탭")
+                        isReply.toggle()
+                        tappedReply?(isReply)
                     }
             } else if isEditing {
-                Text(StringLiterals.cancelReply.string)
+                Text(StringLiterals.cancelEdit.string)
                     .basicText(.PTTitle6, .scmGray90)
                     .asButton {
                         Log.debug("🔗 수정취소 탭탭")
@@ -161,9 +200,10 @@ struct CommentCell: View {
 // MARK: StringLiterals
 private enum StringLiterals: String {
     case reply = "답글 달기"
+    case cancelReply = "답글 취소"
     case edit = "수정"
     case delete = "삭제"
-    case cancelReply = "수정 취소"
+    case cancelEdit = "수정 취소"
     
     var string: String {
         return self.rawValue
@@ -189,10 +229,11 @@ private enum StringLiterals: String {
     CommentCell(
         imageHelper: DIContainer.shared.imageHelper,
         postID: .constant(""),
-        comment: comment,
+        comment: .constant(comment),
         canReply: false,
         tappedEdit: nil,
         sendEditComment: nil,
-        tappedDelete: nil
+        tappedDelete: nil,
+        tappedReply: nil
     )
 }
