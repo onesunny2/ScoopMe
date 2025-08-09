@@ -36,7 +36,7 @@ public struct CommentResponseDTO: Hashable, Codable {
     public let content: String
     public let createdAt: String
     public let creator: UserInfoResponseDTO
-    public let replies: [ReplyDTO]?
+    public var replies: [ReplyDTO]?
 
     enum CodingKeys: String, CodingKey {
         case commentId = "comment_id"
@@ -60,7 +60,7 @@ public struct CommentResponseDTO: Hashable, Codable {
 
 public struct ReplyDTO: Hashable, Codable {
     public let commentId: String
-    public let content: String
+    public var content: String
     public let createdAt: String
     public let creator: UserInfoResponseDTO
 
