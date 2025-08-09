@@ -21,6 +21,7 @@ struct PostCommentView: View {
     
     @State private var commentText: String = ""
     @State private var isEditing: Bool = false
+    @State private var isReplying: Bool = false
     
     @State private var parentID: String? = nil
     @State private var failedUpload: Bool = false
@@ -43,7 +44,7 @@ struct PostCommentView: View {
     }
     
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 0) {
             contentView
             
             inputCommentView
@@ -86,6 +87,11 @@ struct PostCommentView: View {
                     await deleteComment(comment: comment)
                 }
             }
+            .showAlert(
+                isPresented: $failedDelete,
+                title: StringLiterals.deleteFailedTitle.string,
+                message: StringLiterals.deleteFailedMessage.string
+            )
     }
     
     @ViewBuilder
@@ -101,14 +107,14 @@ struct PostCommentView: View {
     
     private var mainComments: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ForEach(comments, id: \.commentId) { comment in
+            ForEach($comments, id: \.commentId) { comment in
                 CommentCell(
                     imageHelper: imageHelper,
                     postID: $postID,
                     comment: comment,
                     canReply: true,
                     tappedEdit: {
-                        isEditing = true
+                        isEditing.toggle()
                     },
                     sendEditComment: { info in
                         Task {
@@ -120,9 +126,13 @@ struct PostCommentView: View {
                     tappedDelete: { info in
                         willDeleteComment = info
                         isDeleted = true
+                    },
+                    tappedReply: { replyStatus in
+                        isReplying = replyStatus
+                        parentID = isReplying ? comment.wrappedValue.commentId : nil
                     }
                 )
-                .padding(.vertical, 10)
+                .padding(.top, 10)
             }
         }
     }
@@ -138,7 +148,7 @@ struct PostCommentView: View {
     
     @ViewBuilder
     private var inputCommentView: some View {
-        if !isEditing {
+        if !isEditing && !isReplying {
             CommentInputView(
                 textMessage: $commentText,
                 focusBinding: $focusBinding,
@@ -154,6 +164,25 @@ struct PostCommentView: View {
             .defaultHorizontalPadding()
             .background(.scmGray45)
             .ignoresSafeArea(.container, edges: .bottom)
+        } else if !isEditing && isReplying {
+            VStack {
+                Text("현재 대댓글 작성 중 입니다")
+                    .basicText(.PTBody4, .scmDeepSprout)
+                
+                CommentInputView(
+                    textMessage: $commentText,
+                    focusBinding: $focusBinding,
+                    parentID: parentID
+                ) { comment in
+                    Task {
+                        commentText = ""
+                        await postNewComment(postID: postID, content: comment)
+                    }
+                }
+                .defaultHorizontalPadding()
+                .background(.scmGray45)
+                .ignoresSafeArea(.container, edges: .bottom)
+            }
         }
     }
 }
@@ -167,7 +196,23 @@ extension PostCommentView {
     ) async {
         do {
             let uploadedComment = try await commentRepository.postComment(postID: postID, content: content)
-            comments.append(uploadedComment)
+            
+            if !isReplying {
+                comments.append(uploadedComment)
+            } else {
+                let reply = ReplyDTO(
+                    commentId: uploadedComment.commentId,
+                    content: uploadedComment.content,
+                    createdAt: uploadedComment.createdAt,
+                    creator: uploadedComment.creator
+                )
+                let parentID = content.parentID
+                
+                guard let index = comments.firstIndex(where: { $0.commentId == parentID }) else { return }
+                comments[index].replies?.append(reply)
+                
+                isReplying = false
+            }
         } catch {
             Log.error("❌ 새 댓글 등록 실패: \(error)")
             failedUpload = true
@@ -200,6 +245,7 @@ extension PostCommentView {
             
         } catch {
             Log.error("❌ 댓글 삭제 실패: \(error)")
+            failedDelete = true
         }
     }
 }
@@ -207,12 +253,14 @@ extension PostCommentView {
 // MARK: StringLiterals
 private enum StringLiterals: String {
     case emptyComment = "아직 등록된 댓글이 없습니다"
-    case uploadFailedTitle = "실패"
+    case uploadFailedTitle = "등록 실패"
     case uploadFailedMessage = "댓글 등록에 실패했습니다"
     case uploadFailedButton = "재시도"
     case editFailedMessage = "댓글 수정에 실패했습니다"
     case deleteTitle = "삭제"
     case deleteMessage = "이 댓글을 삭제하시겠습니까?"
+    case deleteFailedTitle = "삭제 실패"
+    case deleteFailedMessage = "댓글 삭제에 실패했습니다"
     
     var string: String {
         return self.rawValue
