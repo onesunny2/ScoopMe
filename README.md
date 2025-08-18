@@ -13,7 +13,7 @@
 
 |   이메일/소셜 로그인 기능   |   내 주변 가게 조회 기능   |    주문 결제 기능   | 주문상태 확인 기능   |
 |  :-------------: |  :-------------: |  :-------------: |  :-------------: |
-| <img width=200 src="https://github.com/user-attachments/assets/ad6a5811-d8cd-41a4-8ab8-c43915f4deac"> | <img width=200 src="https://github.com/user-attachments/assets/b3a27c3b-fa93-44cc-ba58-ed80a82ffa4f"> | <img width=200 src="https://github.com/user-attachments/assets/ee5d4832-3125-4d1c-9c95-361df8a9aee4"> | <img width=200 src="https://github.com/user-attachments/assets/ee5d4832-3125-4d1c-9c95-361df8a9aee4"> |
+| <img width=200 src="https://github.com/user-attachments/assets/ad6a5811-d8cd-41a4-8ab8-c43915f4deac"> | <img width=200 src="https://github.com/user-attachments/assets/b3a27c3b-fa93-44cc-ba58-ed80a82ffa4f"> | <img width=200 src="https://github.com/user-attachments/assets/ee5d4832-3125-4d1c-9c95-361df8a9aee4"> | <img width=200 src="https://github.com/user-attachments/assets/456415c6-7437-476c-9cb5-381ba35535a5"> |
 
 |   채팅 및 알림 기능   |   커뮤니티 게시글 작성 기능   |    게시글 조회 및 댓글 기능   |
 |  :-------------: |  :-------------: |  :-------------: |
