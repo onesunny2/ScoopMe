@@ -25,6 +25,7 @@
 </br>
 <img width="853" height="245" alt="image" src="https://github.com/user-attachments/assets/fff73415-cdb8-45cd-a9f7-790ecaf4d48f" />
 </br></br>
+
 - SwiftUI에서는 기존 UIKit에서 사용하던 MVVM 패턴이 불필요한 데이터 바인딩 과정을 거치게 한다고 판단해 새로운 구조를 도입해보고자 했습니다</br>
 - 비즈니스 로직을 각 View에 주입해 데이터 관리는 해당 View에서만 실행되게끔 하고자 Repository 패턴을 사용했습니다.</br>
 - 추후 기능 및 개발 인원의 확장, 단위 테스트 등에 유연한 대처를 하기 위해 모듈화 아키텍쳐를 도입했습니다.
@@ -48,6 +49,7 @@
 ### 3. 커뮤니티 내 이미지 갯수에 따른 동적 View 구성
 <img width="474" height="312" alt="image" src="https://github.com/user-attachments/assets/9b88c547-a056-4a8d-9fd9-73a4f416c538" />
 </br></br>
+
 - 커뮤니티 게시글 포스팅 시 최소 0개부터 최대 5개까지의 이미지를 서버에 업로드 할 수 있습니다.</br>
 - 이에 따라 커뮤니티 게시글 조회 시, 게시글마다 이미지의 갯수가 달라 UI적으로 분기처리가 불가피했습니다.</br>
 - 기본적으로 이미지 1개에 대한 범용적인 UI 컴포넌트를 구성하였으며 나머지는 아래와 같이 구성했습니다.</br>
