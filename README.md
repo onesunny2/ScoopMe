@@ -38,6 +38,47 @@
   ㄴ baseURL, path, parameters, jsonBody, headers 등 각 요소를 구성하는 메서드로 SwiftUI의 선언형에 안맞게 구성하였습니다.
 - 네트워크 구현체에는 Response 유무에 따라 HTTPResponse와 EmtpyHTTPResponse를 반환값으로 활용해 적절히 사용 가능합니다.
 
+</br>
+
+```swift
+extension HTTPRequest: Requestable {
+    
+    public var successCodes: Set<Int> {...}
+    
+    public var urlString: String {...}
+    
+    public func addBaseURL(_ url: String) -> Self {...}
+    
+    public func addPath(_ path: String) -> Self {...}
+    
+    public func addParameters(_ params: [String: String?]?) -> Self {...}
+    
+    public func addJSONBody(_ body: [String: Any]?) -> Self {...}
+    
+    public func addMultipartData(_ multipartData: MultipartFormData?) -> Self {...}
+    
+    public func addHeaders(_ headers: [String: String]) -> Self {...}
+    
+    public func setCachePolicy(_ policy: URLRequest.CachePolicy) -> Self {...}
+    
+    public func urlRequest() throws -> URLRequest {...}
+}
+```
+
+```swift
+public struct HTTPResponse<T: Decodable>: Responsable {
+    public typealias ResponseType = T
+    
+    public var statusCode: Int
+    public var response: ResponseType
+    public var headers: [String : String]?
+}
+
+public struct EmptyResponse: Decodable {
+    public init() { }
+}
+```
+
 ### 2. 채팅 및 PushNotification
 - 서버에서 받은 채팅은 Realm을 활용해 로컬DB에 저장합니다.
 - SwiftUI에서 사용할 수 있도록 제공되는 Realm의 @ObservedResults 프로퍼티 래퍼를 통해 데이터의 변경사항을 자동으로 감지하여 UI를 구현합니다.
